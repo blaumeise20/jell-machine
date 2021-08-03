@@ -1,0 +1,5 @@
+node_modules
+node_modules.nosync
+dist/
+src/dist/
+src/build/
