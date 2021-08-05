@@ -1,5 +1,5 @@
-import { Off, Position } from "../../utils/positions";
-import { Cell, CellType, Direction } from "../cell";
+import { Off } from "../../utils/positions";
+import { Cell } from "../cell";
 
 export class GeneratorCell extends Cell {
     update() {
@@ -11,12 +11,7 @@ export class GeneratorCell extends Cell {
         const target = this.pos.mi(Off[this.direction]);
         if (!this.grid.size.contains(target)) return;
 
-        const block = this.grid.cells.get(target);
-        // if (!this.grid.cells.get(target)?.push(this.direction, 1)) return;
-        if (block) {
-            const res = block.push(this.direction, 1);
-            if (!res) return;
-        }
+        if (this.grid.cells.get(target)?.push(this.direction, 1) == false) return;
 
         this.grid.loadCell(target, sourceCell.type, sourceCell.direction);
     }
