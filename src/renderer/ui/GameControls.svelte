@@ -2,7 +2,6 @@
     import { writable, derived } from "svelte/store";
     import { CellType, cellTypes } from "../core/cell";
     import { openLevel } from "../core/grid";
-import { config } from "../utils/config";
     import { rotateBy } from "../utils/misc";
     import { currentPack } from "../utils/texturePacks";
 
