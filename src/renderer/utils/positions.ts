@@ -33,7 +33,6 @@ export class PosMap<T, X = undefined> extends Map<Position, T> {
     }
 
     *entries(): IterableIterator<[Position, T]> {
-        console.log("loaded entries");
         for (const [key, value] of super.entries()) {
             yield [Pos(...(JSON.parse(`[${key}]`) as [number, number])), value];
         }
