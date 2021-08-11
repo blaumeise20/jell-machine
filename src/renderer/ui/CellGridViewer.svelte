@@ -156,10 +156,6 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
         position: absolute;
         width: $CELL_SIZE;
         transform-origin: center;
-
-        &:not(.placable_bg) {
-            transition: transform .2s linear;
-        }
     }
 
     .show_placable .cell:not(.placable) {
