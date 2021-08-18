@@ -55,8 +55,7 @@ export class CellGrid {
      */
     cell(pos: Position, type: CellType, direction: Direction) {
         const cellClass: typeof Cell = (cellClasses as any)[type] || Cell;
-        const c = new cellClass(pos, type, direction, this);
-        return c;
+        return new cellClass(pos, type, direction, this);
     }
 
     /**
