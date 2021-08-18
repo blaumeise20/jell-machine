@@ -173,6 +173,7 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
         "></div>
         <svg class="cell_container" width={grid.size.width * CELL_SIZE} height={grid.size.height * CELL_SIZE}>
             {#each [...grid.tiles.entries()] as [pos, tile]}
+                <image
                     class="cell placable placable_bg"
                     x={CELL_SIZE * pos.x}
                     y={CELL_SIZE * (grid.size.height - pos.y - 1)}
@@ -180,7 +181,7 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
                 />
             {/each}
             {#each [...grid.cells.values()] as cell (cell.id)}
-                " class:placable={grid.tiles.get(cell.pos) == Tile.Placable}></div>
+                <image
                     class="cell"
                     class:placable={grid.tiles.get(cell.pos) == Tile.Placable}
                     x={CELL_SIZE * cell.pos.x}
