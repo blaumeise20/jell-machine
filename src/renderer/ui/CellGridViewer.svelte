@@ -72,7 +72,7 @@
         }
         else if (mouseButton == 2) {
             if (keys.shift) grid.tiles.delete(clickedCell);
-            else grid.cells.get(clickedCell)?.rm(true);
+            else grid.cells.get(clickedCell)?.rm();
 
             cellChanged = true;
         }

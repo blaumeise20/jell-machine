@@ -12,12 +12,12 @@ export class Cell {
         grid.cellList.push(this);
     }
 
-    rm(rmFromGrid = false) {
+    rm() {
         if (this.deleted) return;
         const i = this.grid.cellList.indexOf(this);
         if (i >= 0) {
             this.grid.cellList.splice(i, 1);
-            if (rmFromGrid) this.grid.cells.delete(this.pos);
+            this.grid.cells.delete(this.pos);
             this.deleted = true;
         }
     }
@@ -50,7 +50,7 @@ export class Cell {
             return true;
         }
         if (res === null) {
-            this.rm(true);
+            this.rm();
             return true;
         }
         return false;
