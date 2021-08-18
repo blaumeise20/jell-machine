@@ -148,14 +148,10 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
         position: absolute;
     }
     .cell {
-        background-position: center;
-        background-size: $CELL_SIZE $CELL_SIZE;
-        bottom: 0;
         height: $CELL_SIZE;
-        left: 0;
-        position: absolute;
         width: $CELL_SIZE;
-        transform-origin: center;
+        transform-box: fill-box;
+        transform-origin: center center;
     }
 
     .show_placable .cell:not(.placable) {
@@ -175,19 +171,24 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
             height: {grid.size.height * CELL_SIZE}px;
             background-image: url({$currentPack.textures.bg.url});
         "></div>
-        <div class="cell_container">
+        <svg class="cell_container" width={grid.size.width * CELL_SIZE} height={grid.size.height * CELL_SIZE}>
             {#each [...grid.tiles.entries()] as [pos, tile]}
-                <div class="cell placable placable_bg" style="
-                    transform: translate({CELL_SIZE * pos.x}px, {-CELL_SIZE * pos.y}px);
-                    background-image: url({$currentPack.textures.placable.url});
-                "></div>
+                    class="cell placable placable_bg"
+                    x={CELL_SIZE * pos.x}
+                    y={CELL_SIZE * (grid.size.height - pos.y - 1)}
+                    href={$currentPack.textures.placable.url}
+                />
             {/each}
             {#each [...grid.cells.values()] as cell (cell.id)}
-                <div class="cell" style="
-                    transform: translate({CELL_SIZE * cell.pos.x}px, {-CELL_SIZE * cell.pos.y}px) rotate({cell.direction * 90}deg);
-                    background-image: url({$currentPack.textures[cellMap[cell.type]].url});
                 " class:placable={grid.tiles.get(cell.pos) == Tile.Placable}></div>
+                    class="cell"
+                    class:placable={grid.tiles.get(cell.pos) == Tile.Placable}
+                    x={CELL_SIZE * cell.pos.x}
+                    y={CELL_SIZE * (grid.size.height - cell.pos.y - 1)}
+                    href={$currentPack.textures[cellMap[cell.type]].url}
+                    transform="rotate({cell.direction * 90})"
+                />
             {/each}
-        </div>
+        </svg>
     </div>
 </div>
