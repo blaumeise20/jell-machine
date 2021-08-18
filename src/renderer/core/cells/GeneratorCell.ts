@@ -11,7 +11,8 @@ export class GeneratorCell extends Cell {
         const target = this.pos.mi(Off[this.direction]);
         if (!this.grid.size.contains(target)) return;
 
-        if (this.grid.cells.get(target)?.push(this.direction, 1) == false) return;
+        const targetCell = this.grid.cells.get(target);
+        if (targetCell) if (!targetCell.push(this.direction, 1)) return;
 
         this.grid.loadCell(target, sourceCell.type, sourceCell.direction);
     }
