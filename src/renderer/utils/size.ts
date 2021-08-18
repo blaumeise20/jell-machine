@@ -32,4 +32,9 @@ export class Size {
                pos.y >= this.bottom &&
                pos.y <  this.bottom + this.height;
     }
+
+    static from(p1: Position | null, p2: Position | null): Size | null {
+        if (!p1 || !p2) return null;
+        return new Size(Math.abs(p1.x - p2.x) + 1, Math.abs(p1.y - p2.y) + 1, Math.min(p1.y, p2.y), Math.min(p1.x, p2.x));;
+    }
 }
