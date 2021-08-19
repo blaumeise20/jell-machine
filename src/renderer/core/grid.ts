@@ -73,6 +73,18 @@ export class CellGrid {
         else this._reloaders.forEach(r => r());
     }
 
+    extract(area: Size) {
+        const grid = new CellGrid();
+        grid.size = new Size(area.width, area.height);
+        for (let x = 0; x < area.width; x++) {
+            for (let y = 0; y < area.height; y++) {
+                const cell = this.cells.get(Pos(x + area.left, y + area.bottom));
+                if (cell) grid.loadCell(Pos(x, y), cell.type, cell.direction);
+            }
+        }
+        return grid;
+    }
+
     toString(format: "V3" = "V3") {
         // TODO: add infinite grid support
         if (this.isInfinite) throw new Error("oh no i'm infinite");
