@@ -5,10 +5,11 @@
     import { onMount, onDestroy } from "svelte";
     import { moving, showControls } from "./uiState";
     import { Tile } from "../core/tiles";
-    import { keys, keys$ } from "./keys";
+    import { keys, keys$, on } from "./keys";
     import { mouse } from "../utils/mouse";
-    import { Pos } from "../utils/positions";
+    import { Pos, Position } from "../utils/positions";
     import { rotation, selectedCell } from "./GameControls.svelte";
+    import { Size } from "../utils/size";
 
     export let grid: CellGrid;
     if (grid.isInfinite) throw new Error("OH NO");
@@ -22,6 +23,7 @@
     const editorSize = { width: 0, height: 0 };
     const center = { x: grid.size.width / 2, y: grid.size.height / 2 }
     const gridOffset = { left: 0, bottom: 0 };
+    const mouseCell = { x: 0, y: 0 };
     let zoom = 1;
     let mouseButton = -1;
 
@@ -59,14 +61,23 @@
         const pixelDistY = mouse.y - editorSize.height / 2;
         const cellDistX = pixelDistX / CELL_SIZE / zoom;
         const cellDistY = pixelDistY / CELL_SIZE / zoom;
-        const actualX = Math.floor(center.x + cellDistX);
-        const actualY = Math.floor(center.y - cellDistY);
+        const cellX = center.x + cellDistX;
+        const cellY = center.y - cellDistY;
+        const actualX = Math.floor(cellX);
+        const actualY = Math.floor(cellY);
         const clickedCell = Pos(actualX, actualY);
 
         let cellChanged = false;
         if (mouseButton == 0) {
-            if (keys.shift) grid.tiles.set(clickedCell, Tile.Placable);
-            else grid.loadCell(clickedCell, $selectedCell, $rotation);
+            if (selecting) {
+                if (!showSelection) selectionStart = clickedCell.c();
+                showSelection = true;
+                selectionCurrent = clickedCell.c();
+            }
+            else if (placeCell) {
+                if (keys.shift) grid.tiles.set(clickedCell, Tile.Placable);
+                else grid.loadCell(clickedCell, $selectedCell, $rotation);
+            }
 
             cellChanged = true;
         }
@@ -80,6 +91,8 @@
 
         center.x = x;
         center.y = y;
+        mouseCell.x = cellX;
+        mouseCell.y = cellY;
         if (cellChanged) grid = grid;
         previousTime = time;
         if (living) frame = requestAnimationFrame(updateFrame);
@@ -90,6 +103,34 @@
     onDestroy(() => (living = false, cancelAnimationFrame(frame)));
 
     //#endregion frames
+
+    //#region selection
+    let selectionStart: Position | null = null;
+    let selectionCurrent: Position | null = null;
+    let selecting = false;
+    let showSelection = false;
+    let placeCell = true;
+    $: selectionSize = Size.from(selectionStart, selectionCurrent)!;
+
+    export let selectionArea: Size | null = null;
+    $: selectionArea = showSelection ? selectionSize : null;
+
+    let selection: CellGrid | null = null;
+    $: selectionPos = selection ? Pos(
+        Math.round(mouseCell.x - selection.size.width / 2),
+        Math.round(mouseCell.y - selection.size.height / 2)
+    ) : Pos(0, 0);
+
+    on("x").down(() => {
+        if (showSelection) selection = grid.extract(selectionSize, true), showSelection = false;
+    });
+    on("c").down(() => {
+        if (showSelection) selection = grid.extract(selectionSize), showSelection = false;
+    });
+    //#endregion
+
+
+    //#region events
 
     function zoomEvent(e: WheelEvent) {
         const d = e.deltaY;
@@ -106,6 +147,27 @@
         }
         zoom = Math.min(zoom, MAX_ZOOM);
     }
+
+    function mousedownEvent(e: MouseEvent) {
+        if (selection) {
+            if (e.button != 2) grid.insert(selection, selectionPos);
+            selection = null;
+            placeCell = false;
+        }
+        else {
+            mouseButton = e.button;
+            if (mouseButton == 2 && showSelection) grid.clear(selectionSize);
+            selecting = keys.ctrl;
+            showSelection = false;
+        }
+    }
+    function mouseupEvent(e: MouseEvent) {
+        mouseButton = -1;
+        selecting = false;
+        placeCell = !showSelection;
+    }
+
+    //#endregion
 
 /*
 
@@ -158,9 +220,16 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
     .show_placable .cell:not(.placable) {
         opacity: .5;
     }
+
+    .selection_box {
+        background-color: rgba(255,255,255, .2);
+        border-style: solid;
+        border-color: #fff;
+        position: absolute;
+    }
 </style>
 
-<div class="cell_editor" class:show_placable={$keys$.shift && $showControls} bind:this={editorElement} on:wheel={zoomEvent} on:mousedown={e => mouseButton = e.button} on:mouseup={() => mouseButton = -1}>
+<div class="cell_editor" class:show_placable={$keys$.shift && $showControls} bind:this={editorElement} on:wheel={zoomEvent} on:mousedown={mousedownEvent} on:mouseup={mouseupEvent}>
     <div class="container" style="
         bottom: {gridOffset.bottom}px;
         left: {gridOffset.left}px;
@@ -192,5 +261,37 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
                 />
             {/each}
         </svg>
+        {#if selection}
+            <svg class="cell_container" style="opacity: .7; bottom: {Math.round(selectionPos.y) * CELL_SIZE}px; left: {Math.round(selectionPos.x) * CELL_SIZE}px;" width={selection.size.width * CELL_SIZE} height={selection.size.height * CELL_SIZE}>
+                <!-- {#each [...selection.tiles.entries()] as [pos, tile]}
+                    <image
+                        class="cell placable placable_bg"
+                        x={CELL_SIZE * pos.x}
+                        y={CELL_SIZE * (selection.size.height - pos.y - 1)}
+                        href={$currentPack.textures.placable.url}
+                    />
+                {/each} -->
+                {#each [...selection.cells.values()] as cell}
+                    <image
+                        class="cell"
+                        x={CELL_SIZE * cell.pos.x}
+                        y={CELL_SIZE * (selection.size.height - cell.pos.y - 1)}
+                        href={$currentPack.textures[cellMap[cell.type]].url}
+                        transform="rotate({cell.direction * 90})"
+                    />
+                {/each}
+            </svg>
+        {/if}
+
+        {#if showSelection}
+            <div class="selection_box" style="
+                bottom: {CELL_SIZE * selectionSize.bottom}px;
+                left: {CELL_SIZE * selectionSize.left}px;
+                width: {CELL_SIZE * selectionSize.width}px;
+                height: {CELL_SIZE * selectionSize.height}px;
+
+                border-width: {CELL_SIZE / 16 * Math.max(.5, Math.min(1 / zoom, 3))}px;
+            "></div>
+        {/if}
     </div>
 </div>

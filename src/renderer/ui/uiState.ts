@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import { Size } from "../utils/size";
 import { on } from "./keys";
 
 export const menuOpen = writable(false);
@@ -33,3 +34,5 @@ function addMoveKey(k: string, p: keyof typeof moving) {
     .up(() => moving[p] = false)
     .when(() => !$menuOpen && !$importLevel).down(() => moving[p] = true);
 }
+
+export const selection = writable<Size | null>(null);

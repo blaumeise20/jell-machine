@@ -1,10 +1,10 @@
 <script>
     import { clip } from "../utils/misc";
     import { openLevel } from "../core/grid";
-    import { importLevel, menuOpen } from "./uiState";
+    import { importLevel, menuOpen, selection } from "./uiState";
 
-    const copyText = "Copy to Clipboard";
     const copiedText = "Copied!";
+    $: copyText = $selection ? "Copy selected area" : "Copy to Clipboard";
     let copyButtonLabel = "Copy to Clipboard";
     let copyTimeout: any = null;
 </script>
@@ -54,7 +54,8 @@
             <!-- {#if $openLevel.isInfinite} -->
                 <button on:click={() => {
                     if ($openLevel) {
-                        clip($openLevel.toString("V3"));
+                        if ($selection) clip($openLevel.extract($selection).toString("V3"));
+                        else clip($openLevel.toString("V3"));
                         copyButtonLabel = copiedText;
                         copyTimeout && clearTimeout(copyTimeout);
                         copyTimeout = setTimeout(() => {
