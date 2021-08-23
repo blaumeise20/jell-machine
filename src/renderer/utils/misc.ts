@@ -44,7 +44,7 @@ export function clip(text?: string) {
 }
 
 export function ERR() {
-    alert("something bad happened but i don't know why");
+    alert("something bad happened but i don't know why\nplease contact a dev AAAA");
     window.close();
 }
 
