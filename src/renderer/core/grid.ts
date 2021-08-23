@@ -89,6 +89,24 @@ export class CellGrid {
         return grid;
     }
 
+    insert(selection: CellGrid, selectionPos: Position) {
+        for (const cell of selection.cellList) {
+            this.loadCell(cell.pos.mi([selectionPos.x, selectionPos.y]), cell.type, cell.direction);
+        }
+        this.reloadUI();
+    }
+
+    clear(area: Size) {
+        for (let x = 0; x < area.width; x++) {
+            for (let y = 0; y < area.height; y++) {
+                const cell = this.cells.get(Pos(x + area.left, y + area.bottom));
+                if (cell) cell.rm();
+            }
+        }
+        this.reloadUI();
+    }
+
+
     toString(format: "V3" = "V3") {
         // TODO: add infinite grid support
         if (this.isInfinite) throw new Error("oh no i'm infinite");
