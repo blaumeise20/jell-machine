@@ -146,6 +146,7 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
         bottom: 0;
         left: 0;
         position: absolute;
+        shape-rendering: optimizeSpeed;
     }
     .cell {
         height: $CELL_SIZE;
