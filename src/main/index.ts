@@ -8,7 +8,7 @@ app.on("ready", () => {
         dev ?
             join(app.getPath("userData"), require("../../package.json").productName) :
             app.getPath("userData"),
-        app.getAppPath()
+        __dirname
     ]));
 
 	const window = new BrowserWindow({
@@ -20,5 +20,5 @@ app.on("ready", () => {
 	});
 
     if (dev) window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_DEV_PORT}/#${appPath}`);
-	else window.loadFile(`../build/index.html#${appPath}`);
+	else window.loadURL("file://" + join(__dirname, `../build/index.html#${appPath}`));
 });
