@@ -73,15 +73,19 @@ export class CellGrid {
         else this._reloaders.forEach(r => r());
     }
 
-    extract(area: Size) {
+    extract(area: Size, del = false) {
         const grid = new CellGrid();
         grid.size = new Size(area.width, area.height);
         for (let x = 0; x < area.width; x++) {
             for (let y = 0; y < area.height; y++) {
                 const cell = this.cells.get(Pos(x + area.left, y + area.bottom));
-                if (cell) grid.loadCell(Pos(x, y), cell.type, cell.direction);
+                if (cell) {
+                    grid.loadCell(Pos(x, y), cell.type, cell.direction);
+                    if (del) cell.rm();
+                }
             }
         }
+        if (del) this.reloadUI();
         return grid;
     }
 
