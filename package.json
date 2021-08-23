@@ -8,7 +8,9 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "cross-env NODE_ENV=development ELECTRON_WEBPACK_DEV_PORT=6357 electron src/dist/index.js",
 		"dev": "cross-env NODE_ENV=development ELECTRON_WEBPACK_DEV_PORT=6357 webpack serve",
-		"build": "npm run build:webpack && npm run build:tsc && electron-packager . --platform=darwin --arch=x64 --icon=app_icon.icns --prune --asar --overwrite --out=dist/ --ignore=^/dist/",
+		"build": "npm run build:webpack && npm run build:tsc && electron-packager . --icon=app_icon.icns --prune --asar --overwrite --out=dist/ --ignore='^/(dist|src/(main|renderer))'",
+		"build-mac": "npm run build:webpack && npm run build:tsc && electron-packager . --icon=app_icon.icns --prune --asar --overwrite --out=dist/ --ignore='^/(dist|src/(main|renderer))'",
+		"build-windows": "npm run build:webpack && npm run build:tsc && electron-packager . --icon=app_icon.ico --prune --asar --overwrite --out=dist/ --ignore='^/(dist|src/(main|renderer))'",
 		"build:webpack": "cross-env NODE_ENV=production webpack",
 		"build:tsc": "tsc -p tsconfig.main.json"
 	},
