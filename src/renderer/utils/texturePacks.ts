@@ -2,7 +2,7 @@ import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { get, writable, Writable } from "svelte/store";
 import { appPath, ERR, runningPath, safe, tryAll, tryFirst } from "./misc";
-import { $config, config } from "./config";
+import { config } from "./config";
 
 const textureMapping = {
     "generator": ["generator.png"],
