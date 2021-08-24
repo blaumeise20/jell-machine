@@ -16,7 +16,6 @@ export const openLevel: Writable<CellGrid | null> = writable(null);
 
 export enum LevelError {
     Unknown,
-    V2,
     VersionWrong,
     OutOfBounds
 }
@@ -209,8 +208,6 @@ export class CellGrid {
                     grid.description = parts[5]?.trim() || "";
                     grid.name = parts[6]?.trim() || "";
                 } break;
-
-                case "V2": return [false, LevelError.V2]; // no one uses v2, ERROR xD
 
                 case "V3": {
                     grid.size = new Size(decodeBase74(parts[1]), decodeBase74(parts[2]));
