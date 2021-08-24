@@ -1,6 +1,6 @@
 import { writable, Writable } from "svelte/store";
 import { Size } from "../utils/size";
-import { Pos, Position, PosMap } from "../utils/positions";
+import { Off, Pos, Position, PosMap } from "../utils/positions";
 import { base74Decode, base74Key, decodeBase74, encodeBase74, int } from "../utils/nums";
 import { Tile } from "./tiles";
 import { Cell, CellType, Direction } from "./cell";
@@ -102,6 +102,45 @@ export class CellGrid {
                 if (cell) cell.rm();
             }
         }
+        this.reloadUI();
+    }
+
+    move(area: Size, where: Direction) {
+        const offset = Off[where];
+
+        const moveCell = (x: number, y: number) => {
+            const cellPos = Pos(x, y);
+            const newPos = cellPos.mi(offset);
+            const cell = this.cells.get(cellPos);
+            if (cell) {
+                if (this.cells.get(newPos)) cell.rm();
+                cell.setPosition(newPos);
+            }
+        };
+
+        switch (where) {
+            case Direction.Right:
+                for (let x = area.left + area.width - 1; x >= area.left; x--)
+                    for (let y = area.bottom + area.height - 1; y >= area.bottom; y--)
+                        moveCell(x, y);
+                break;
+            case Direction.Down:
+                for (let x = area.left; x < area.left + area.width; x++)
+                    for (let y = area.bottom; y < area.bottom + area.height; y++)
+                        moveCell(x, y);
+                break;
+            case Direction.Left:
+                for (let x = area.left; x < area.left + area.width; x++)
+                    for (let y = area.bottom; y < area.bottom + area.height; y++)
+                        moveCell(x, y);
+                break;
+            case Direction.Up:
+                for (let x = area.left + area.width - 1; x >= area.left; x--)
+                    for (let y = area.bottom + area.height - 1; y >= area.bottom; y--)
+                        moveCell(x, y);
+                break;
+        }
+
         this.reloadUI();
     }
 

@@ -1,5 +1,5 @@
 <script>
-    import { cellMap } from "../core/cell";
+    import { cellMap, Direction } from "../core/cell";
     import { CellGrid } from "../core/grid";
     import { currentPack } from "../utils/texturePacks";
     import { onMount, onDestroy } from "svelte";
@@ -126,6 +126,31 @@
     });
     on("c").down(() => {
         if (showSelection) selection = grid.extract(selectionSize), showSelection = false;
+    });
+
+    on("arrowright").down(() => {
+        if (showSelection) {
+            grid.move(selectionSize, Direction.Right);
+            selectionSize = selectionSize.move(Direction.Right);
+        }
+    });
+    on("arrowdown").down(() => {
+        if (showSelection) {
+            grid.move(selectionSize, Direction.Down);
+            selectionSize = selectionSize.move(Direction.Down);
+        }
+    });
+    on("arrowleft").down(() => {
+        if (showSelection) {
+            grid.move(selectionSize, Direction.Left);
+            selectionSize = selectionSize.move(Direction.Left);
+        }
+    });
+    on("arrowup").down(() => {
+        if (showSelection) {
+            grid.move(selectionSize, Direction.Up);
+            selectionSize = selectionSize.move(Direction.Up);
+        }
     });
     //#endregion
 

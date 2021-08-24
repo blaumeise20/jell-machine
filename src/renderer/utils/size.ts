@@ -1,4 +1,5 @@
-import { Position } from "./positions";
+import { Direction } from "../core/cell";
+import { Off, Position } from "./positions";
 
 export class Size {
     width: number;
@@ -31,6 +32,11 @@ export class Size {
                pos.x <  this.left + this.width &&
                pos.y >= this.bottom &&
                pos.y <  this.bottom + this.height;
+    }
+
+    move(where: Direction) {
+        const offset = Off[where];
+        return new Size(this.width, this.height, this.bottom + offset[1], this.left + offset[0]);
     }
 
     static from(p1: Position | null, p2: Position | null): Size | null {
