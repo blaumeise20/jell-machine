@@ -1,7 +1,7 @@
 {
 	"name": "electron_base",
 	"productName": "Jell Machine",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "",
 	"main": "src/dist/index.js",
 	"scripts": {
