@@ -1,9 +1,9 @@
 <script context="module">
     import { writable, derived } from "svelte/store";
-    import { CellType, cellTypes } from "../core/cell";
-    import { openLevel } from "../core/grid";
-    import { rotateBy } from "../utils/misc";
-    import { currentPack } from "../utils/texturePacks";
+    import { CellType, cellTypes } from "@core/cell";
+    import { openLevel } from "@core/grid";
+    import { rotateBy } from "@utils/misc";
+    import { currentPack } from "@utils/texturePacks";
 
     export const selectedCell = writable(CellType.Generator);
     export const actualRotation = writable(0);
@@ -11,8 +11,8 @@
 </script>
 
 <script>
-    import { on } from "./keys";
-    import { importLevel, menuOpen, showControls } from "./uiState";
+    import { on } from "../keys";
+    import { importLevel, menuOpen, showControls } from "../uiState";
 
     let show = true;
     on("F1").when(() => !$importLevel).down(() => (show = !show, showControls.set(show), $menuOpen = false));

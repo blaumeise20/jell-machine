@@ -1,7 +1,7 @@
 <script>
-    import { clip } from "../utils/misc";
-    import { openLevel } from "../core/grid";
-    import { importLevel, menuOpen, selection } from "./uiState";
+    import { clip } from "@utils/misc";
+    import { openLevel } from "@core/grid";
+    import { importLevel, menuOpen, selection } from "../uiState";
 
     const copiedText = "Copied!";
     $: copyText = $selection ? "Copy selected area" : "Copy to Clipboard";

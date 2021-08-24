@@ -1,9 +1,10 @@
 <script>
-	// import { activeLevel, openLevel1, openLevel2 } from "../core/grid";
-	import { openLevel } from "../core/grid";
+	// import { activeLevel, openLevel1, openLevel2 } from "@core/grid";
+	import { openLevel } from "@core/grid";
     import CellGridViewer from "./CellGridViewer.svelte";
     import GameControls from "./GameControls.svelte";
-    import { selection } from "./uiState";
+    import { selection } from "../uiState";
+    import Menu from "./Menu.svelte";
 
     // $openLevel = CellGrid.loadFromString("V3;1;1;e;;")[1] as CellGrid;
 </script>
@@ -33,3 +34,5 @@
     {/if} -->
     <GameControls />
 </div>
+
+<Menu />

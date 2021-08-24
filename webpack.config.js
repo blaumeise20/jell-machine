@@ -133,6 +133,10 @@ module.exports = {
     ],
     resolve: {
         extensions: [".ts", ".js", ".tsx", ".svelte"],
+        alias: {
+            "@core": path.resolve(__dirname, "./src/renderer/core/"),
+            "@utils": path.resolve(__dirname, "./src/renderer/utils/"),
+        }
     },
     node: {
         __dirname: false

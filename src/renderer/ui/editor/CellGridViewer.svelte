@@ -1,15 +1,15 @@
 <script>
-    import { cellMap, Direction } from "../core/cell";
-    import { CellGrid } from "../core/grid";
-    import { currentPack } from "../utils/texturePacks";
+    import { cellMap, Direction } from "@core/cell";
+    import { CellGrid } from "@core/grid";
+    import { currentPack } from "@utils/texturePacks";
     import { onMount, onDestroy } from "svelte";
-    import { moving, showControls } from "./uiState";
-    import { Tile } from "../core/tiles";
-    import { keys, keys$, on } from "./keys";
-    import { mouse } from "../utils/mouse";
-    import { Pos, Position } from "../utils/positions";
+    import { moving, showControls } from "../uiState";
+    import { Tile } from "@core/tiles";
+    import { keys, keys$, on } from "../keys";
+    import { mouse } from "@utils/mouse";
+    import { Pos, Position } from "@utils/positions";
     import { rotation, selectedCell } from "./GameControls.svelte";
-    import { Size } from "../utils/size";
+    import { Size } from "@utils/size";
 
     export let grid: CellGrid;
     if (grid.isInfinite) throw new Error("OH NO");
