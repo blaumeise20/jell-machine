@@ -21,7 +21,6 @@ export enum LevelError {
 }
 export class CellGrid {
     isInfinite: boolean = false;
-    // HACK add back "| null"
     size!: Size;
     name: string = "";
     description: string = "";
@@ -155,6 +154,8 @@ export class CellGrid {
             case "V3":
                 str += `V3;${encodeBase74(this.size.width)};${encodeBase74(this.size.height)};`;
 
+                // TODO: add correct compression
+
                 const cellData = arr(this.size.width * this.size.height, 72);
 
                 for (let y = 0; y < this.size.height; y++)
@@ -180,12 +181,6 @@ export class CellGrid {
                         runLength = 1;
                     }
                 }
-
-                // TODO: add correct compression
-
-
-                // str += cellData.map(c => encodeBase74(c)).join("");
-                // str = str.replace(/{+$|{\(0.$/, "");
 
                 str += `;${this.description.trim().replace(/;/g, ":")};${this.name.trim().replace(/;/g, ":")}`
         }
@@ -336,6 +331,3 @@ export class CellGrid {
         return [true, grid];
     }
 }
-
-// NOTE: remove later
-(window as any).CG = CellGrid;

@@ -158,6 +158,3 @@ export interface Texture {
 Textures.instance = new Textures();
 
 export const currentPack = Textures.instance.currentPack;
-
-// NOTE: remove later
-(window as any).T = Textures;

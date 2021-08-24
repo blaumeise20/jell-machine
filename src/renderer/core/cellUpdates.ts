@@ -3,8 +3,6 @@ import { Cell, CellType, Direction } from "./cell";
 import { CellGrid } from "./grid";
 
 export function doStep(grid: CellGrid) {
-    // TODO: add all cells
-
     console.time("update");
     for (const updateType of updateOrder) {
         switch (updateType[1]) {
