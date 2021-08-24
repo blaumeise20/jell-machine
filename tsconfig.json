@@ -14,7 +14,11 @@
         "strictFunctionTypes": true,
         "sourceMap": true,
         "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "paths": {
+            "@core/*": ["./src/renderer/core/*"],
+            "@utils/*": ["./src/renderer/utils/*"]
+        }
     },
     "exclude": ["node_modules/", "node_modules.nosync/"]
 }

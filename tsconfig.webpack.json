@@ -1,10 +1,4 @@
 {
 	"extends": "./tsconfig.json",
 	"include": ["src/renderer", "node_modules/svelte/types/runtime"],
-    "compilerOptions": {
-        "paths": {
-            "@core/*": ["./src/renderer/core/*"],
-            "@utils/*": ["./src/renderer/utils/*"]
-        }
-    },
 }
