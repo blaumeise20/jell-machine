@@ -4,6 +4,7 @@
     import { CellGrid, openLevel } from "../core/grid";
     import { clip } from "../utils/misc";
     import { importLevel } from "./uiState";
+    import logo from "../logo.png";
 
     let showSpoiler = false;
     let clipboardContent = "";
@@ -67,12 +68,17 @@
         margin: 20px 0;
         text-align: center;
     }
+    img {
+        margin-bottom: 50px;
+        width: 100%;
+    }
 </style>
 
 {#if $importLevel}
     <!-- transition:fade={{ easing: cubicInOut }} -->
     <div class="overlay_backdrop"></div>
     <div class="overlay">
+        <img src="{logo}" alt="Logo" />
         <button class="big" on:click={importClipboard}>Import from clipboard</button>
         {#if showSpoiler}
             <div class="import_warning">SPOILER: be careful with the thing you have in your clipboard</div>

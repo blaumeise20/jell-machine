@@ -108,10 +108,10 @@ module.exports = {
                 ]
             },
             {
-                test: /\.woff2?/,
+                test: /\.(woff2?|png|svg|jpe?g)$/,
                 loader: "file-loader",
                 options: {
-                    outputPath: "fonts"
+                    outputPath: "static"
                 }
             }
         ],
