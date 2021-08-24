@@ -2,7 +2,7 @@
     import "./utils/config";
     import "./utils/texturePacks";
     import Menu from "./ui/Menu.svelte";
-    import Main from "./ui/Main.svelte";
+    import Main from "./ui/EditorMain.svelte";
     import ImportOverlay from "./ui/ImportOverlay.svelte";
     import { on, onkey } from "./ui/keys";
     import { openLevel } from "./core/grid";
