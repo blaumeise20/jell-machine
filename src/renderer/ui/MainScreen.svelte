@@ -1,9 +1,9 @@
 <script>
     // import { cubicInOut } from "svelte/easing";
     // import { fade } from "svelte/transition";
-    import { CellGrid, openLevel } from "../core/grid";
-    import { clip } from "../utils/misc";
-    import { importLevel } from "./uiState";
+    import { CellGrid, openLevel } from "@core/grid";
+    import { clip } from "@utils/misc";
+    import { importLevel, showHelp } from "./uiState";
     import logo from "../logo.png";
 
     let showSpoiler = false;
@@ -43,7 +43,7 @@
 </script>
 
 <style>
-    .overlay_backdrop {
+    .overlay_container {
         background-color: #363636;
         left: 0;
         position: fixed;
@@ -52,6 +52,7 @@
         width: 100%;
         height: 100%;
     }
+
     .overlay {
         left: 35%;
         position: fixed;
@@ -60,82 +61,45 @@
         height: auto;
         transform: translateY(-50%);
         width: 30%;
-        z-index: 101;
     }
-    .import_warning {
-        color: #fff;
-        font: 400 20px/25px "Roboto", sans-serif;
-        margin: 20px 0;
-        text-align: center;
-    }
+
     img {
         margin-bottom: 50px;
         width: 100%;
     }
-</style>
 
-{#if $importLevel}
-    <!-- transition:fade={{ easing: cubicInOut }} -->
-    <div class="overlay_backdrop"></div>
-    <div class="overlay">
-        <img src="{logo}" alt="Logo" />
-        <button class="big" on:click={importClipboard}>Import from clipboard</button>
-        {#if showSpoiler}
-            <div class="import_warning">SPOILER: be careful with the thing you have in your clipboard</div>
-        {/if}
-        <div class="space"></div>
-        <button class="big" on:click={() => {
-            $openLevel = CellGrid.createEmpty();
-            $importLevel = false;
-        }}>Create new level</button>
-        {#if $openLevel}
-            <div class="space"></div>
-            <button class="center" on:click={() => $importLevel = false}>Back</button>
-        {/if}
-    </div>
-{/if}
-<!--
-<style>
-    .overlay_backdrop {
-        background-color: rgba(0,0,0,.3);
-        left: 0;
-        position: fixed;
-        top: 0;
-        z-index: 100;
-        width: 100%;
-        height: 100%;
-    }
-    .overlay {
-        background-color: #363636;
-        left: calc(50% - 200px);
-        position: fixed;
-        top: 50%;
-        padding: 20px;
-        height: auto;
-        transform: translateY(-50%);
-        width: 400px;
-        z-index: 101;
-    }
     .import_warning {
         color: #fff;
         font: 400 20px/25px "Roboto", sans-serif;
         margin: 20px 0;
         text-align: center;
     }
+
+    .help_button {
+        bottom: 20px;
+        left: 20px;
+        position: absolute;
+    }
 </style>
 
 {#if $importLevel}
-     transition:fade={{ easing: cubicInOut }}
-    <div class="overlay_backdrop"></div>
-    <div class="overlay">
-        <button class="big" on:click={importClipboard}>Import from clipboard</button>
-        {#if showSpoiler}
-            <div class="import_warning">SPOILER: be careful with the thing you have in your clipboard</div>
-        {/if}
-        <div class="space"></div>
-        <button class="big" on:click={() => {
-            $openLevel = CellGrid.createEmpty();
-            $importLevel = false;
-        }}>Create new level</button>
+    <div class="overlay_container">
+        <div class="overlay">
+            <img src="{logo}" alt="Logo" />
+            <button class="big" on:click={importClipboard}>Import from clipboard</button>
+            {#if showSpoiler}
+                <div class="import_warning">SPOILER: be careful with the thing you have in your clipboard</div>
+            {/if}
+            <div class="space"></div>
+            <button class="big" on:click={() => {
+                $openLevel = CellGrid.createEmpty();
+                $importLevel = false;
+            }}>Create new level</button>
+            {#if $openLevel}
+                <div class="space"></div>
+                <button class="center" on:click={() => $importLevel = false}>Back</button>
+            {/if}
+        </div>
+        <button class="center help_button big" on:click={() => $showHelp = true}>Help</button>
     </div>
-{/if} -->
+{/if}

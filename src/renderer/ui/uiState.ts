@@ -12,6 +12,7 @@ importLevel.subscribe(v => $importLevel = v);
 
 export const showControls = writable(true);
 
+export const showHelp = writable(false);
 
 importLevel.subscribe(l => l == true && menuOpen.set(false));
 
