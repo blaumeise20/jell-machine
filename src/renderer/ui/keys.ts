@@ -1,4 +1,5 @@
 import { readable, Readable, writable, Writable } from "svelte/store";
+import { onMount } from "svelte";
 
 const downs: Record<string, ((key: string) => any)[]> = {};
 const ups: Record<string, ((key: string) => any)[]> = {};
@@ -24,28 +25,71 @@ on("Shift").observe(keys, "shift").observe$(keys$, "shift");
 
 export function on(key: string) {
     key = key.toLowerCase();
-    return makeObject(key, []);
+    try {
+        let mounters: any[] = [];
+        let unmounters: any[] = [];
+        onMount(() => {
+            mounters.forEach(m => m());
+            return () => unmounters.forEach(u => u());
+        });
+        return makeObject(key, [], {
+            mount(fn: any) {
+                mounters.push(fn);
+            },
+            unmount(fn: any) {
+                unmounters.push(fn);
+            }
+        });
+    }
+    catch {
+        return makeObject(key, []);
+    }
 }
 
-function makeObject(key: string, whens: ((key: string) => any)[]): KeyListener {
+function makeObject(key: string, whens: ((key: string) => any)[], mounter?: { mount: any, unmount: any }): KeyListener {
     return {
         when(fn: (key: string) => any) {
-            return makeObject(key, [...whens, fn]);
+            return makeObject(key, [...whens, fn], mounter);
         },
 
         down(down: (key: string) => any) {
             const newDown = (key: string) => whens.every(w => w(key)) && down(key);
 
-            if (downs[key]) downs[key].push(newDown);
-            else downs[key] = [newDown];
+            if (mounter) {
+                mounter.mount(() => {
+                    if (downs[key]) downs[key].push(newDown);
+                    else downs[key] = [newDown];
+                });
+                mounter.unmount(() => {
+                    const index = downs[key].indexOf(newDown);
+                    if (index != -1) downs[key].splice(index, 1);
+                });
+            }
+            else {
+                if (downs[key]) downs[key].push(newDown);
+                else downs[key] = [newDown];
+            }
             return this;
         },
 
         up(up: (key: string) => any) {
             const newUp = (key: string) => whens.every(w => w(key)) && up(key);
 
-            if (ups[key]) ups[key].push(newUp);
-            else ups[key] = [newUp];
+            if (mounter) {
+                mounter.mount(() => {
+                    if (ups[key]) ups[key].push(newUp);
+                    else ups[key] = [newUp];
+                });
+                mounter.unmount(() => {
+                    const index = ups[key].indexOf(newUp);
+                    if (index != -1) ups[key].splice(index, 1);
+                });
+            }
+            else {
+                if (ups[key]) ups[key].push(newUp);
+                else ups[key] = [newUp];
+            }
+
             return this;
         },
 
