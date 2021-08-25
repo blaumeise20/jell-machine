@@ -23,7 +23,7 @@
         left: 0;
         position: fixed;
         top: 0;
-        z-index: 100;
+        z-index: 102;
         width: 100%;
         height: 100%;
     }
@@ -41,7 +41,7 @@
     }
 
     p {
-        margin: 0 0 10px 0;
+        margin: 0 0 5px 0;
     }
 </style>
 
@@ -51,6 +51,7 @@
             {#each actions as [ trigger, what ]}
                 <p><b>{trigger}:</b> {what}</p>
             {/each}
+            <div class="space"></div>
             <button class="center" on:click={() => $showHelp = false}>Back</button>
         </div>
     </div>
