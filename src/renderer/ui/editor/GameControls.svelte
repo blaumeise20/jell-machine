@@ -39,7 +39,7 @@
         //     if (levelPlaying) doStep();
         // }, $config.tickSpeed);
     }
-    on("space").when(() => !$menuOpen && !$importLevel).down(toggleLevel);
+    on(" ").when(() => !$menuOpen && !$importLevel).down(toggleLevel);
 
     let cellsInBar = [...cellTypes];
     on("1").down(() => $selectedCell = cellsInBar[0][0]);
