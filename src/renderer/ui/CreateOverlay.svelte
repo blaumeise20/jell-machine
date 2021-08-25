@@ -74,7 +74,7 @@
                 $importLevel = false;
             }}>Create new level</button>
             <div class="space"></div>
-            <button class="center" on:click={() => $importLevel = false}>Back</button>
+            <button class="center" on:click={() => $createLevel = false}>Back</button>
         </div>
     </div>
 {/if}

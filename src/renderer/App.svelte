@@ -11,7 +11,7 @@
 
     // onkey("Escape", () => $openLevel && ($menuOpen = !$menuOpen));
     on("escape").when(() => !$importLevel && $openLevel).down(() => $menuOpen = !$menuOpen);
-    on("escape").when(() => $importLevel && $openLevel && !$showHelp && !$showHelp).down(() => $importLevel = false);
+    on("escape").when(() => $importLevel && $openLevel && !$showHelp && !$createLevel).down(() => $importLevel = false);
     on("escape").when(() => $showHelp).down(() => $showHelp = false);
     on("escape").when(() => $createLevel).down(() => $createLevel = false);
     // on("escape").when(() => $createLevel).down(() => ($importLevel = true, $createLevel = false));
