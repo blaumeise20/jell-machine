@@ -39,6 +39,7 @@
         //     if (levelPlaying) doStep();
         // }, $config.tickSpeed);
     }
+    on("space").when(() => !$menuOpen && !$importLevel).down(toggleLevel);
 </script>
 
 <style>

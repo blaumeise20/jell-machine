@@ -14,7 +14,8 @@
         ["arrow keys", "move selected area"],
         ["Right click while selecting", "delete selection"],
         ["ESC", "open menu"],
-        ["F1", "toggle UI around cells"]
+        ["F1", "toggle UI around cells"],
+        ["space", "toggle simulation"],
     ];
 </script>
 
