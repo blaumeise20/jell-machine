@@ -4,8 +4,8 @@
 
     let width = 100;
     let height = 100;
-    let widthElement = null as HTMLInputElement;
-    let heightElement = null as HTMLInputElement;
+    let widthElement = null as any as HTMLInputElement;
+    let heightElement = null as any as HTMLInputElement;
 </script>
 
 <style>
