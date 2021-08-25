@@ -40,6 +40,17 @@
         // }, $config.tickSpeed);
     }
     on("space").when(() => !$menuOpen && !$importLevel).down(toggleLevel);
+
+    let cellsInBar = [...cellTypes];
+    on("1").down(() => $selectedCell = cellsInBar[0][0]);
+    on("2").down(() => $selectedCell = cellsInBar[1][0]);
+    on("3").down(() => $selectedCell = cellsInBar[2][0]);
+    on("4").down(() => $selectedCell = cellsInBar[3][0]);
+    on("5").down(() => $selectedCell = cellsInBar[4][0]);
+    on("6").down(() => $selectedCell = cellsInBar[5][0]);
+    on("7").down(() => $selectedCell = cellsInBar[6][0]);
+    on("8").down(() => $selectedCell = cellsInBar[7][0]);
+    on("9").down(() => $selectedCell = cellsInBar[8][0]);
 </script>
 
 <style>
