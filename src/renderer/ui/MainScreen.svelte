@@ -1,9 +1,7 @@
 <script>
-    // import { cubicInOut } from "svelte/easing";
-    // import { fade } from "svelte/transition";
     import { CellGrid, openLevel } from "@core/grid";
     import { clip } from "@utils/misc";
-    import { importLevel, showHelp } from "./uiState";
+    import { createLevel, importLevel, showHelp } from "./uiState";
     import logo from "../logo.png";
 
     let showSpoiler = false;
@@ -17,7 +15,6 @@
 
         showSpoiler = clipboardContent.startsWith("V2;");
 
-        // console.log(clipboardContent);
         setTimeout(loadFromClipboard, 500);
     };
 
@@ -82,24 +79,19 @@
     }
 </style>
 
-{#if $importLevel}
-    <div class="overlay_container">
-        <div class="overlay">
-            <img src="{logo}" alt="Logo" />
-            <button class="big" on:click={importClipboard}>Import from clipboard</button>
-            {#if showSpoiler}
-                <div class="import_warning">SPOILER: be careful with the thing you have in your clipboard</div>
-            {/if}
+<div class="overlay_container" style="display: {$importLevel ? "block" : "none"}">
+    <div class="overlay">
+        <img src="{logo}" alt="Logo" />
+        <button class="big" on:click={importClipboard}>Import from clipboard</button>
+        {#if showSpoiler}
+            <div class="import_warning">SPOILER: be careful with the thing you have in your clipboard</div>
+        {/if}
+        <div class="space"></div>
+        <button class="big" on:click={() => $createLevel = true}>Create new level</button>
+        {#if $openLevel}
             <div class="space"></div>
-            <button class="big" on:click={() => {
-                $openLevel = CellGrid.createEmpty();
-                $importLevel = false;
-            }}>Create new level</button>
-            {#if $openLevel}
-                <div class="space"></div>
-                <button class="center" on:click={() => $importLevel = false}>Back</button>
-            {/if}
-        </div>
-        <button class="center help_button big" on:click={() => $showHelp = true}>Help</button>
+            <button class="center" on:click={() => $importLevel = false}>Back</button>
+        {/if}
     </div>
-{/if}
+    <button class="center help_button big" on:click={() => $showHelp = true}>Help</button>
+</div>

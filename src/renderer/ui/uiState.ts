@@ -10,11 +10,14 @@ export const importLevel = writable(true);
 let $importLevel = false;
 importLevel.subscribe(v => $importLevel = v);
 
+importLevel.subscribe(l => l == true && menuOpen.set(false));
+
 export const showControls = writable(true);
 
 export const showHelp = writable(false);
 
-importLevel.subscribe(l => l == true && menuOpen.set(false));
+export const createLevel = writable(false);
+
 
 
 export const moving = {

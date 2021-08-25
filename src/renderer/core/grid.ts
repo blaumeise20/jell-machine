@@ -192,9 +192,9 @@ export class CellGrid {
      * Creates a new empty infinite cell grid.
      * @returns A cell grid.
      */
-    static createEmpty() {
+    static createEmpty(width = 100, height = 100) {
         const grid = new CellGrid();
-        grid.size = new Size(100);
+        grid.size = new Size(width, height);
         // grid.isInfinite = true;
         return grid;
     }

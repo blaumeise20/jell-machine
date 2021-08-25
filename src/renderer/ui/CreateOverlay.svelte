@@ -1,45 +1,80 @@
 <script>
-    import { cubicInOut } from "svelte/easing";
-    import { fade } from "svelte/transition";
+    import { CellGrid, openLevel } from "@core/grid";
     import { createLevel, importLevel } from "./uiState";
+
+    let width = 100;
+    let height = 100;
+    let widthElement = null as HTMLInputElement;
+    let heightElement = null as HTMLInputElement;
 </script>
 
 <style>
-    .overlay_backdrop {
-        background-color: rgba(0,0,0,.3);
+    .overlay_container {
+        background-color: #363636;
         left: 0;
         position: fixed;
         top: 0;
-        z-index: 102;
+        z-index: 101;
         width: 100%;
         height: 100%;
     }
+
     .overlay {
-        background-color: #363636;
-        height: 100%;
-        left: calc(50% - 200px);
+        left: 50%;
         position: fixed;
         top: 50%;
         padding: 20px;
         height: auto;
-        transform: translateY(-50%);
-        width: 400px;
-        z-index: 103;
+        transform: translate(-50%, -50%);
+        width: auto;
     }
-    .import_warning {
+
+    h2 {
         color: #fff;
-        font: 400 20px/25px "Roboto", sans-serif;
-        margin: 20px 0;
+        font: 400 35px/40px "Roboto", sans-serif;
+        margin: 0;
+        padding: 0;
         text-align: center;
+    }
+
+    input {
+        appearance: none;
+        background-color: #303030;
+        border: none;
+        color: #fff;
+        display: inline-block;
+        font: 400 22px/25px "Roboto", sans-serif;
+        margin: 10px;
+        outline: none;
+        padding: 10px;
+        text-align: center;
+        width: 150px;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
     }
 </style>
 
 {#if $createLevel}
-    <div class="overlay_backdrop" transition:fade={{ easing: cubicInOut }} on:click={() => ($importLevel = true, $createLevel = false)}></div>
-    <div class="overlay" transition:fade={{ easing: cubicInOut }}>
-
-        <button class="big" on:click={() => {
-            ($importLevel = true, $createLevel = false)
-        }}>Create new level</button>
+    <div class="overlay_container">
+        <div class="overlay">
+            <h2>Create Level</h2>
+            <div class="space"></div>
+            <input type="number" placeholder="Width" bind:value={width} bind:this={widthElement} autofocus on:focus={e => widthElement.select()} />
+            <input type="number" placeholder="Height" bind:value={height} bind:this={heightElement} on:focus={e => heightElement.select()} />
+            <div class="space"></div>
+            <button class="big" on:click={() => {
+                $openLevel = CellGrid.createEmpty(width, height);
+                width = 100;
+                height = 100;
+                $createLevel = false;
+                $importLevel = false;
+            }}>Create new level</button>
+            <div class="space"></div>
+            <button class="center" on:click={() => $importLevel = false}>Back</button>
+        </div>
     </div>
 {/if}
