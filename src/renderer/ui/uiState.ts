@@ -36,8 +36,8 @@ addMoveKey("a", "left");
 
 function addMoveKey(k: string, p: keyof typeof moving) {
     on(k)
-    .up(() => moving[p] = false)
-    .when(() => !$menuOpen && !$importLevel).down(() => moving[p] = true);
+        .up(() => moving[p] = false)
+        .when(() => !$menuOpen && !$importLevel).down(() => moving[p] = true);
 }
 
 export const selection = writable<Size | null>(null);
