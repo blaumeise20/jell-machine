@@ -1,7 +1,7 @@
 <script>
     import { CellGrid, openLevel } from "@core/grid";
     import { clip } from "@utils/misc";
-    import { createLevel, importLevel, showHelp } from "./uiState";
+    import { createLevel, importLevel, showHelp, settings } from "./uiState";
     import logo from "../logo.png";
 
     let showSpoiler = false;
@@ -88,6 +88,8 @@
         {/if}
         <div class="space"></div>
         <button class="big" on:click={() => $createLevel = true}>Create new level</button>
+        <div class="space"></div>
+        <button on:click={() => $settings = true}>Settings</button>
         {#if $openLevel}
             <div class="space"></div>
             <button class="center" on:click={() => $importLevel = false}>Back</button>

@@ -18,6 +18,7 @@ export const showHelp = writable(false);
 
 export const createLevel = writable(false);
 
+export const settings = writable(false);
 
 
 export const moving = {
