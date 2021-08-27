@@ -84,9 +84,11 @@
     }
     .cell_selection {
         background-repeat: no-repeat;
-        background-size: $selection_size $selection_size;
-        height: $selection_size;
+        background-size: contain;
+        display: block;
+        position: relative;
         opacity: .4;
+        padding-top: 100%;
         transition: transform .15s, opacity .1s;
         width: $selection_size;
     }
@@ -106,10 +108,12 @@
                 {#if i}
                     <div class="cell_selection_seperator"></div>
                 {/if}
-                <div class="cell_selection" class:selected={$selectedCell == c[0]} style="
-                    background-image: url({$currentPack.textures[c[1]].url});
-                    transform: rotate({$actualRotation * 90}deg);
-                " on:click={() => $selectedCell = c[0]}></div>
+                <div>
+                    <div class="cell_selection" class:selected={$selectedCell == c[0]} style="
+                        background-image: url({$currentPack.textures[c[1]].url});
+                        transform: rotate({$actualRotation * 90}deg);
+                    " on:click={() => $selectedCell = c[0]}></div>
+                </div>
             {/each}
         </div>
     </div>
