@@ -1,9 +1,7 @@
 <script context="module">
     import { writable, derived } from "svelte/store";
     import { CellType, cellTypes } from "@core/cell";
-    import { openLevel } from "@core/grid";
     import { rotateBy } from "@utils/misc";
-    import { currentPack } from "@utils/texturePacks";
 
     export const selectedCell = writable(CellType.Generator);
     export const actualRotation = writable(0);
@@ -13,31 +11,32 @@
 <script>
     import { on } from "../keys";
     import { importLevel, menuOpen, showControls } from "../uiState";
+    import { config } from "@utils/config";
+    import { openLevel } from "@core/grid";
+    import { currentPack } from "@utils/texturePacks";
+    import { Animator } from "@utils/animator";
 
     let show = true;
     on("F1").when(() => !$importLevel).down(() => (show = !show, showControls.set(show), $menuOpen = false));
     on("q").when(() => !$menuOpen && !$importLevel).down(() => $actualRotation--);
     on("e").when(() => !$menuOpen && !$importLevel).down(() => $actualRotation++);
 
+    const playTimer = new Animator(() => {
+        $openLevel?.doStep();
+    });
+
+    $: playTimer.setInterval($config.tickSpeed);
+
     let levelPlaying = false;
-    let waiting = false;
     function toggleLevel() {
         if (levelPlaying) {
+            playTimer.stop();
             levelPlaying = false;
         }
         else {
+            playTimer.start();
             levelPlaying = true;
-            if (!waiting) doStep();
-            levelPlaying = false;
         }
-    }
-    function doStep() {
-        // waiting = true;
-        $openLevel?.doStep();
-        // setTimeout(() => {
-        //     waiting = false;
-        //     if (levelPlaying) doStep();
-        // }, $config.tickSpeed);
     }
     on(" ").when(() => !$menuOpen && !$importLevel).down(toggleLevel);
 
