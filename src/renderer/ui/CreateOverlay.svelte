@@ -38,23 +38,8 @@
     }
 
     input {
-        appearance: none;
-        background-color: #303030;
-        border: none;
-        color: #fff;
-        display: inline-block;
-        font: 400 22px/25px "Roboto", sans-serif;
-        margin: 10px;
-        outline: none;
-        padding: 10px;
         text-align: center;
         width: 150px;
-    }
-
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
     }
 </style>
 
@@ -63,8 +48,8 @@
         <div class="overlay">
             <h2>Create Level</h2>
             <div class="space"></div>
-            <input type="number" placeholder="Width" bind:value={width} bind:this={widthElement} autofocus on:focus={e => widthElement.select()} />
-            <input type="number" placeholder="Height" bind:value={height} bind:this={heightElement} on:focus={e => heightElement.select()} />
+            <input type="number" class="big" placeholder="Width" bind:value={width} bind:this={widthElement} autofocus on:focus={e => widthElement.select()} />
+            <input type="number" class="big" placeholder="Height" bind:value={height} bind:this={heightElement} on:focus={e => heightElement.select()} />
             <div class="space"></div>
             <button class="big" on:click={() => {
                 $openLevel = CellGrid.createEmpty(width, height);

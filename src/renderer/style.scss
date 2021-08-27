@@ -96,3 +96,25 @@ button.center {
     padding: 0;
     height: 20px;
 }
+
+input {
+    appearance: none;
+    background-color: #303030;
+    border: none;
+    color: #fff;
+    display: inline-block;
+    font: 400 17px/20px "Roboto", sans-serif;
+    outline: none;
+    padding: 7px;
+    width: 200px;
+}
+input.big {
+    font: 400 22px/25px "Roboto", sans-serif;
+    margin: 10px;
+    padding: 10px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
