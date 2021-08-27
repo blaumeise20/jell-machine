@@ -1,4 +1,5 @@
 <script>
+    import { config } from "@utils/config";
     import { settings } from "../uiState";
 
     const actions = [
@@ -50,7 +51,7 @@
 {#if $settings}
     <div class="overlay_container">
         <div class="overlay">
-            Will come...
+            <b>Tick Speed (ms):</b> <input type="number" bind:value={$config.tickSpeed}>
             <div class="space"></div>
             <button class="center" on:click={() => $settings = false}>Back</button>
         </div>
