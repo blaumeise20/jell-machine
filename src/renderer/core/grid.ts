@@ -144,6 +144,9 @@ export class CellGrid {
     }
 
 
+    /**
+     * Generates a string representation of the grid.
+     */
     toString(format: "V3" = "V3") {
         // TODO: add infinite grid support
         if (this.isInfinite) throw new Error("oh no i'm infinite");
