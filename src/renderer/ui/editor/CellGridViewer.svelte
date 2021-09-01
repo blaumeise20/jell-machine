@@ -128,6 +128,20 @@
         if (showSelection) selection = grid.extract(selectionSize), showSelection = false;
     });
 
+    on("q").when(() => selection).down(() => {
+        selection = selection!.rotateCCW();
+    });
+    on("e").when(() => selection).down(() => {
+        selection = selection!.rotateCW();
+    });
+
+    on("r").when(() => selection).down(() => {
+        selection = selection!.flipVertical();
+    });
+    on("f").when(() => selection).down(() => {
+        selection = selection!.flipHorizontal();
+    });
+
     on("arrowright").down(() => {
         if (showSelection) {
             grid.move(selectionSize, Direction.Right);

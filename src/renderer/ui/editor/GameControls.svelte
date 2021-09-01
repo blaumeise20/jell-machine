@@ -10,7 +10,7 @@
 
 <script>
     import { on } from "../keys";
-    import { importLevel, menuOpen, showControls } from "../uiState";
+    import { importLevel, menuOpen, selection, showControls } from "../uiState";
     import { config } from "@utils/config";
     import { openLevel } from "@core/grid";
     import { currentPack } from "@utils/texturePacks";

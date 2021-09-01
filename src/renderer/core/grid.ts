@@ -143,6 +143,69 @@ export class CellGrid {
         this.reloadUI();
     }
 
+    rotateCW() {
+        const grid = CellGrid.createEmpty(this.size.height, this.size.width);
+
+        for (let x = 0; x < this.size.width; x++) {
+            for (let y = 0; y < this.size.height; y++) {
+                const cell = this.cells.get(Pos(x, y));
+                if (cell) {
+                    const newPos = Pos(y, this.size.width - x - 1);
+                    grid.loadCell(newPos, cell.type, (cell.direction + 1) % 4);
+                }
+            }
+        }
+
+        return grid;
+    }
+
+    rotateCCW() {
+        const grid = CellGrid.createEmpty(this.size.height, this.size.width);
+
+        for (let x = 0; x < this.size.width; x++) {
+            for (let y = 0; y < this.size.height; y++) {
+                const cell = this.cells.get(Pos(x, y));
+                if (cell) {
+                    const newPos = Pos(this.size.height - y - 1, x);
+                    grid.loadCell(newPos, cell.type, (cell.direction + 3) % 4);
+                }
+            }
+        }
+
+        return grid;
+    }
+
+    flipHorizontal() {
+        const grid = CellGrid.createEmpty(this.size.width, this.size.height);
+
+        for (let x = 0; x < this.size.width; x++) {
+            for (let y = 0; y < this.size.height; y++) {
+                const cell = this.cells.get(Pos(x, y));
+                if (cell) {
+                    const newPos = Pos(this.size.width - x - 1, y);
+                    grid.loadCell(newPos, cell.type, cell.direction == Direction.Right ? Direction.Left : cell.direction == Direction.Left ? Direction.Right : cell.direction);
+                }
+            }
+        }
+
+        return grid;
+    }
+
+    flipVertical() {
+        const grid = CellGrid.createEmpty(this.size.width, this.size.height);
+
+        for (let x = 0; x < this.size.width; x++) {
+            for (let y = 0; y < this.size.height; y++) {
+                const cell = this.cells.get(Pos(x, y));
+                if (cell) {
+                    const newPos = Pos(x, this.size.height - y - 1);
+                    grid.loadCell(newPos, cell.type, cell.direction == Direction.Up ? Direction.Down : cell.direction == Direction.Down ? Direction.Up : cell.direction);
+                }
+            }
+        }
+
+        return grid;
+    }
 
     /**
      * Generates a string representation of the grid.
