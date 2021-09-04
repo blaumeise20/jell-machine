@@ -30,7 +30,6 @@ export class Cell {
         this.pos = pos;
     }
 
-    // WE HAVE BIAS TOO POG
     push(dir: Direction, bias: number): PushResult {
         if (bias < 1) return false;
 
