@@ -46,12 +46,18 @@
     p {
         margin: 0 0 5px 0;
     }
+
+    input {
+        margin-left: 10px;
+    }
 </style>
 
 {#if $settings}
     <div class="overlay_container">
         <div class="overlay">
-            <b>Tick Speed (ms):</b> <input type="number" bind:value={$config.tickSpeed}>
+            <p>
+                <b>Tick Speed (ms):</b> <input type="number" bind:value={$config.tickSpeed}>
+            </p>
             <div class="space"></div>
             <button class="center" on:click={() => $settings = false}>Back</button>
         </div>
