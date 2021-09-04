@@ -132,19 +132,7 @@ export class Textures {
 
 export interface TexturePack {
     name: string;
-    textures: {
-        generator: Texture;
-        mover: Texture;
-        cwRotator: Texture;
-        ccwRotator: Texture;
-        push: Texture;
-        slide: Texture;
-        enemy: Texture;
-        trash: Texture;
-        wall: Texture;
-        placable: Texture;
-        bg: Texture;
-    };
+    textures: Record<string, Texture>;
     ui: {
         play: Texture;
         pause: Texture;
