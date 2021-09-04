@@ -1,23 +1,11 @@
-import { CellType } from "@core/cell";
-import { generatorCell, GeneratorCell } from "./GeneratorCell";
-import { moverCell, MoverCell } from "./MoverCell";
-import { ccwRotatorCell, cwRotatorCell, RotatorCell } from "./RotatorCell";
+import { generatorCell } from "./GeneratorCell";
+import { moverCell } from "./MoverCell";
+import { ccwRotatorCell, cwRotatorCell } from "./RotatorCell";
 import { pushCell } from "./PushCell";
-import { slideCell, SlideCell } from "./SlideCell";
-import { enemyCell, EnemyCell } from "./EnemyCell";
-import { trashCell, TrashCell } from "./TrashCell";
-import { wallCell, WallCell } from "./WallCell";
-
-export const cellClasses = {
-    [CellType.Generator ]: GeneratorCell,
-    [CellType.Mover     ]: MoverCell    ,
-    [CellType.CWrotator ]: RotatorCell  ,
-    [CellType.CCWrotator]: RotatorCell  ,
-    [CellType.Slide     ]: SlideCell    ,
-    [CellType.Trash     ]: TrashCell    ,
-    [CellType.Enemy     ]: EnemyCell    ,
-    [CellType.Wall      ]: WallCell     ,
-};
+import { slideCell } from "./SlideCell";
+import { enemyCell } from "./EnemyCell";
+import { trashCell } from "./TrashCell";
+import { wallCell } from "./WallCell";
 
 export const builtinCells = [
     generatorCell,
@@ -26,7 +14,7 @@ export const builtinCells = [
     ccwRotatorCell,
     pushCell,
     slideCell,
-    trashCell,
     enemyCell,
+    trashCell,
     wallCell,
 ];

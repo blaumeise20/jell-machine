@@ -5,7 +5,6 @@ import { base74Decode, base74Key, decodeBase74, encodeBase74, int } from "../uti
 import { Tile } from "./tiles";
 import { Cell, CellType, Direction } from "./cell";
 import arr from "create-arr";
-import { cellClasses } from "./cells/collection";
 import { doStep } from "./cellUpdates";
 
 export const openLevel: Writable<CellGrid | null> = writable(null);
@@ -52,8 +51,7 @@ export class CellGrid {
      * @returns A new cell.
      */
     cell(pos: Position, type: CellType, direction: Direction) {
-        const cellClass: typeof Cell = (cellClasses as any)[type] || Cell;
-        return new cellClass(pos, type, direction, this);
+        return type.newCell(this, pos, direction);
     }
 
     /**
@@ -230,7 +228,7 @@ export class CellGrid {
                             cellData[x + (y * this.size.width)] = 73;
 
                 for (const cell of this.cells.values())
-                    cellData[cell.pos.x + (cell.pos.y * this.size.width)] += (2 * cell.type) + (18 * cell.direction) - 72;
+                    cellData[cell.pos.x + (cell.pos.y * this.size.width)] += (2 * cell.type.data.v3id) + (18 * cell.direction) - 72;
 
 
                 let runLength = 1;
@@ -299,7 +297,8 @@ export class CellGrid {
                     if (cells[0]) {
                         for (const cell of cells) {
                             const splitCell = cell.split(".");
-                            if (!grid.loadCell(Pos(int(splitCell[2]), int(splitCell[3])), int(splitCell[0]), int(splitCell[1]))) return [false, LevelError.OutOfBounds];
+                            const cellId = int(splitCell[0]);
+                            if (!grid.loadCell(Pos(int(splitCell[2]), int(splitCell[3])), CellType.types.find(t => t.data?.v3id == cellId)!, int(splitCell[1]))) return [false, LevelError.OutOfBounds];
                         }
                     }
 
@@ -320,7 +319,8 @@ export class CellGrid {
                             grid.tiles.set(pos, Tile.Placable);
                         }
                         if (cellContent < 72) {
-                            return grid.loadCell(pos, Math.floor(cellContent / 2) % 9, Math.floor(cellContent / 18));
+                            const cellId = Math.floor(cellContent / 2) % 9;
+                            return grid.loadCell(pos, CellType.types.find(t => t.data?.v3id == cellId)!, Math.floor(cellContent / 18));
                         }
                         return true;
                     }

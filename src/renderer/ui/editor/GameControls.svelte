@@ -1,20 +1,21 @@
 <script context="module">
     import { writable, derived } from "svelte/store";
-    import { CellType, cellTypes } from "@core/cell";
     import { rotateBy } from "@utils/misc";
+    import { generatorCell } from "@core/cells/GeneratorCell";
 
-    export const selectedCell = writable(CellType.Generator);
+    export const selectedCell = writable(generatorCell);
     export const actualRotation = writable(0);
     export const rotation = derived(actualRotation, $r => rotateBy($r));
 </script>
 
 <script>
     import { on } from "../keys";
-    import { importLevel, menuOpen, selection, showControls } from "../uiState";
+    import { importLevel, menuOpen, showControls } from "../uiState";
     import { config } from "@utils/config";
     import { openLevel } from "@core/grid";
     import { currentPack } from "@utils/texturePacks";
     import { Animator } from "@utils/animator";
+    import { builtinCells } from "@core/cells/collection";
 
     let show = true;
     on("F1").when(() => !$importLevel).down(() => (show = !show, showControls.set(show), $menuOpen = false));
@@ -40,16 +41,16 @@
     }
     on(" ").when(() => !$menuOpen && !$importLevel).down(toggleLevel);
 
-    let cellsInBar = [...cellTypes];
-    on("1").down(() => $selectedCell = cellsInBar[0][0]);
-    on("2").down(() => $selectedCell = cellsInBar[1][0]);
-    on("3").down(() => $selectedCell = cellsInBar[2][0]);
-    on("4").down(() => $selectedCell = cellsInBar[3][0]);
-    on("5").down(() => $selectedCell = cellsInBar[4][0]);
-    on("6").down(() => $selectedCell = cellsInBar[5][0]);
-    on("7").down(() => $selectedCell = cellsInBar[6][0]);
-    on("8").down(() => $selectedCell = cellsInBar[7][0]);
-    on("9").down(() => $selectedCell = cellsInBar[8][0]);
+    let cellsInBar = [...builtinCells];
+    on("1").down(() => $selectedCell = cellsInBar[0]);
+    on("2").down(() => $selectedCell = cellsInBar[1]);
+    on("3").down(() => $selectedCell = cellsInBar[2]);
+    on("4").down(() => $selectedCell = cellsInBar[3]);
+    on("5").down(() => $selectedCell = cellsInBar[4]);
+    on("6").down(() => $selectedCell = cellsInBar[5]);
+    on("7").down(() => $selectedCell = cellsInBar[6]);
+    on("8").down(() => $selectedCell = cellsInBar[7]);
+    on("9").down(() => $selectedCell = cellsInBar[8]);
 </script>
 
 <style>
@@ -104,15 +105,15 @@
         </div>
 
         <div class="cells">
-            {#each cellTypes as c, i}
+            {#each cellsInBar as c, i}
                 {#if i}
                     <div class="cell_selection_seperator"></div>
                 {/if}
                 <div>
-                    <div class="cell_selection" class:selected={$selectedCell == c[0]} style="
-                        background-image: url({$currentPack.textures[c[1]].url});
+                    <div class="cell_selection" class:selected={$selectedCell == c} style="
+                        background-image: url({$currentPack.textures[c.options.textureName].url});
                         transform: rotate({$actualRotation * 90}deg);
-                    " on:click={() => $selectedCell = c[0]}></div>
+                    " on:click={() => $selectedCell = c}></div>
                 </div>
             {/each}
         </div>

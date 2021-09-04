@@ -1,5 +1,5 @@
 <script>
-    import { cellMap, Direction } from "@core/cell";
+    import { Direction } from "@core/cell";
     import { CellGrid } from "@core/grid";
     import { currentPack } from "@utils/texturePacks";
     import { onMount, onDestroy } from "svelte";
@@ -295,7 +295,7 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
                     class:placable={grid.tiles.get(cell.pos) == Tile.Placable}
                     x={CELL_SIZE * cell.pos.x}
                     y={CELL_SIZE * (grid.size.height - cell.pos.y - 1)}
-                    href={$currentPack.textures[cellMap[cell.type]].url}
+                    href={$currentPack.textures[cell.type.options.textureName].url}
                     transform="rotate({cell.direction * 90})"
                 />
             {/each}
@@ -315,7 +315,7 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
                         class="cell"
                         x={CELL_SIZE * cell.pos.x}
                         y={CELL_SIZE * (selection.size.height - cell.pos.y - 1)}
-                        href={$currentPack.textures[cellMap[cell.type]].url}
+                        href={$currentPack.textures[cell.type.options.textureName].url}
                         transform="rotate({cell.direction * 90})"
                     />
                 {/each}

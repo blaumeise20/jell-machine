@@ -1,13 +1,11 @@
-import { Cell, CellType_ } from "@core/cell";
+import { Cell, CellType } from "@core/cell";
 
-export class TrashCell extends Cell {
-    push() {
-        return null;
-    }
-}
-
-export const trashCell = CellType_.create({
-    behavior: TrashCell,
+export const trashCell = CellType.create({
+    behavior: class TrashCell extends Cell {
+        push() {
+            return null;
+        }
+    },
     textureName: "trash",
     data: { v3id: 8 }
 });

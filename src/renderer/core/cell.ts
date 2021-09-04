@@ -64,42 +64,6 @@ export class Cell {
     }
 }
 
-export enum CellType {
-    Generator = 0,
-    Mover = 3,
-    CWrotator = 1,
-    CCWrotator = 2,
-    Push = 5,
-    Slide = 4,
-    Enemy = 7,
-    Trash = 8,
-    Wall = 6
-}
-
-export const cellTypes = [
-    [CellType.Generator, "generator"],
-    [CellType.Mover, "mover"],
-    [CellType.CWrotator, "cwRotator"],
-    [CellType.CCWrotator, "ccwRotator"],
-    [CellType.Push, "push"],
-    [CellType.Slide, "slide"],
-    [CellType.Enemy, "enemy"],
-    [CellType.Trash, "trash"],
-    [CellType.Wall, "wall"]
-] as const;
-
-export const cellMap = {
-    [CellType.Generator]: "generator",
-    [CellType.Mover]: "mover",
-    [CellType.CWrotator]: "cwRotator",
-    [CellType.CCWrotator]: "ccwRotator",
-    [CellType.Push]: "push",
-    [CellType.Slide]: "slide",
-    [CellType.Enemy]: "enemy",
-    [CellType.Trash]: "trash",
-    [CellType.Wall]: "wall"
-} as const;
-
 export enum Direction {
     Right,
     Down,
@@ -110,7 +74,9 @@ export enum Direction {
 export type PushResult = boolean | null;
 
 
-export class CellType_ {
+export class CellType {
+    static types: CellType[] = [];
+
     private constructor(public options: Readonly<CellTypeOptions>) {}
 
     public get data() {
@@ -135,8 +101,14 @@ export class CellType_ {
         }
     }
 
+    newCell(grid: CellGrid, pos: Position, dir: Direction) {
+        return new this.behavior(pos, this, dir, grid);
+    }
+
     static create(options: CellTypeOptions) {
-        return new CellType_(options);
+        const t = new CellType(options);
+        CellType.types.push(t);
+        return t;
     }
 }
 

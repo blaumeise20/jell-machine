@@ -1,5 +1,8 @@
 import { Position } from "../utils/positions";
 import { Cell, CellType, Direction } from "./cell";
+import { generatorCell } from "./cells/GeneratorCell";
+import { moverCell } from "./cells/MoverCell";
+import { ccwRotatorCell, cwRotatorCell } from "./cells/RotatorCell";
 import { CellGrid } from "./grid";
 
 export function doStep(grid: CellGrid) {
@@ -58,22 +61,21 @@ export const directionalUpdateOrder = [
     Direction.Left,
     Direction.Up,
     Direction.Down,
-]
+];
 
 export const order = {
     [Direction.Right]: (pos: Position) => -pos.x,
     [Direction.Down]: (pos: Position) => pos.y,
     [Direction.Left]: (pos: Position) => pos.x,
     [Direction.Up]: (pos: Position) => -pos.y,
-}
+};
 
 export const updateOrder: [CellType, UpdateType][] = [
-    [CellType.Generator, UpdateType.Directional],
-    [CellType.CWrotator, UpdateType.Random],
-    [CellType.CCWrotator, UpdateType.Random],
-    [CellType.Mover, UpdateType.Directional],
-]
-
+    [generatorCell, UpdateType.Directional],
+    [cwRotatorCell, UpdateType.Random],
+    [ccwRotatorCell, UpdateType.Random],
+    [moverCell, UpdateType.Directional],
+];
 
 export type ListNode<T> = {
     e: T,

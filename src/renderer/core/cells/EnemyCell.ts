@@ -1,14 +1,12 @@
-import { Cell, CellType_ } from "@core/cell";
+import { Cell, CellType } from "@core/cell";
 
-export class EnemyCell extends Cell {
-    push() {
-        this.rm();
-        return null;
-    }
-}
-
-export const enemyCell = CellType_.create({
-    behavior: EnemyCell,
+export const enemyCell = CellType.create({
+    behavior: class EnemyCell extends Cell {
+        push() {
+            this.rm();
+            return null;
+        }
+    },
     textureName: "enemy",
     data: { v3id: 7 }
 });
