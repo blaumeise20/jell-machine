@@ -36,7 +36,7 @@ export class Size {
 
     move(where: Direction) {
         const offset = Off[where];
-        return new Size(this.width, this.height, this.bottom + offset[1], this.left + offset[0]);
+        return new Size(this.width, this.height, this.bottom + offset.x, this.left + offset.y);
     }
 
     static from(p1: Position | null, p2: Position | null): Size | null {

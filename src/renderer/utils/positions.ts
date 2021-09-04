@@ -51,16 +51,16 @@ export class Position {
      * @param offsetY
      * @returns Itself
      */
-    move(offset: Offset): this;
+    move(offset: Position): this;
     move(offsetX: number, offsetY: number): this;
-    move(offsetX: number | Offset, offsetY?: number) {
+    move(offsetX: number | Position, offsetY?: number) {
         if (typeof offsetX == "number") {
             this.x += offsetX;
             this.y += offsetY!;
         }
         else {
-            this.x += offsetX[0],
-            this.y += offsetX[1];
+            this.x += offsetX.x,
+            this.y += offsetX.x;
         }
         return this;
     }
@@ -70,14 +70,14 @@ export class Position {
      * @param offsetY
      * @returns A new position moved by specified offset.
      */
-    mi(offset: Offset): this;
+    mi(offset: Position): this;
     mi(offsetX: number, offsetY: number): this;
-    mi(offsetX: number | Offset, offsetY?: number) {
+    mi(offsetX: number | Position, offsetY?: number) {
         if (typeof offsetX == "number") {
             return new Position(this.x + offsetX, this.y + offsetY!);
         }
         else {
-            return new Position(this.x + offsetX[0], this.y + offsetX[1]);
+            return new Position(this.x + offsetX.x, this.y + offsetX.y);
         }
     }
 
@@ -105,10 +105,8 @@ export class Position {
  */
 export const Pos = (x: number, y: number) => new Position(x, y);
 export const Off = {
-    [Direction.Right]: [ 1,  0],
-    [Direction.Down ]: [ 0, -1],
-    [Direction.Left ]: [-1,  0],
-    [Direction.Up   ]: [ 0,  1],
-} as Record<Direction | number, Offset>;
-
-export type Offset = readonly [x: number, y: number];
+    [Direction.Right]: Pos( 1,  0),
+    [Direction.Down ]: Pos( 0, -1),
+    [Direction.Left ]: Pos(-1,  0),
+    [Direction.Up   ]: Pos( 0,  1),
+} as Record<Direction | number, Position>;

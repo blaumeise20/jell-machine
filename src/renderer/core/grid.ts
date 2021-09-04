@@ -89,7 +89,7 @@ export class CellGrid {
 
     insert(selection: CellGrid, selectionPos: Position) {
         for (const cell of selection.cellList) {
-            this.loadCell(cell.pos.mi([selectionPos.x, selectionPos.y]), cell.type, cell.direction);
+            this.loadCell(cell.pos.mi(selectionPos), cell.type, cell.direction);
         }
         this.reloadUI();
     }
