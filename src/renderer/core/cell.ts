@@ -12,6 +12,10 @@ export class Cell {
         grid.cellList.push(this);
     }
 
+    public get options(): CellData {
+        return [this.type, this.direction];
+    }
+
     rm() {
         if (this.deleted) return;
         const i = this.grid.cellList.indexOf(this);
@@ -104,3 +108,43 @@ export enum Direction {
 }
 
 export type PushResult = boolean | null;
+
+
+export class CellType_ {
+    private constructor(public options: Readonly<CellTypeOptions>) {}
+
+    public get data() {
+        return this.options.data;
+    }
+
+    public get behavior() {
+        return this.options.behavior;
+    }
+
+    flip(cell: Cell, horizontal: boolean): CellData {
+        if (this.options.flip) return this.options.flip([cell.type, cell.direction], horizontal);
+        else {
+            return [
+                cell.type,
+                horizontal ?
+                    cell.direction == Direction.Right ? Direction.Left
+                        : cell.direction == Direction.Left ? Direction.Right : cell.direction
+                    : cell.direction == Direction.Up ? Direction.Down
+                        : cell.direction == Direction.Down ? Direction.Up : cell.direction
+            ];
+        }
+    }
+
+    static create(options: CellTypeOptions) {
+        return new CellType_(options);
+    }
+}
+
+export interface CellTypeOptions {
+    behavior: typeof Cell;
+    textureName: string;
+    flip?(cell: CellData, horizontal: boolean): CellData;
+    data?: any;
+}
+
+export type CellData = [CellType, Direction];

@@ -1,4 +1,4 @@
-import { Cell, Direction } from "../cell";
+import { Cell, CellType_, Direction } from "@core/cell";
 
 export class SlideCell extends Cell {
     push(dir: Direction, bias: number) {
@@ -6,3 +6,9 @@ export class SlideCell extends Cell {
         return false;
     }
 }
+
+export const slideCell = CellType_.create({
+    behavior: SlideCell,
+    textureName: "slide",
+    data: { v3id: 4 }
+});

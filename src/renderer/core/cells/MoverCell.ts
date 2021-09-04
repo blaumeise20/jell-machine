@@ -1,4 +1,4 @@
-import { Cell, Direction } from "../cell";
+import { Cell, CellType_, Direction } from "@core/cell";
 
 export class MoverCell extends Cell {
     update() {
@@ -11,3 +11,9 @@ export class MoverCell extends Cell {
         return super.push(dir, bias);
     }
 }
+
+export const moverCell = CellType_.create({
+    behavior: MoverCell,
+    textureName: "mover",
+    data: { v3id: 3 }
+});

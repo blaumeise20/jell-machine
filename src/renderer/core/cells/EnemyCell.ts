@@ -1,4 +1,4 @@
-import { Cell } from "../cell";
+import { Cell, CellType_ } from "@core/cell";
 
 export class EnemyCell extends Cell {
     push() {
@@ -6,3 +6,9 @@ export class EnemyCell extends Cell {
         return null;
     }
 }
+
+export const enemyCell = CellType_.create({
+    behavior: EnemyCell,
+    textureName: "enemy",
+    data: { v3id: 7 }
+});

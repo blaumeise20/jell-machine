@@ -1,5 +1,5 @@
-import { Off } from "../../utils/positions";
-import { Cell } from "../cell";
+import { Off } from "@utils/positions";
+import { Cell, CellType_ } from "@core/cell";
 
 export class GeneratorCell extends Cell {
     update() {
@@ -17,3 +17,9 @@ export class GeneratorCell extends Cell {
         this.grid.loadCell(target, sourceCell.type, sourceCell.direction);
     }
 }
+
+export const generatorCell = CellType_.create({
+    behavior: GeneratorCell,
+    textureName: "generator",
+    data: { v3id: 0 }
+});
