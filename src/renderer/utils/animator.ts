@@ -23,6 +23,7 @@ export class Animator {
                 lastTime = time;
             }
         }
+        this.fn();
         this.frame = requestAnimationFrame(loop);
     }
 
