@@ -112,8 +112,8 @@ export class CellGrid {
             const newPos = cellPos.mi(offset);
             const cell = this.cells.get(cellPos);
             if (cell) {
-                if (this.cells.get(newPos)) cell.rm();
-                cell.setPosition(newPos);
+                cell.rm();
+                this.loadCell(newPos, cell.type, cell.direction);
             }
         };
 
