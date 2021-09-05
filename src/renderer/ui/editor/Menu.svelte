@@ -48,6 +48,7 @@
     <div class="sidebar_backdrop" on:click={() => $menuOpen = false}></div>
     <div class="sidebar">
         <div class="actions">
+            <button on:click={() => $openLevel?.reset()}>Reset</button>
         </div>
         <div class="action_buttons">
             <button on:click={() => $importLevel = true}>Go to main screen</button>

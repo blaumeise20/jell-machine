@@ -26,6 +26,7 @@ export class CellGrid {
     readonly tiles = new PosMap<Tile, Tile>(Tile.None);
     readonly cells = new PosMap<Cell, null>(null);
     readonly cellList: Cell[] = [];
+    initial = true;
 
     private constructor() {}
 
@@ -38,7 +39,7 @@ export class CellGrid {
     loadCell(pos: Position, type: CellType, direction: Direction) {
         if (this.isInfinite || this.size.contains(pos)) {
             this.cells.get(pos)?.rm();
-            return this.cells.set(pos, type.newCell(this, pos, direction)), true;
+            return this.cells.set(pos, type.newCell(this, pos, direction, !this.initial)), true;
         }
         return false;
     }
@@ -47,9 +48,20 @@ export class CellGrid {
      * Heart of Jell Machine.
      */
     doStep() {
+        this.initial = false;
         doStep(this);
 
         this.reloadUI();
+    }
+
+    reset() {
+        if (!this.initial) {
+            this.cells.clear();
+            for (let i = this.cellList.length; i--;) this.cellList[i].reset();
+            this.initial = true;
+
+            this.reloadUI();
+        }
     }
 
     private _reloaders: any[] = [];
