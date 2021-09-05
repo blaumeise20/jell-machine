@@ -38,20 +38,9 @@ export class CellGrid {
     loadCell(pos: Position, type: CellType, rotation: Direction) {
         if (this.isInfinite || this.size.contains(pos)) {
             this.cells.get(pos)?.rm();
-            return this.cells.set(pos, this.cell(pos, type, rotation)), true;
+            return this.cells.set(pos, type.newCell(this, pos, direction)), true;
         }
         return false;
-    }
-
-    /**
-     * Creates a cell with the correct constructor and returns it.
-     * @param pos Cell position.
-     * @param type Type of the cell.
-     * @param direction Direction.
-     * @returns A new cell.
-     */
-    cell(pos: Position, type: CellType, direction: Direction) {
-        return type.newCell(this, pos, direction);
     }
 
     /**
