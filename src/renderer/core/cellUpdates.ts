@@ -34,7 +34,7 @@ export function doStep(grid: CellGrid) {
                     }
 
                     while (cells) {
-                        cells.e.update();
+                        !cells.e.deleted && cells.e.update();
                         cells = cells.n;
                     }
                 }
