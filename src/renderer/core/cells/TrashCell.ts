@@ -7,5 +7,6 @@ export const trashCell = CellType.create({
         }
     },
     textureName: "trash",
-    data: { v3id: 8 }
+    data: { v3id: 8 },
+    flip: d => d,
 });

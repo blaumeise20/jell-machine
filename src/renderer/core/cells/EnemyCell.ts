@@ -8,5 +8,6 @@ export const enemyCell = CellType.create({
         }
     },
     textureName: "enemy",
-    data: { v3id: 7 }
+    data: { v3id: 7 },
+    flip: d => d,
 });

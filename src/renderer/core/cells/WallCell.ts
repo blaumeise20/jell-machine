@@ -7,5 +7,6 @@ export const wallCell = CellType.create({
         }
     },
     textureName: "wall",
-    data: { v3id: 6 }
+    data: { v3id: 6 },
+    flip: d => d,
 });

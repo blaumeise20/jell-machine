@@ -13,5 +13,5 @@ export const moverCell = CellType.create({
         }
     },
     textureName: "mover",
-    data: { v3id: 3 }
+    data: { v3id: 3 },
 });

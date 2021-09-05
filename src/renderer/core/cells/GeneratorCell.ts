@@ -19,5 +19,5 @@ export const generatorCell = CellType.create({
         }
     },
     textureName: "generator",
-    data: { v3id: 0 }
+    data: { v3id: 0 },
 });

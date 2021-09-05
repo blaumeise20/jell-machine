@@ -13,10 +13,12 @@ export const cwRotatorCell = CellType.create({
         }
     },
     textureName: "cwRotator",
-    data: { v3id: 1, rotation: 1 }
+    data: { v3id: 1, rotation: 1 },
+    flip: (options) => [ccwRotatorCell, options[1]],
 });
 export const ccwRotatorCell = CellType.create({
     behavior: cwRotatorCell.behavior,
     textureName: "ccwRotator",
-    data: { v3id: 2, rotation: -1 }
+    data: { v3id: 2, rotation: -1 },
+    flip: (options) => [cwRotatorCell, options[1]],
 });

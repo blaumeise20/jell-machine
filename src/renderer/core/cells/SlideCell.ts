@@ -8,5 +8,6 @@ export const slideCell = CellType.create({
         }
     },
     textureName: "slide",
-    data: { v3id: 4 }
+    data: { v3id: 4 },
+    flip: d => d,
 });
