@@ -181,7 +181,7 @@ export class CellGrid {
                 const cell = this.cells.get(Pos(x, y));
                 if (cell) {
                     const newPos = Pos(this.size.width - x - 1, y);
-                    grid.loadCell(newPos, cell.type, cell.direction == Direction.Right ? Direction.Left : cell.direction == Direction.Left ? Direction.Right : cell.direction);
+                    grid.loadCell(newPos, ...cell.type.flip(cell, true));
                 }
             }
         }
@@ -197,7 +197,7 @@ export class CellGrid {
                 const cell = this.cells.get(Pos(x, y));
                 if (cell) {
                     const newPos = Pos(x, this.size.height - y - 1);
-                    grid.loadCell(newPos, cell.type, cell.direction == Direction.Up ? Direction.Down : cell.direction == Direction.Down ? Direction.Up : cell.direction);
+                    grid.loadCell(newPos, ...cell.type.flip(cell, false));
                 }
             }
         }
