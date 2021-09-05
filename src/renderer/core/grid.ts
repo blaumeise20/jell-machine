@@ -33,9 +33,9 @@ export class CellGrid {
      * Loads a cell into the grid (creates a new cell).
      * @param pos Cell position.
      * @param type Cell type.
-     * @param rotation Rotation of the cell.
+     * @param direction Rotation of the cell.
      */
-    loadCell(pos: Position, type: CellType, rotation: Direction) {
+    loadCell(pos: Position, type: CellType, direction: Direction) {
         if (this.isInfinite || this.size.contains(pos)) {
             this.cells.get(pos)?.rm();
             return this.cells.set(pos, type.newCell(this, pos, direction)), true;
