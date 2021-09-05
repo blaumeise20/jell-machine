@@ -81,6 +81,10 @@ export class Cell {
     rotate(amount: number) {
         this.direction = rotateBy(this.direction, amount);
     }
+
+    setRotation(amount: number) {
+        this.direction = amount % 4;
+    }
 }
 
 export enum Direction {
