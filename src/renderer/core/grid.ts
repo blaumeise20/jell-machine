@@ -70,6 +70,7 @@ export class CellGrid {
         else this._reloaders.forEach(r => r());
     }
 
+    //#region grid actions
     extract(area: Size, del = false) {
         const grid = new CellGrid();
         grid.size = new Size(area.width, area.height);
@@ -205,6 +206,7 @@ export class CellGrid {
 
         return grid;
     }
+    //#endregion
 
     /**
      * Generates a string representation of the grid.
