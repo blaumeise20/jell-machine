@@ -13,6 +13,8 @@
         ["X", "cut selected area"],
         ["arrow keys", "move selected area"],
         ["Right click while selecting", "delete selection"],
+        ["Q and E while selecting", "rotate selection"],
+        ["R and F while selecting", "flip selection"],
         ["ESC", "open menu"],
         ["F1", "toggle UI around cells"],
         ["space", "toggle simulation"],
