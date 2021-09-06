@@ -1,6 +1,6 @@
 <script>
     import { CellGrid, openLevel } from "@core/grid";
-    import { createLevel, importLevel } from "./uiState";
+    import { createLevel, mainMenu } from "./uiState";
 
     let width = 100;
     let height = 100;
@@ -56,7 +56,7 @@
                 width = 100;
                 height = 100;
                 $createLevel = false;
-                $importLevel = false;
+                $mainMenu = false;
             }}>Create new level</button>
             <div class="space"></div>
             <button class="center" on:click={() => $createLevel = false}>Back</button>

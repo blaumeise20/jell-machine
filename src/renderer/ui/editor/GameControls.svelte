@@ -10,7 +10,7 @@
 
 <script>
     import { on } from "../keys";
-    import { importLevel, menuOpen, showControls } from "../uiState";
+    import { mainMenu, menuOpen, showControls } from "../uiState";
     import { config } from "@utils/config";
     import { openLevel } from "@core/grid";
     import { currentPack } from "@utils/texturePacks";
@@ -18,9 +18,9 @@
     import { builtinCells } from "@core/cells/collection";
 
     let show = true;
-    on("F1").when(() => !$importLevel).down(() => (show = !show, showControls.set(show), $menuOpen = false));
-    on("q").when(() => !$menuOpen && !$importLevel).down(() => $actualRotation--);
-    on("e").when(() => !$menuOpen && !$importLevel).down(() => $actualRotation++);
+    on("F1").when(() => !$mainMenu).down(() => (show = !show, showControls.set(show), $menuOpen = false));
+    on("q").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation--);
+    on("e").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation++);
 
     const playTimer = new Animator(() => {
         $openLevel?.doStep();
@@ -39,7 +39,7 @@
             levelPlaying = true;
         }
     }
-    on(" ").when(() => !$menuOpen && !$importLevel).down(toggleLevel);
+    on(" ").when(() => !$menuOpen && !$mainMenu).down(toggleLevel);
 
     let cellsInBar = [...builtinCells];
     on("1").down(() => $selectedCell = cellsInBar[0]);

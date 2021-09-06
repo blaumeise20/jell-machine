@@ -1,7 +1,7 @@
 <script>
     import { CellGrid, openLevel } from "@core/grid";
     import { clip } from "@utils/misc";
-    import { createLevel, importLevel, showHelp, settings } from "./uiState";
+    import { createLevel, mainMenu, showHelp, settings } from "./uiState";
     import logo from "../logo.png";
 
     let showSpoiler = false;
@@ -9,7 +9,7 @@
 
     const loadFromClipboard = async () => {
         try {
-            if ($importLevel) clipboardContent = clip();
+            if ($mainMenu) clipboardContent = clip();
         }
         catch {}
 
@@ -30,7 +30,7 @@
         const res = CellGrid.loadFromString(clipboardContent);
 
         if (res[0]) {
-            $importLevel = false;
+            $mainMenu = false;
             $openLevel = res[1];
         }
         else {
@@ -79,7 +79,7 @@
     }
 </style>
 
-<div class="overlay_container" style="display: {$importLevel ? "block" : "none"}">
+<div class="overlay_container" style="display: {$mainMenu ? "block" : "none"}">
     <div class="overlay">
         <img src="{logo}" alt="Logo" />
         <button class="big" on:click={importClipboard}>Import from clipboard</button>
@@ -92,7 +92,7 @@
         <button on:click={() => $settings = true}>Settings</button>
         {#if $openLevel}
             <div class="space"></div>
-            <button class="center" on:click={() => $importLevel = false}>Back</button>
+            <button class="center" on:click={() => $mainMenu = false}>Back</button>
         {/if}
     </div>
     <button class="center help_button big" on:click={() => $showHelp = true}>Help</button>

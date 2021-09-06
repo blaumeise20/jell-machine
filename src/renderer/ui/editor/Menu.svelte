@@ -1,7 +1,7 @@
 <script>
     import { clip } from "@utils/misc";
     import { openLevel } from "@core/grid";
-    import { importLevel, menuOpen, selection } from "../uiState";
+    import { mainMenu, menuOpen, selection } from "../uiState";
 
     const copiedText = "Copied!";
     $: copyText = $selection ? "Copy selected area" : "Copy to Clipboard";
@@ -51,7 +51,7 @@
             <button on:click={() => $openLevel?.reset()}>Reset</button>
         </div>
         <div class="action_buttons">
-            <button on:click={() => $importLevel = true}>Go to main screen</button>
+            <button on:click={() => $mainMenu = true}>Go to main screen</button>
             <!-- {#if $openLevel.isInfinite} -->
                 <button on:click={() => {
                     if ($openLevel) {
