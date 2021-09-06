@@ -4,7 +4,7 @@ import { appPath, safe } from "./misc";
 
 export class Config {
     static instance: Config;
-    static default = { texturePack: "HighRes", tickSpeed: 200 };
+    static default = { texturePack: "HighRes", tickSpeed: 200, animation: false };
 
     constructor() { return Config.instance ?? (this.init(), Config.instance = this) }
 

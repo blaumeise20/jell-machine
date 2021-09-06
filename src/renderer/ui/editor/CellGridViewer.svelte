@@ -10,6 +10,7 @@
     import { Pos, Position } from "@utils/positions";
     import { rotation, selectedCell } from "./GameControls.svelte";
     import { Size } from "@utils/size";
+    import { config } from "@utils/config";
 
     export let grid: CellGrid;
     if (grid.isInfinite) throw new Error("OH NO");
@@ -248,6 +249,12 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
         left: 0;
         position: absolute;
         shape-rendering: optimizeSpeed;
+
+        &.animate .cell.animate {
+            transition-duration: var(--transition-duration);
+            transition-timing-function: linear;
+            transition-property: transform, x, y;
+        }
     }
     .cell {
         height: $CELL_SIZE;
@@ -274,7 +281,8 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
         left: {gridOffset.left}px;
         transform: scale({zoom});
         transform-origin: {editorSize.width / 2 - gridOffset.left}px {-(editorSize.height / 2 - gridOffset.bottom)}px;
-    ">
+        --transition-duration: {$config.tickSpeed}ms;
+    " class:animate={$config.animation}>
         <div class="background" style="
             width: {grid.size.width * CELL_SIZE}px;
             height: {grid.size.height * CELL_SIZE}px;
@@ -291,7 +299,7 @@ V3;1q;1q;{(0(Vr)a)06{(0(1g)aaa{)05aaa{(0(1c)a{)0baa{(0(19)aa{)042)03{)04a{(0(17)
             {/each}
             {#each [...grid.cells.values()] as cell (cell.id)}
                 <image
-                    class="cell"
+                    class="cell animate"
                     class:placable={grid.tiles.get(cell.pos) == Tile.Placable}
                     x={CELL_SIZE * cell.pos.x}
                     y={CELL_SIZE * (grid.size.height - cell.pos.y - 1)}
