@@ -41,10 +41,7 @@ export function doStep(grid: CellGrid) {
 
                 break;
             case UpdateType.Random:
-                for (const cell of grid.cellList) if (cell.type == updateType[0]) cell.update();
-                // grid.cellList
-                //     .filter(c => c.type == updateType[0])
-                //     .forEach(c => c.update());
+                for (const cell of grid.cellList) if (cell.type == updateType[0]) !cell.deleted && cell.update();
                 break;
         }
     }
