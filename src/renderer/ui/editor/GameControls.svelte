@@ -1,9 +1,9 @@
 <script context="module">
     import { writable, derived } from "svelte/store";
     import { rotateBy } from "@utils/misc";
-    import { generatorCell } from "@core/cells/GeneratorCell";
+    import { CellType } from "@core/cell";
 
-    export const selectedCell = writable(generatorCell);
+    export const selectedCell = writable(null as any as CellType);
     export const actualRotation = writable(0);
     export const rotation = derived(actualRotation, $r => rotateBy($r));
 </script>
@@ -21,6 +21,7 @@
     on("F1").when(() => !$mainMenu).down(() => (show = !show, showControls.set(show), $menuOpen = false));
     on("q").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation--);
     on("e").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation++);
+    on("t").when(() => !$menuOpen && !$mainMenu).down(() => (levelPlaying = false, playTimer.stop(), $openLevel?.reset()));
 
     const playTimer = new Animator(() => {
         $openLevel?.doStep();
@@ -42,15 +43,10 @@
     on(" ").when(() => !$menuOpen && !$mainMenu).down(toggleLevel);
 
     let cellsInBar = [...builtinCells];
-    on("1").down(() => $selectedCell = cellsInBar[0]);
-    on("2").down(() => $selectedCell = cellsInBar[1]);
-    on("3").down(() => $selectedCell = cellsInBar[2]);
-    on("4").down(() => $selectedCell = cellsInBar[3]);
-    on("5").down(() => $selectedCell = cellsInBar[4]);
-    on("6").down(() => $selectedCell = cellsInBar[5]);
-    on("7").down(() => $selectedCell = cellsInBar[6]);
-    on("8").down(() => $selectedCell = cellsInBar[7]);
-    on("9").down(() => $selectedCell = cellsInBar[8]);
+    for (let i = 0; i < 9; i++) {
+        on(`${i + 1}`).down(() => $selectedCell = cellsInBar[i]);
+    }
+    $selectedCell = cellsInBar[0];
 </script>
 
 <style>

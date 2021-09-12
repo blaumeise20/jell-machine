@@ -1,8 +1,6 @@
 import { Position } from "../utils/positions";
 import { Cell, CellType, Direction } from "./cell";
-import { generatorCell } from "./cells/GeneratorCell";
-import { moverCell } from "./cells/MoverCell";
-import { ccwRotatorCell, cwRotatorCell } from "./cells/RotatorCell";
+import { Extension } from "./extensions";
 import { CellGrid } from "./grid";
 
 export function doStep(grid: CellGrid) {
@@ -67,11 +65,12 @@ export const order = {
     [Direction.Up]: (pos: Position) => -pos.y,
 };
 
+const builtinCells = Extension.get("core");
 export const updateOrder: [CellType, UpdateType][] = [
-    [generatorCell, UpdateType.Directional],
-    [cwRotatorCell, UpdateType.Random],
-    [ccwRotatorCell, UpdateType.Random],
-    [moverCell, UpdateType.Directional],
+    [builtinCells?.data.generator, UpdateType.Directional],
+    [builtinCells?.data.cwRotator, UpdateType.Random],
+    [builtinCells?.data.ccwRotator, UpdateType.Random],
+    [builtinCells?.data.mover, UpdateType.Directional],
 ];
 
 export type ListNode<T> = {

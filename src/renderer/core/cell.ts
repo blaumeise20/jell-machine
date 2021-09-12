@@ -2,6 +2,12 @@ import { rotateBy } from "../utils/misc";
 import { Off, Position } from "../utils/positions";
 import { CellGrid } from "./grid";
 
+// import { Extension } from "@core/extensions";
+// import { load } from "../../extensions/builtin";
+
+// export const builtinCells = Extension.load("core", load).cells ?? [];
+
+
 let cellid = 0;
 
 export class Cell {
@@ -123,6 +129,10 @@ export class CellType {
             ];
         }
     }
+    merge(self: Cell, other: Cell) {
+        if (this.options.merge) return this.options.merge(self.options, other.options);
+        else return other.options;
+    }
 
     newCell(grid: CellGrid, pos: Position, dir: Direction, generated: boolean) {
         return new this.behavior(pos, this, dir, grid, generated);
@@ -139,6 +149,7 @@ export interface CellTypeOptions {
     behavior: typeof Cell;
     textureName: string;
     flip?(cell: CellData, horizontal: boolean): CellData;
+    merge?(self: CellData, other: CellData): CellData;
     data?: any;
 }
 
