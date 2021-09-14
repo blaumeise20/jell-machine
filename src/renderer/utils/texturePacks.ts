@@ -32,7 +32,7 @@ export class Textures {
         this.reload();
 
         config.subscribe(c => {
-            if (c.texturePack != get(this.currentPack)?.name) this.use(c.texturePack);
+            if (c.texturePack != get(this.currentPack)?.name) this.use(c.texturePack) || (this._copyDefaultPack(), this.use(c.texturePack) || ERR());
         });
     }
 
