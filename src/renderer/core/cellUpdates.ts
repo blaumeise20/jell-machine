@@ -65,7 +65,7 @@ export const order = {
     [Direction.Up]: (pos: Position) => -pos.y,
 };
 
-const builtinCells = Extension.get("core");
+const builtinCells = Extension.get("jm.core");
 export const updateOrder: [CellType, UpdateType][] = [
     [builtinCells?.data.generator, UpdateType.Directional],
     [builtinCells?.data.cwRotator, UpdateType.Random],

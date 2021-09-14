@@ -2,12 +2,6 @@ import { rotateBy } from "../utils/misc";
 import { Off, Position } from "../utils/positions";
 import { CellGrid } from "./grid";
 
-// import { Extension } from "@core/extensions";
-// import { load } from "../../extensions/builtin";
-
-// export const builtinCells = Extension.load("core", load).cells ?? [];
-
-
 let cellid = 0;
 
 export class Cell {
