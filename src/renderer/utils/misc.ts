@@ -36,6 +36,15 @@ export function tryAll<T>(arr: T[], fn: (t: T) => boolean) {
     return true;
 }
 
+export function tryAllContinue<T>(arr: T[], fn: (t: T) => boolean) {
+    let errorless = true;
+    for (const t of arr) {
+        const result = safe(() => fn(t));
+        if (!result[0] || !result[1]) errorless = false;
+    }
+    return errorless;
+}
+
 export function clip(): string;
 export function clip(text: string): void;
 export function clip(text?: string) {

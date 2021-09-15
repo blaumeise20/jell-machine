@@ -1,7 +1,7 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { get, writable, Writable } from "svelte/store";
-import { appPath, ERR, runningPath, safe, tryAll, tryFirst } from "./misc";
+import { appPath, ERR, runningPath, safe, tryAll, tryAllContinue, tryFirst } from "./misc";
 import { config } from "./config";
 
 const textureMapping = {
@@ -66,7 +66,7 @@ export class Textures {
         try {
             const packPath = join(runningPath, "../../defaultPack");
             const defaults = readdirSync(packPath);
-            tryAll(defaults, file => {
+            tryAllContinue(defaults, file => {
                 const filePath = appPath("textures/HighRes", file);
                 writeFileSync(filePath, readFileSync(join(packPath, file)));
                 return true;
