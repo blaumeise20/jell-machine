@@ -3,6 +3,7 @@ import { CellType, CellTypeOptions } from "./cell";
 export interface ExtensionContext {
     addSlot(t: CellType): void;
     createCellType(options: CellTypeOptions): CellType;
+    onTickEnd(fn: () => void): void;
 }
 
 export type ExtensionLoader = (context: ExtensionContext) => void | Record<string, any>;
@@ -11,6 +12,7 @@ export class Extension {
     cells: CellType[] = [];
     id!: string;
     data!: Record<string, any>;
+    tickend?: () => void;
 
     static extensions: Extension[] = [];
 
@@ -26,6 +28,9 @@ export class Extension {
             },
             addSlot(t: CellType) {
 
+            },
+            onTickEnd(fn: () => void) {
+                extension.tickend = fn;
             }
         }) || {};
 

@@ -4,8 +4,10 @@ import { Off, Pos, Position, PosMap } from "../utils/positions";
 import { base74Decode, base74Key, decodeBase74, encodeBase74, int } from "../utils/nums";
 import { Tile } from "./tiles";
 import { Cell, CellType, Direction } from "./cell";
+import "./cells/collection";
 import arr from "create-arr";
 import { doStep } from "./cellUpdates";
+import { Extension } from "./extensions";
 
 export const openLevel: Writable<CellGrid | null> = writable(null);
 // export const openLevel2: Writable<CellGrid | null> = writable(null);
@@ -50,6 +52,8 @@ export class CellGrid {
     doStep() {
         this.initial = false;
         doStep(this);
+
+        Extension.extensions.forEach(e => e.tickend && e.tickend());
 
         this.reloadUI();
     }
