@@ -14,6 +14,7 @@ const textureMapping = {
     "enemy": ["enemy.png"],
     "trash": ["trash.png"],
     "wall": ["wall.png", "immobile.png"],
+    "note": ["note.png", "music.png"],
     "placable": ["BGPlacable.png", "0.png"],
     "bg": ["BG.png", "BGDefault.png"],
 };

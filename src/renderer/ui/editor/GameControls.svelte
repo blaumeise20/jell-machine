@@ -15,7 +15,7 @@
     import { openLevel } from "@core/grid";
     import { currentPack } from "@utils/texturePacks";
     import { Animator } from "@utils/animator";
-    import { builtinCells } from "@core/cells/collection";
+    import { builtinCells, musicCells } from "@core/cells/collection";
 
     let show = true;
     on("F1").when(() => !$mainMenu).down(() => (show = !show, showControls.set(show), $menuOpen = false));
@@ -42,7 +42,7 @@
     }
     on(" ").when(() => !$menuOpen && !$mainMenu).down(toggleLevel);
 
-    let cellsInBar = [...builtinCells];
+    let cellsInBar = [...builtinCells, ...musicCells];
     for (let i = 0; i < 9; i++) {
         on(`${i + 1}`).down(() => $selectedCell = cellsInBar[i]);
     }
