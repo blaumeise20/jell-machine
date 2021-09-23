@@ -21,7 +21,7 @@ export function load(ctx: ExtensionContext) {
             }
         },
         textureName: "generator",
-        data: { v3id: 8 },
+        data: { v3id: 0 },
     });
 
     const mover = ctx.createCellType({
