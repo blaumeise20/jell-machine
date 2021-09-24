@@ -49,6 +49,8 @@
     }
     $: slotIndex = Math.min(slotIndex, slots.length - 1);
     $: $selectedCell = slots[slotIndex];
+
+    on("tab").down(() => slotIndex = (slotIndex + 1) % slots.length);
 </script>
 
 <style>
