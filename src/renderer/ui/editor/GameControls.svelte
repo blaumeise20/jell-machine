@@ -42,11 +42,13 @@
     }
     on(" ").when(() => !$menuOpen && !$mainMenu).down(toggleLevel);
 
-    let cellsInBar = [...builtinCells, ...musicCells];
+    let slots = [...builtinCells, ...musicCells];
+    let slotIndex = 0;
     for (let i = 0; i < 9; i++) {
-        on(`${i + 1}`).down(() => $selectedCell = cellsInBar[i]);
+        on(`${i + 1}`).down(() => slotIndex = i);
     }
-    $selectedCell = cellsInBar[0];
+    $: slotIndex = Math.min(slotIndex, slots.length - 1);
+    $: $selectedCell = slots[slotIndex];
 </script>
 
 <style>
@@ -101,15 +103,15 @@
         </div>
 
         <div class="cells">
-            {#each cellsInBar as c, i}
+            {#each slots as c, i}
                 {#if i}
                     <div class="cell_selection_seperator"></div>
                 {/if}
                 <div>
-                    <div class="cell_selection" class:selected={$selectedCell == c} style="
+                    <div class="cell_selection" class:selected={slotIndex == i} style="
                         background-image: url({$currentPack.textures[c.options.textureName].url});
                         transform: rotate({$actualRotation * 90}deg);
-                    " on:click={() => $selectedCell = c}></div>
+                    " on:click={() => slotIndex = i}></div>
                 </div>
             {/each}
         </div>
