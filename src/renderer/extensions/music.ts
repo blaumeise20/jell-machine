@@ -59,7 +59,7 @@ export function load(ctx: ExtensionContext) {
         flip: d => d
     });
 
-    ctx.onTickEnd(() => {
+    ctx.on("tickend", () => {
         noteTicks.forEach(note => play(note));
         noteTicks.clear();
 
