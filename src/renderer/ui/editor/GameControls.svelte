@@ -118,6 +118,4 @@
             {/each}
         </div>
     </div>
-
-    <!-- cells/tools -->
 {/if}
