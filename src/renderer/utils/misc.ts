@@ -59,7 +59,5 @@ export function ERR() {
 
 
 export function rotateBy(dir: Direction, amount = 0) {
-    dir += amount;
-    while (dir < 0) dir += 4;
-    return dir % 4 as Direction;
+    return ((dir + amount) % 4 + 4) % 4 as Direction;
 }
