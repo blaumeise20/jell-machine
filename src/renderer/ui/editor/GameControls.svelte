@@ -9,7 +9,7 @@
 </script>
 
 <script>
-    import { on } from "../keys";
+    import { keys, on } from "../keys";
     import { mainMenu, menuOpen, showControls } from "../uiState";
     import { config } from "@utils/config";
     import { openLevel } from "@core/grid";
@@ -50,7 +50,11 @@
     $: slotIndex = Math.min(slotIndex, slots.length - 1);
     $: $selectedCell = slots[slotIndex];
 
-    on("tab").down(() => slotIndex = (slotIndex + 1) % slots.length);
+    on("tab").down(() => {
+        slotIndex = ((slotIndex + (
+            keys.shift ? -1 : 1
+        )) % slots.length + slots.length) % slots.length;
+    });
 </script>
 
 <style>
