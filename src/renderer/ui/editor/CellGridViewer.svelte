@@ -167,6 +167,15 @@
             selectionSize = selectionSize.move(Direction.Up);
         }
     });
+
+    on("g").down(() => {
+        if (keys.shift) {
+            grid.fillTile(selectionSize, Tile.Placable);
+        }
+        else {
+            grid.fillCell(selectionSize, $selectedCell, $rotation);
+        }
+    });
     //#endregion
 
 

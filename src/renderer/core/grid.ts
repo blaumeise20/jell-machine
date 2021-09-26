@@ -213,6 +213,24 @@ export class CellGrid {
 
         return grid;
     }
+
+    fillCell(area: Size, type: CellType, direction: Direction) {
+        for (let x = 0; x < area.width; x++) {
+            for (let y = 0; y < area.height; y++) {
+                this.loadCell(Pos(x + area.left, y + area.bottom), type, direction);
+            }
+        }
+        this.reloadUI();
+    }
+
+    fillTile(area: Size, tile: Tile) {
+        for (let x = 0; x < area.width; x++) {
+            for (let y = 0; y < area.height; y++) {
+                this.tiles.set(Pos(x + area.left, y + area.bottom), tile);
+            }
+        }
+        this.reloadUI();
+    }
     //#endregion
 
     /**
