@@ -117,10 +117,8 @@ export function load(ctx: ExtensionContext) {
 
     ctx.addSlot(generator);
     ctx.addSlot(mover);
-    ctx.addSlot(cwRotator);
-    ctx.addSlot(ccwRotator);
-    ctx.addSlot(push);
-    ctx.addSlot(slide);
+    ctx.addSlot(cwRotator, ccwRotator);
+    ctx.addSlot(push, slide);
     ctx.addSlot(enemy);
     ctx.addSlot(trash);
     ctx.addSlot(wall);

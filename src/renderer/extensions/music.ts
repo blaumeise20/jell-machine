@@ -46,9 +46,9 @@ export function load(ctx: ExtensionContext) {
         oscillators.push(oscillator);
         gainNode.gain.value = 1 / oscillators.length;
     };
-
     const noteTicks = new Set<keyof typeof notes>();
-    ctx.createCellType({
+
+    ctx.addSlot(ctx.createCellType({
         textureName: "note",
         behavior: class NoteCell extends Cell {
             push() {
@@ -57,7 +57,7 @@ export function load(ctx: ExtensionContext) {
             }
         },
         flip: d => d
-    });
+    }));
 
     ctx.on("tickend", () => {
         noteTicks.forEach(note => play(note));

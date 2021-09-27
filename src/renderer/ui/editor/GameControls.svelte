@@ -15,7 +15,7 @@
     import { openLevel } from "@core/grid";
     import { currentPack } from "@utils/texturePacks";
     import { Animator } from "@utils/animator";
-    import { builtinCells, musicCells } from "@core/cells/collection";
+    import { builtinSlots, musicSlots } from "@core/cells/collection";
 
     let show = true;
     on("F1").when(() => !$mainMenu).down(() => (show = !show, showControls.set(show), $menuOpen = false));
@@ -42,18 +42,22 @@
     }
     on(" ").when(() => !$menuOpen && !$mainMenu).down(toggleLevel);
 
-    let slots = [...builtinCells, ...musicCells];
+    let slots = [...builtinSlots, ...musicSlots];
     let slotIndex = 0;
     for (let i = 0; i < 9; i++) {
         on(`${i + 1}`).down(() => slotIndex = i);
     }
     $: slotIndex = Math.min(slotIndex, slots.length - 1);
-    $: $selectedCell = slots[slotIndex];
+    $: $selectedCell = slots[slotIndex].currentItem;
 
     on("tab").down(() => {
         slotIndex = ((slotIndex + (
             keys.shift ? -1 : 1
         )) % slots.length + slots.length) % slots.length;
+    });
+    on("<").down(() => {
+        slots[slotIndex].next();
+        slots = slots;
     });
 </script>
 
@@ -115,9 +119,14 @@
                 {/if}
                 <div>
                     <div class="cell_selection" class:selected={slotIndex == i} style="
-                        background-image: url({$currentPack.textures[c.options.textureName].url});
+                        background-image: url({$currentPack.textures[c.currentItem.options.textureName].url});
                         transform: rotate({$actualRotation * 90}deg);
-                    " on:click={() => slotIndex = i}></div>
+                    " on:click={() => {
+                        if (slotIndex == i)
+                            slots[slotIndex].next(), slots = slots;
+                        else
+                            slotIndex = i;
+                    }}></div>
                 </div>
             {/each}
         </div>

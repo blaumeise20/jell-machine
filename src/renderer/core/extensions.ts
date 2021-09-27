@@ -1,7 +1,9 @@
+import { safe } from "@utils/misc";
 import { CellType, CellTypeOptions } from "./cell";
+import { Slot } from "./slot";
 
 export interface ExtensionContext {
-    addSlot(t: CellType): void;
+    addSlot(...t: (CellType | CellType[])[]): void;
     createCellType(options: CellTypeOptions): CellType;
     on(event: string, fn: (...args: any[]) => void): void;
 }
@@ -12,6 +14,7 @@ export class Extension {
     cells: CellType[] = [];
     id!: string;
     data!: Record<string, any>;
+    slots: Slot[] = [];
 
     events: Record<string, ((...args: any[]) => void)[]> = {};
 
@@ -33,8 +36,8 @@ export class Extension {
                 extension.cells.push(cellType);
                 return cellType;
             },
-            addSlot(t: CellType) {
-
+            addSlot(...t: (CellType | CellType[])[]) {
+                extension.slots.push(new Slot(t.flatMap(t => Array.isArray(t) ? t : [t])));
             },
             on(event: string, fn: (...args: any[]) => void) {
                 if (!extension.events[event]) extension.events[event] = [];
