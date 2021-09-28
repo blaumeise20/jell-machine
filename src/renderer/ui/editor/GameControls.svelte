@@ -2,8 +2,14 @@
     import { writable, derived } from "svelte/store";
     import { rotateBy } from "@utils/misc";
     import { CellType } from "@core/cell";
+    import { builtinSlots, musicSlots } from "@core/cells/collection";
 
-    export const selectedCell = writable(null as any as CellType);
+    let slots = [...builtinSlots, ...musicSlots];
+
+    let slotHandler = new SlotHandler(slots);
+    const currentSlots = slotHandler.slots;
+
+    export const selectedCell = slotHandler.currentCell;
     export const actualRotation = writable(0);
     export const rotation = derived(actualRotation, $r => rotateBy($r));
 </script>
@@ -15,7 +21,7 @@
     import { openLevel } from "@core/grid";
     import { currentPack } from "@utils/texturePacks";
     import { Animator } from "@utils/animator";
-    import { builtinSlots, musicSlots } from "@core/cells/collection";
+    import { SlotHandler } from "@core/slot";
 
     let show = true;
     on("F1").when(() => !$mainMenu).down(() => (show = !show, showControls.set(show), $menuOpen = false));
@@ -42,22 +48,11 @@
     }
     on(" ").when(() => !$menuOpen && !$mainMenu).down(toggleLevel);
 
-    let slots = [...builtinSlots, ...musicSlots];
-    let slotIndex = 0;
-    for (let i = 0; i < 9; i++) {
-        on(`${i + 1}`).down(() => slotIndex = i);
-    }
-    $: slotIndex = Math.min(slotIndex, slots.length - 1);
-    $: $selectedCell = slots[slotIndex].currentItem;
-
     on("tab").down(() => {
-        slotIndex = ((slotIndex + (
-            keys.shift ? -1 : 1
-        )) % slots.length + slots.length) % slots.length;
+        keys.shift ? slotHandler.prev() : slotHandler.next();
     });
     on("<").down(() => {
-        slots[slotIndex].next();
-        slots = slots;
+        slotHandler.loopSlot();
     });
 </script>
 
@@ -113,19 +108,19 @@
         </div>
 
         <div class="cells">
-            {#each slots as c, i}
+            {#each $currentSlots as c, i}
                 {#if i}
                     <div class="cell_selection_seperator"></div>
                 {/if}
                 <div>
-                    <div class="cell_selection" class:selected={slotIndex == i} style="
+                    <div class="cell_selection" class:selected={c.isActive} style="
                         background-image: url({$currentPack.textures[c.currentItem.options.textureName].url});
                         transform: rotate({$actualRotation * 90}deg);
                     " on:click={() => {
-                        if (slotIndex == i)
-                            slots[slotIndex].next(), slots = slots;
+                        if (c.isActive)
+                            slotHandler.next();
                         else
-                            slotIndex = i;
+                            slotHandler.to(i);
                     }}></div>
                 </div>
             {/each}
