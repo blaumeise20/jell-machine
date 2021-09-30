@@ -1,7 +1,7 @@
 import { writable, Writable } from "svelte/store";
 import { Size } from "../utils/size";
 import { Off, Pos, Position, PosMap } from "../utils/positions";
-import { base74Decode, base74Key, decodeBase74, encodeBase74, int } from "../utils/nums";
+import { base74Key, encodeBase74 } from "../utils/nums";
 import { Tile } from "./tiles";
 import { Cell, CellType, Direction } from "./cell";
 import { Extension } from "@core/extensions";
@@ -33,6 +33,7 @@ export class CellGrid {
     readonly cells = new PosMap<Cell, null>(null);
     readonly cellList: Cell[] = [];
     initial = true;
+    tickCount = 0;
 
     private constructor() {}
 
@@ -55,13 +56,12 @@ export class CellGrid {
      */
     doStep() {
         this.initial = false;
-
         Extension.extensions.forEach(e => e.emit("tickstart"));
 
         doStep(this);
 
+        this.tickCount++;
         Extension.extensions.forEach(e => e.emit("tickend"));
-
         this.reloadUI();
     }
 
