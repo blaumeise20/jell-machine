@@ -264,6 +264,8 @@ export class CellGrid {
                 for (const cell of this.cells.values()) {
                     const v3id = cell.type.data?.v3id;
                     if (v3id)
+                        cellData[cell.pos.x + (cell.pos.y * this.size.width)] += (2 * cell.type.data.v3id) + (18 * cell.direction) - 72;
+                }
 
 
                 let runLength = 1;
