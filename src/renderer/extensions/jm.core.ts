@@ -106,7 +106,9 @@ export function load(ctx: ExtensionContext) {
 
     const enemy = ctx.createCellType({
         behavior: class EnemyCell extends Cell {
-            push() {
+            push(dir: Direction, bias: number) {
+                // TODO: fix bug where enemies don't break when disabled before
+                if (this.disabled) return super.push(dir, bias);
                 this.rm();
                 return null;
             }
