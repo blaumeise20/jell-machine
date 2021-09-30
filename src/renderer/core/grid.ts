@@ -4,10 +4,14 @@ import { Off, Pos, Position, PosMap } from "../utils/positions";
 import { base74Decode, base74Key, decodeBase74, encodeBase74, int } from "../utils/nums";
 import { Tile } from "./tiles";
 import { Cell, CellType, Direction } from "./cell";
-import "./cells/collection";
+import { Extension } from "@core/extensions";
+
+// yes i'm sorry so many casts
+const context = (require as any).context("../extensions", true, /\.ts$/) as any;
+(context.keys() as string[]).forEach(key => Extension.load(key.substr(-3), context(key).load));
+
 import arr from "create-arr";
 import { doStep } from "./cellUpdates";
-import { Extension } from "./extensions";
 
 export const openLevel: Writable<CellGrid | null> = writable(null);
 // export const openLevel2: Writable<CellGrid | null> = writable(null);

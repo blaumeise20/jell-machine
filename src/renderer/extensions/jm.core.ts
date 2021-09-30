@@ -1,6 +1,7 @@
 import { ExtensionContext } from "@core/extensions";
 import { Off } from "@utils/positions";
 import { Cell, Direction } from "@core/cell";
+import { UpdateType } from "@core/cellUpdates";
 
 export function load(ctx: ExtensionContext) {
     const generator = ctx.createCellType({
@@ -22,6 +23,8 @@ export function load(ctx: ExtensionContext) {
         },
         textureName: "generator",
         data: { v3id: 0 },
+        updateOrder: 1,
+        updateType: UpdateType.Directional,
     });
 
     const mover = ctx.createCellType({
@@ -38,6 +41,8 @@ export function load(ctx: ExtensionContext) {
         },
         textureName: "mover",
         data: { v3id: 3 },
+        updateOrder: 3,
+        updateType: UpdateType.Directional,
     });
 
     const cwRotator = ctx.createCellType({
@@ -54,12 +59,16 @@ export function load(ctx: ExtensionContext) {
         textureName: "cwRotator",
         data: { v3id: 1, rotation: 1 },
         flip: (options) => [ccwRotator, options[1]],
+        updateOrder: 2,
+        updateType: UpdateType.Random,
     });
     const ccwRotator = ctx.createCellType({
         behavior: cwRotator.behavior,
         textureName: "ccwRotator",
         data: { v3id: 2, rotation: -1 },
         flip: (options) => [cwRotator, options[1]],
+        updateOrder: 2,
+        updateType: UpdateType.Random,
     });
 
     const push = ctx.createCellType({

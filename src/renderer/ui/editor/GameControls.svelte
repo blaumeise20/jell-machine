@@ -1,10 +1,9 @@
 <script context="module">
     import { writable, derived } from "svelte/store";
     import { rotateBy } from "@utils/misc";
-    import { CellType } from "@core/cell";
-    import { builtinSlots, musicSlots } from "@core/cells/collection";
+    import { Extension } from "@core/extensions";
 
-    let slots = [...builtinSlots, ...musicSlots];
+    let slots = Extension.slots;
 
     let slotHandler = new SlotHandler(slots);
     const currentSlots = slotHandler.slots;

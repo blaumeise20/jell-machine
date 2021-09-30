@@ -1,5 +1,6 @@
 import { rotateBy } from "../utils/misc";
 import { Off, Position } from "../utils/positions";
+import type { UpdateType } from "./cellUpdates";
 import { CellGrid } from "./grid";
 
 let cellid = 0;
@@ -145,6 +146,8 @@ export interface CellTypeOptions {
     flip?(cell: CellData, horizontal: boolean): CellData;
     merge?(self: CellData, other: CellData): CellData;
     data?: any;
+    updateType?: UpdateType;
+    updateOrder?: number;
 }
 
 export type CellData = [CellType, Direction];

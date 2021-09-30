@@ -1,5 +1,6 @@
 import { safe } from "@utils/misc";
 import { CellType, CellTypeOptions } from "./cell";
+import type { UpdateType } from "./cellUpdates";
 import { Slot } from "./slot";
 
 export interface ExtensionContext {
@@ -25,6 +26,7 @@ export class Extension {
     }
 
     static extensions: Extension[] = [];
+    static slots: Slot[] = [];
 
     static load(id: string, extensionLoader: ExtensionLoader) {
         const extension = new Extension();
@@ -37,7 +39,9 @@ export class Extension {
                 return cellType;
             },
             addSlot(...t: (CellType | CellType[])[]) {
-                extension.slots.push(new Slot(t.flatMap(t => Array.isArray(t) ? t : [t])));
+                const slot = new Slot(t.flatMap(t => Array.isArray(t) ? t : [t]));
+                extension.slots.push(slot);
+                Extension.slots.push(slot);
             },
             on(event: string, fn: (...args: any[]) => void) {
                 if (!extension.events[event]) extension.events[event] = [];
@@ -51,5 +55,21 @@ export class Extension {
 
     static get(id: string): Extension | undefined {
         return this.extensions.find(e => e.id === id);
+    }
+
+    static getUpdateOrder(): [CellType, UpdateType][] {
+        const result: [CellType, UpdateType][] = [];
+
+        this.extensions.forEach(extension => {
+            extension.cells.forEach(cell => {
+                if (cell.options.updateType != null) {
+                    result.push([cell, cell.options.updateType]);
+                }
+            });
+        });
+
+        console.log(this.extensions);
+
+        return result.sort((a, b) => a[0].options.updateOrder! - b[0].options.updateOrder!);
     }
 }

@@ -4,6 +4,11 @@ import { Extension } from "./extensions";
 import { CellGrid } from "./grid";
 
 export function doStep(grid: CellGrid) {
+    if ((updateOrder as any).eee) {
+        (updateOrder as any).eee = false;
+        updateOrder.push(...Extension.getUpdateOrder());
+    }
+
     console.time("update");
     for (const updateType of updateOrder) {
         switch (updateType[1]) {
@@ -65,13 +70,7 @@ export const order = {
     [Direction.Up]: (pos: Position) => -pos.y,
 };
 
-const builtinCells = Extension.get("jm.core");
-export const updateOrder: [CellType, UpdateType][] = [
-    [builtinCells?.data.generator, UpdateType.Directional],
-    [builtinCells?.data.cwRotator, UpdateType.Random],
-    [builtinCells?.data.ccwRotator, UpdateType.Random],
-    [builtinCells?.data.mover, UpdateType.Directional],
-];
+export const updateOrder: [CellType, UpdateType][] = Object.assign([], { eee: true });
 
 export type ListNode<T> = {
     e: T,
