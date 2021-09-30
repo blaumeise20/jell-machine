@@ -37,14 +37,21 @@ export function doStep(grid: CellGrid) {
                     }
 
                     while (cells) {
-                        !cells.e.deleted && cells.e.update();
+                        if (!cells.e.deleted) {
+                            if (cells.e.disabled) cells.e.disabled = false;
+                            else cells.e.update();
+                        }
                         cells = cells.n;
                     }
                 }
 
                 break;
             case UpdateType.Random:
-                for (const cell of grid.cellList) if (cell.type == updateType[0]) !cell.deleted && cell.update();
+                for (const cell of grid.cellList)
+                    if (cell.type == updateType[0] && !cell.deleted) {
+                        if (cell.disabled) cell.disabled = false;
+                        else cell.update();
+                    }
                 break;
         }
     }

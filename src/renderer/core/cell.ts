@@ -7,6 +7,7 @@ let cellid = 0;
 
 export class Cell {
     public deleted = false;
+    public disabled = false;
     id = cellid++;
     readonly initialPosition: Position;
     readonly initialDirection: Direction;
@@ -85,6 +86,10 @@ export class Cell {
 
     setRotation(amount: number) {
         this.direction = amount % 4;
+    }
+
+    disable() {
+        this.disabled = true;
     }
 }
 
