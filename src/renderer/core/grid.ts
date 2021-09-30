@@ -14,8 +14,6 @@ import arr from "create-arr";
 import { doStep } from "./cellUpdates";
 
 export const openLevel: Writable<CellGrid | null> = writable(null);
-
-openLevel.subscribe(o => (window as any).openLevel = o);
 // export const openLevel2: Writable<CellGrid | null> = writable(null);
 
 // export const activeLevel: Writable<0 | 1 | 2> = writable(0);
