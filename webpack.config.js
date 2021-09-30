@@ -19,6 +19,7 @@ module.exports = {
             filename: "main.[contenthash].js"
         },
     },
+    devtool: prod ? "source-map" : "inline-source-map",
     devServer: {
         port: process.env.ELECTRON_WEBPACK_DEV_PORT,
         contentBase: "./src/build"
