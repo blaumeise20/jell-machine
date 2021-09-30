@@ -90,6 +90,16 @@ export function load(ctx: ExtensionContext) {
         flip: d => d,
     });
 
+    const arrow = ctx.createCellType({
+        behavior: class ArrowCell extends Cell {
+            push(dir: Direction, bias: number) {
+                if (this.direction == dir) return super.push(dir, bias);
+                return false;
+            }
+        },
+        textureName: "arrow",
+    });
+
     const enemy = ctx.createCellType({
         behavior: class EnemyCell extends Cell {
             push() {
@@ -127,7 +137,7 @@ export function load(ctx: ExtensionContext) {
     ctx.addSlot(generator);
     ctx.addSlot(mover);
     ctx.addSlot(cwRotator, ccwRotator);
-    ctx.addSlot(push, slide);
+    ctx.addSlot(push, slide, arrow);
     ctx.addSlot(enemy);
     ctx.addSlot(trash);
     ctx.addSlot(wall);

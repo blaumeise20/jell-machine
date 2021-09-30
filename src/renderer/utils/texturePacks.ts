@@ -11,6 +11,7 @@ const textureMapping = {
     "ccwRotator": ["rotatorCCW.png", "CCWrotator_alt.png"],
     "push": ["push.png"],
     "slide": ["slide.png"],
+    "arrow": ["arrow.png"],
     "enemy": ["enemy.png"],
     "trash": ["trash.png"],
     "wall": ["wall.png", "immobile.png"],
