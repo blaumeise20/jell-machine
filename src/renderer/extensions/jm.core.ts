@@ -1,7 +1,11 @@
 import { ExtensionContext } from "@core/extensions";
-import { Off } from "@utils/positions";
+import { Off, Pos } from "@utils/positions";
 import { Cell, Direction } from "@core/cell";
 import { UpdateType } from "@core/cellUpdates";
+import { Size } from "@utils/size";
+import { base74Decode, decodeBase74, int } from "@utils/nums";
+import { Tile } from "@core/tiles";
+import arr from "create-arr";
 
 export function load(ctx: ExtensionContext) {
     const generator = ctx.createCellType({
@@ -142,15 +146,127 @@ export function load(ctx: ExtensionContext) {
     ctx.addSlot(trash);
     ctx.addSlot(wall);
 
-    return {
+    function findCell(id: number) {
+        return Object.values(cells).find(t => t.data?.v3id == id);
+    }
+
+    ctx.registerLevelCode("V1", (parts, grid) => {
+        grid.size = new Size(int(parts[1]), int(parts[2]));
+
+        // placable stuff
+        const placables = parts[3].split(",");
+        if (placables[0]) {
+            for (const position of placables) {
+                const posArr = position.split(".");
+                const pos = Pos(int(posArr[0]), int(posArr[1]));
+                if (!grid.size.contains(pos)) return false;
+                grid.tiles.set(pos, Tile.Placable);
+            }
+        }
+
+        // actual cells
+        const cells = parts[4].split(",");
+        if (cells[0]) {
+            for (const cell of cells) {
+                const splitCell = cell.split(".");
+                const cellId = int(splitCell[0]);
+                const pos = Pos(int(splitCell[2]), int(splitCell[3]));
+                const cellType = findCell(cellId);
+                if (!cellType || !grid.loadCell(pos, cellType, int(splitCell[1]))) return false;
+            }
+        }
+
+        // naming stuff, can be put at the end of level codes
+        // optional to avoid errors when people forget to put ;; at the end
+        grid.description = parts[5]?.trim() || "";
+        grid.name = parts[6]?.trim() || "";
+    });
+
+    ctx.registerLevelCode("V3", (parts, grid) => {
+        grid.size = new Size(decodeBase74(parts[1]), decodeBase74(parts[2]));
+
+        if (parts[1][0] == "0") grid.isInfinite = true;
+
+        function setCell(cellContent: number, index: number) {
+            const pos = Pos(index % grid.size!.width, Math.floor(index / grid.size!.width));
+            if (cellContent % 2) {
+                if (!grid.size.contains(pos)) return 0;
+                grid.tiles.set(pos, Tile.Placable);
+            }
+            if (cellContent < 72) {
+                const cellId = Math.floor(cellContent / 2) % 9;
+                const cellType = findCell(cellId);
+                return cellType && grid.loadCell(pos, cellType, Math.floor(cellContent / 18));
+            }
+            return true;
+        }
+
+        const cells = parts[3];
+        const cellArray = arr(grid.size.width * grid.size.height, 0);
+        let cellIndex = 0;
+        for (let i = 0; i < cells.length; i++) {
+            if (cells[i] == ")" || cells[i] == "(") {
+                let offset: number, repeatingLength: number;
+
+                // c = cells
+                // o = offset (cells length - 1)
+                // l = repeating length (cells length * (pattern count - 1))
+                // c)ol
+                // c(o)l
+                // c(o(l)
+
+                if (cells[i] == ")") {
+                    offset = base74Decode[cells[++i]];
+                    repeatingLength = base74Decode[cells[++i]];
+                }
+                else {
+                    // cells[i] == "("
+
+                    i++;
+                    let str = "";
+                    for (; cells[i] != ")" && cells[i] != "("; i++) str += cells[i];
+                    offset = decodeBase74(str);
+
+                    if (cells[i] == ")") {
+                        i++;
+                        repeatingLength = base74Decode[cells[i]];
+                    }
+                    else {
+                        i++;
+                        const str = cells.substring(i, cells.indexOf(")", i));
+                        i += str.length;
+                        repeatingLength = decodeBase74(str);
+                    }
+                }
+
+                for (let j = 0; j < repeatingLength; j++) {
+                    if (!setCell(cellArray[cellIndex - offset - 1], cellIndex)) return false;
+                    cellArray[cellIndex] = cellArray[cellIndex - offset - 1];
+                    cellIndex++;
+                }
+            }
+            else {
+                if (!setCell(base74Decode[cells[i]], cellIndex)) return false;
+                cellArray[cellIndex] = base74Decode[cells[i]];
+                cellIndex++;
+            }
+        }
+
+        grid.description = parts[4]?.trim() || "";
+        grid.name = parts[5]?.trim() || "";
+    });
+
+    const cells = {
         generator,
         mover,
         cwRotator,
         ccwRotator,
         push,
         slide,
+        arrow,
         enemy,
         trash,
         wall,
-    };
+    }
+    return cells;
 }

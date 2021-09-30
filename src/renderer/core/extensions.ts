@@ -1,11 +1,13 @@
 import { safe } from "@utils/misc";
 import { CellType, CellTypeOptions } from "./cell";
 import type { UpdateType } from "./cellUpdates";
+import type { CellGrid } from "./grid";
 import { Slot } from "./slot";
 
 export interface ExtensionContext {
     addSlot(...t: (CellType | CellType[])[]): void;
     createCellType(options: CellTypeOptions): CellType;
+    registerLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void): void;
     on(event: string, fn: (...args: any[]) => void): void;
 }
 
@@ -16,6 +18,7 @@ export class Extension {
     id!: string;
     data!: Record<string, any>;
     slots: Slot[] = [];
+    levelCodes: [string, (parts: string[], grid: CellGrid) => false | void][] = [];
 
     events: Record<string, ((...args: any[]) => void)[]> = {};
 
@@ -27,6 +30,7 @@ export class Extension {
 
     static extensions: Extension[] = [];
     static slots: Slot[] = [];
+    static levelCodes: Record<string, (parts: string[], grid: CellGrid) => false | void> = {};
 
     static load(id: string, extensionLoader: ExtensionLoader) {
         const extension = new Extension();
@@ -42,6 +46,10 @@ export class Extension {
                 const slot = new Slot(t.flatMap(t => Array.isArray(t) ? t : [t]));
                 extension.slots.push(slot);
                 Extension.slots.push(slot);
+            },
+            registerLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void) {
+                extension.levelCodes.push([identification, parse]);
+                Extension.levelCodes[identification] = parse;
             },
             on(event: string, fn: (...args: any[]) => void) {
                 if (!extension.events[event]) extension.events[event] = [];
