@@ -33,6 +33,9 @@
     }
     .actions {
         flex: 1;
+        font: 400 17px/20px "Roboto", sans-serif;
+        color: #fff;
+        padding: 10px;
     }
     .action_buttons {
         border-top: 2px solid #404040;
@@ -48,6 +51,7 @@
     <div class="sidebar_backdrop" on:click={() => $menuOpen = false}></div>
     <div class="sidebar">
         <div class="actions">
+            Tick Count: {$openLevel?.tickCount}
             <button on:click={() => $openLevel?.reset()}>Reset</button>
         </div>
         <div class="action_buttons">
