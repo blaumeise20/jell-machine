@@ -7,7 +7,10 @@ let cellid = 0;
 
 export class Cell {
     public deleted = false;
-    public disabled = false;
+    public disabledIn = -1;
+    public get disabled(): boolean {
+        return this.disabledIn == this.grid.tickCount;
+    }
     id = cellid++;
     readonly initialPosition: Position;
     readonly initialDirection: Direction;
@@ -46,6 +49,8 @@ export class Cell {
             this.pos = this.initialPosition;
             this.direction = this.initialDirection;
         }
+
+        this.disabledIn = -1;
     }
 
     setPosition(pos: Position) {
@@ -89,7 +94,7 @@ export class Cell {
     }
 
     disable() {
-        this.disabled = true;
+        this.disabledIn = this.grid.tickCount;
     }
 }
 

@@ -37,10 +37,8 @@ export function doStep(grid: CellGrid) {
                     }
 
                     while (cells) {
-                        if (!cells.e.deleted) {
-                            if (cells.e.disabled) cells.e.disabled = false;
-                            else cells.e.update();
-                        }
+                        if (!cells.e.deleted && !cells.e.disabled)
+                            cells.e.update();
                         cells = cells.n;
                     }
                 }
@@ -48,10 +46,8 @@ export function doStep(grid: CellGrid) {
                 break;
             case UpdateType.Random:
                 for (const cell of grid.cellList)
-                    if (cell.type == updateType[0] && !cell.deleted) {
-                        if (cell.disabled) cell.disabled = false;
-                        else cell.update();
-                    }
+                    if (cell.type == updateType[0] && !cell.deleted && !cell.disabled)
+                        cell.update();
                 break;
         }
     }

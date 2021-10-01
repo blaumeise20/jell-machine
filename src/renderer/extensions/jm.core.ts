@@ -38,6 +38,8 @@ export function load(ctx: ExtensionContext) {
             }
 
             push(dir: Direction, bias: number) {
+                if (this.disabled) return super.push(dir, bias);
+
                 if (dir == this.direction) return super.push(dir, bias + 1);
                 if ((dir + 2) % 4 == this.direction) return super.push(dir, bias - 1);
                 return super.push(dir, bias);
@@ -85,7 +87,7 @@ export function load(ctx: ExtensionContext) {
     const slide = ctx.createCellType({
         behavior: class SlideCell extends Cell {
             push(dir: Direction, bias: number) {
-                if (this.direction % 2 == dir % 2) return super.push(dir, bias);
+                if (this.direction % 2 == dir % 2 || this.disabled) return super.push(dir, bias);
                 return false;
             }
         },
@@ -97,7 +99,7 @@ export function load(ctx: ExtensionContext) {
     const arrow = ctx.createCellType({
         behavior: class ArrowCell extends Cell {
             push(dir: Direction, bias: number) {
-                if (this.direction == dir) return super.push(dir, bias);
+                if (this.direction == dir || this.disabled) return super.push(dir, bias);
                 return false;
             }
         },
@@ -120,7 +122,8 @@ export function load(ctx: ExtensionContext) {
 
     const trash = ctx.createCellType({
         behavior: class TrashCell extends Cell {
-            push() {
+            push(dir: Direction, bias: number) {
+                if (this.disabled) return super.push(dir, bias);
                 return null;
             }
         },
