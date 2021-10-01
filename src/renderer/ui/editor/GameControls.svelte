@@ -117,7 +117,7 @@
                         transform: rotate({$actualRotation * 90}deg);
                     " on:click={() => {
                         if (c.isActive)
-                            slotHandler.next();
+                            slotHandler.loopSlot();
                         else
                             slotHandler.to(i);
                     }}></div>
