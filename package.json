@@ -5,7 +5,7 @@
     "description": "",
     "main": "src/dist/index.js",
     "scripts": {
-        "start": "run-p build:webpack build:tsc && electron src/dist/index.js",
+        "start": "run-p build:webpack build:tsc && cross-env NODE_ENV=production electron src/dist/index.js",
         "dev": "npm run build:tsc && run-p dev:*",
         "dev:webpack": "webpack serve",
         "dev:electron": "electron src/dist/index.js",
@@ -13,7 +13,7 @@
         "build": "npm run build:electron:base",
         "build:electron:mac": "npm run build:electron:base -- --icon=assets/app_icon.icns --platform=darwin",
         "build:electron:windows": "npm run build:electron:base -- --icon=assets/app_icon.ico --platform=win32",
-        "build:electron:base": "npm run build:webpack && npm run build:tsc && electron-packager . --prune --asar --overwrite --out=dist/ --ignore='^/(dist|src/(main|renderer))'",
+        "build:electron:base": "cross-env NODE_ENV=development && npm run build:webpack && npm run build:tsc && electron-packager . --prune --asar --overwrite --out=dist/ --ignore='^/(dist|src/(main|renderer))'",
         "build:webpack": "cross-env NODE_ENV=production webpack",
         "build:tsc": "tsc -p tsconfig.main.json"
     },

@@ -29,7 +29,9 @@ app.on("ready", () => {
     });
     if (dev)
         window.loadURL(
-            `http://localhost:${process.env.ELECTRON_WEBPACK_DEV_PORT}/#${appPath}`
+            `http://localhost:${
+                process.env.ELECTRON_WEBPACK_DEV_PORT || 6357
+            }/#${appPath}`
         );
     else
         window.loadURL(
