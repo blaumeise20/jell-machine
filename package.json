@@ -5,7 +5,7 @@
     "description": "",
     "main": "src/dist/index.js",
     "scripts": {
-        "start": "electron src/dist/index.js",
+        "start": "run-p build:webpack build:tsc && electron src/dist/index.js",
         "dev": "npm run build:tsc && run-p dev:*",
         "dev:webpack": "webpack serve",
         "dev:electron": "electron src/dist/index.js",
