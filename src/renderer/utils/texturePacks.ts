@@ -1,30 +1,38 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { get, writable, Writable } from "svelte/store";
-import { appPath, ERR, runningPath, safe, tryAll, tryAllContinue, tryFirst } from "./misc";
+import {
+    appPath,
+    ERR,
+    runningPath,
+    safe,
+    tryAll,
+    tryAllContinue,
+    tryFirst,
+} from "./misc";
 import { config } from "./config";
 
 const textureMapping = {
-    "generator": ["generator.png"],
-    "mover": ["mover.png"],
-    "cwRotator": ["rotatorCW.png", "CWrotator_alt.png"],
-    "ccwRotator": ["rotatorCCW.png", "CCWrotator_alt.png"],
-    "push": ["push.png"],
-    "slide": ["slide.png"],
-    "arrow": ["arrow.png"],
-    "enemy": ["enemy.png"],
-    "trash": ["trash.png"],
-    "wall": ["wall.png", "immobile.png"],
-    "note": ["note.png", "music.png"],
-    "orientator": ["orientator.png"],
-    "disabler": ["disabler.png"],
+    generator: ["generator.png"],
+    mover: ["mover.png"],
+    cwRotator: ["rotatorCW.png", "CWrotator_alt.png"],
+    ccwRotator: ["rotatorCCW.png", "CCWrotator_alt.png"],
+    push: ["push.png"],
+    slide: ["slide.png"],
+    arrow: ["arrow.png"],
+    enemy: ["enemy.png"],
+    trash: ["trash.png"],
+    wall: ["wall.png", "immobile.png"],
+    note: ["note.png", "music.png"],
+    orientator: ["orientator.png"],
+    disabler: ["disabler.png"],
 
-    "placable": ["BGPlacable.png", "0.png"],
-    "bg": ["BG.png", "BGDefault.png"],
+    placable: ["BGPlacable.png", "0.png"],
+    bg: ["BG.png", "BGDefault.png"],
 };
 const uiTextures = {
-    "play": "buttonPlay.png",
-    "pause": "buttonPause.png"
+    play: "buttonPlay.png",
+    pause: "buttonPause.png",
 };
 
 export class Textures {
@@ -36,21 +44,25 @@ export class Textures {
     constructor() {
         this.reload();
 
-        config.subscribe(c => {
-            if (c.texturePack != get(this.currentPack)?.name) this.use(c.texturePack) || (this._copyDefaultPack(), this.use(c.texturePack) || ERR());
+        config.subscribe((c) => {
+            if (c.texturePack != get(this.currentPack)?.name)
+                this.use(c.texturePack) ||
+                    (this._copyDefaultPack(), this.use(c.texturePack) || ERR());
         });
     }
 
     reload(copied = false) {
         let packs: string[] = [];
         try {
-            packs = readdirSync(appPath("textures"), { withFileTypes: true }).filter(f => f.isDirectory()).map(f => f.name);
-        }
-        catch {
+            packs = readdirSync(appPath("textures"), { withFileTypes: true })
+                .filter((f) => f.isDirectory())
+                .map((f) => f.name);
+        } catch {
             try {
                 mkdirSync(appPath("textures"), { recursive: true });
+            } catch (e) {
+                ERR();
             }
-            catch (e) { ERR() }
         }
 
         if (packs.length == 0) {
@@ -58,64 +70,81 @@ export class Textures {
 
             this._copyDefaultPack();
             this.reload(true);
-        }
-        else this.packPaths = packs.map(p => appPath(p));
+        } else this.packPaths = packs.map((p) => appPath(p));
     }
 
     private _copyDefaultPack() {
         try {
             mkdirSync(appPath("textures", "HighRes"));
+        } catch {
+            ERR();
         }
-        catch { ERR() }
 
         try {
-            const packPath = join(runningPath, "../../defaultPack");
+            const packPath = join(runningPath, "../../assets/defaultPack");
             const defaults = readdirSync(packPath);
-            tryAllContinue(defaults, file => {
+            tryAllContinue(defaults, (file) => {
                 const filePath = appPath("textures/HighRes", file);
                 writeFileSync(filePath, readFileSync(join(packPath, file)));
                 return true;
             }) || ERR();
+        } catch {
+            ERR();
         }
-        catch { ERR() }
     }
 
     load(name: string): TexturePack | false {
         const textures = {} as any;
 
-        for (const k of Object.keys(textureMapping) as (keyof typeof textureMapping)[]) {
-            if (!tryFirst(textureMapping[k], filename => {
-                const imageContent = safe(() => readFileSync(appPath("textures", name, filename)));
-                if (!imageContent[1]) return false;
+        for (const k of Object.keys(
+            textureMapping
+        ) as (keyof typeof textureMapping)[]) {
+            if (
+                !tryFirst(textureMapping[k], (filename) => {
+                    const imageContent = safe(() =>
+                        readFileSync(appPath("textures", name, filename))
+                    );
+                    if (!imageContent[1]) return false;
 
-                const blob = new Blob([new Uint8Array(imageContent[0]).buffer], { type: "image/png" });
-                const url = URL.createObjectURL(blob);
-                textures[k] = { blob, url };
+                    const blob = new Blob(
+                        [new Uint8Array(imageContent[0]).buffer],
+                        { type: "image/png" }
+                    );
+                    const url = URL.createObjectURL(blob);
+                    textures[k] = { blob, url };
 
-                return true;
-            })) return false;
+                    return true;
+                })
+            )
+                return false;
         }
 
         return {
             textures,
             ui: this.loadUI(name),
-            name
+            name,
         };
     }
 
     loadUI(name: string): TexturePack["ui"] {
         const ui = {} as any;
 
-        for (const k of Object.keys(uiTextures) as (keyof typeof uiTextures)[]) {
-            const imageContent = safe(() => readFileSync(appPath("textures", name, uiTextures[k])));
+        for (const k of Object.keys(
+            uiTextures
+        ) as (keyof typeof uiTextures)[]) {
+            const imageContent = safe(() =>
+                readFileSync(appPath("textures", name, uiTextures[k]))
+            );
             if (!imageContent[1]) continue;
 
             try {
-                const blob = new Blob([new Uint8Array(imageContent[0]).buffer], { type: "image/png" });
+                const blob = new Blob(
+                    [new Uint8Array(imageContent[0]).buffer],
+                    { type: "image/png" }
+                );
                 const url = URL.createObjectURL(blob);
                 ui[k] = { blob, url };
-            }
-            catch {}
+            } catch {}
         }
 
         return ui;
@@ -130,8 +159,7 @@ export class Textures {
             pack.ui = { ...defaultUI, ...pack.ui };
             this.currentPack.set(pack);
             return true;
-        }
-        else return false;
+        } else return false;
     }
 }
 
@@ -144,8 +172,8 @@ export interface TexturePack {
     };
 }
 export interface Texture {
-    blob: Blob,
-    url: string
+    blob: Blob;
+    url: string;
 }
 
 Textures.instance = new Textures();
