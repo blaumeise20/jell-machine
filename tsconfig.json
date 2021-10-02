@@ -2,10 +2,7 @@
     "compilerOptions": {
         "module": "esnext",
         "target": "esnext",
-        "lib": [
-            "esnext",
-            "DOM"
-        ],
+        "lib": ["esnext", "DOM"],
         "types": ["svelte", "@types/node"],
         "noImplicitAny": true,
         "noImplicitThis": false,
@@ -16,8 +13,8 @@
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "paths": {
-            "@core/*": ["./src/renderer/core/*"],
-            "@utils/*": ["./src/renderer/utils/*"]
+            "@core/*": ["./src/game/core/*"],
+            "@utils/*": ["./src/game/utils/*"]
         }
     },
     "exclude": ["node_modules/", "node_modules.nosync/"]

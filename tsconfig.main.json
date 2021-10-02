@@ -1,8 +1,9 @@
 {
-	"extends": "./tsconfig.json",
-	"compilerOptions": {
-		"module": "commonjs",
-		"outDir": "src/dist/"
-	},
-    "include": ["src/main"]
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "module": "commonjs",
+        "outDir": "src/dist/",
+        "sourceMap": false
+    },
+    "include": ["src/electron"]
 }
