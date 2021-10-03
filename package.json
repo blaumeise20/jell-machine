@@ -13,7 +13,7 @@
         "build": "run-s build:electron:*",
         "build:electron:mac": "npm run build:electron:base -- --icon=assets/app_icon.icns --platform=darwin",
         "build:electron:windows": "npm run build:electron:base -- --icon=assets/app_icon.ico --platform=win32",
-        "build:electron:base": "cross-env NODE_ENV=development && npm run build:webpack && npm run build:tsc && electron-packager . --prune --asar --overwrite --out=dist/ --ignore='^/(dist|src/(main|renderer))'",
+        "build:electron:base": "cross-env NODE_ENV=development && npm run build:webpack && npm run build:tsc && electron-packager . --prune --asar --overwrite --out=dist/ --ignore=\"^/(dist|src/(main|renderer))\"",
         "build:webpack": "cross-env NODE_ENV=production webpack",
         "build:tsc": "tsc -p tsconfig.main.json"
     },
