@@ -38,3 +38,7 @@ app.on("ready", () => {
             "file://" + join(__dirname, `../build/index.html#${appPath}`)
         );
 });
+
+app.on("window-all-closed", () => {
+    app.quit();
+});
