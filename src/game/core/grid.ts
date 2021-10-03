@@ -220,12 +220,17 @@ export class CellGrid {
     }
 
     fillCell(area: Size, type: CellType, direction: Direction) {
-        for (let x = 0; x < area.width; x++) {
+        let successful = true;
+        loop: for (let x = 0; x < area.width; x++) {
             for (let y = 0; y < area.height; y++) {
-                this.loadCell(Pos(x + area.left, y + area.bottom), type, direction);
+                if (!this.loadCell(Pos(x + area.left, y + area.bottom), type, direction)) {
+                    successful = false;
+                    break loop;
+                }
             }
         }
         this.reloadUI();
+        return successful;
     }
 
     fillTile(area: Size, tile: Tile) {
