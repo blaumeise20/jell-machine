@@ -8,6 +8,7 @@ export interface ExtensionContext {
     addSlot(...t: (CellType | CellType[])[]): void;
     createCellType(options: CellTypeOptions): CellType;
     registerLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void): void;
+    createTool(name: string, viewText: string, runTool: (grid: CellGrid) => void): void;
     on(event: string, fn: (...args: any[]) => void): void;
 }
 
@@ -19,6 +20,7 @@ export class Extension {
     data!: Record<string, any>;
     slots: Slot[] = [];
     levelCodes: [string, (parts: string[], grid: CellGrid) => false | void][] = [];
+    tools: Record<string, { name: string, viewText: string, runTool: (grid: CellGrid) => void }> = {};
 
     events: Record<string, ((...args: any[]) => void)[]> = {};
 
@@ -31,6 +33,7 @@ export class Extension {
     static extensions: Extension[] = [];
     static slots: Slot[] = [];
     static levelCodes: Record<string, (parts: string[], grid: CellGrid) => false | void> = {};
+    static tools: Record<string, { name: string, viewText: string, runTool: (grid: CellGrid) => void }> = {};
 
     static load(id: string, extensionLoader: ExtensionLoader) {
         const extension = new Extension();
@@ -50,6 +53,10 @@ export class Extension {
             registerLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void) {
                 extension.levelCodes.push([identification, parse]);
                 Extension.levelCodes[identification] = parse;
+            },
+            createTool(name: string, viewText: string, runTool: (grid: CellGrid) => void) {
+                extension.tools[name] = { name, viewText, runTool };
+                Extension.tools[name] = { name, viewText, runTool };
             },
             on(event: string, fn: (...args: any[]) => void) {
                 if (!extension.events[event]) extension.events[event] = [];

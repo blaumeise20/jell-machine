@@ -2,6 +2,7 @@
     import { clip } from "@utils/misc";
     import { openLevel } from "@core/grid";
     import { mainMenu, menuOpen, selection } from "../uiState";
+    import { Extension } from "@core/extensions";
 
     const copiedText = "Copied!";
     $: copyText = $selection ? "Copy selected area" : "Copy to Clipboard";
@@ -19,6 +20,7 @@
         position: fixed;
         z-index: 94;
     }
+
     .sidebar {
         border-left: 2px solid #404040;
         background-color: #363636;
@@ -31,12 +33,25 @@
         width: 300px;
         z-index: 95;
     }
+
     .actions {
         flex: 1;
         font: 400 17px/20px "Roboto", sans-serif;
         color: #fff;
         padding: 10px;
     }
+
+    .tools {
+        flex: 1;
+        font: 400 17px/20px "Roboto", sans-serif;
+        color: #fff;
+        padding: 10px;
+
+        button {
+            margin-bottom: 10px;
+        }
+    }
+
     .action_buttons {
         border-top: 2px solid #404040;
         padding: 1px 7px;
@@ -53,6 +68,17 @@
         <div class="actions">
             Tick Count: {$openLevel?.tickCount}
             <button on:click={() => $openLevel?.reset()}>Reset</button>
+
+        </div>
+        <div class="tools">
+            {#each Object.values(Extension.tools) as tool}
+                <button on:click={() => {
+                    if ($openLevel) {
+                        $menuOpen = false;
+                        tool.runTool($openLevel);
+                    }
+                }}>{tool.viewText}</button>
+            {/each}
         </div>
         <div class="action_buttons">
             <button on:click={() => $mainMenu = true}>Go to main screen</button>
