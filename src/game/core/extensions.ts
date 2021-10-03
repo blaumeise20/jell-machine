@@ -83,8 +83,6 @@ export class Extension {
             });
         });
 
-        console.log(this.extensions);
-
         return result.sort((a, b) => a[0].options.updateOrder! - b[0].options.updateOrder!);
     }
 }

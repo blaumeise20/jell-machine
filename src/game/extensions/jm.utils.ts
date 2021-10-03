@@ -50,7 +50,6 @@ function canOpen(grid: CellGrid) {
 
     const core_ = Extension.get("jm.core");
     if (!core_) return;
-    console.log("test");
     const cell_trash = core_.data.trash;
     const cell_wall = core_.data.wall;
     const cell_generator = core_.data.generator;
