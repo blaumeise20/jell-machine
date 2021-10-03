@@ -3,3 +3,9 @@ node_modules.nosync
 dist/
 src/dist/
 src/build/
+
+.DS_STORE
+
+.env
+.env.local
+.env.development

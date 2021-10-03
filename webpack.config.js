@@ -1,13 +1,16 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { rmdirSync } = require("fs");
+const { rmSync, existsSync, mkdirSync } = require("fs");
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+require("dotenv").config();
 
 const prod = process.env.NODE_ENV == "production";
 
-if (prod) rmdirSync("./src/build", { recursive: true });
+if (existsSync("./src/build")) rmSync("./src/build", { recursive: true });
+
+mkdirSync("./src/build");
 
 /** @type {webpack.Configuration} */
 module.exports = {
@@ -15,14 +18,14 @@ module.exports = {
     target: "electron-renderer",
     entry: {
         main: {
-            import: ["./src/renderer/index.ts"],
-            filename: "main.[contenthash].js"
+            import: ["./src/game/index.ts"],
+            filename: "main.[contenthash].js",
         },
     },
     devtool: prod ? "source-map" : "inline-source-map",
     devServer: {
-        port: process.env.ELECTRON_WEBPACK_DEV_PORT,
-        contentBase: "./src/build"
+        port: process.env.ELECTRON_WEBPACK_DEV_PORT || 6357,
+        contentBase: "./src/build",
     },
     output: {
         path: path.resolve(__dirname, "src/build"),
@@ -34,8 +37,8 @@ module.exports = {
                 use: {
                     loader: "ts-loader",
                     options: {
-                        configFile: "tsconfig.webpack.json"
-                    }
+                        configFile: "tsconfig.webpack.json",
+                    },
                 },
                 exclude: /node_modules/,
             },
@@ -46,9 +49,9 @@ module.exports = {
                     options: {
                         preprocess: require("./svelte.config").preprocess,
                         sourceMap: !prod,
-                        emitCss: true
-                    }
-                }
+                        emitCss: true,
+                    },
+                },
             },
             {
                 test: /\.scss$/,
@@ -57,18 +60,18 @@ module.exports = {
                     {
                         loader: "css-loader",
                         options: {
-                            sourceMap: !prod
-                        }
+                            sourceMap: !prod,
+                        },
                     },
                     {
                         loader: "postcss-loader",
                         options: {
                             postcssOptions: {
                                 plugins: [require("autoprefixer")()],
-                                sourceMap: !prod
+                                sourceMap: !prod,
                             },
-                            sourceMap: !prod
-                        }
+                            sourceMap: !prod,
+                        },
                     },
                     {
                         loader: "sass-loader",
@@ -78,13 +81,13 @@ module.exports = {
                                 sourceMap: !prod,
                                 resolve: {
                                     alias: {
-                                        style: "./src/style/"
+                                        style: "./src/style/",
                                     },
                                 },
-                            }
-                        }
-                    }
-                ]
+                            },
+                        },
+                    },
+                ],
             },
             {
                 test: /\.css$/,
@@ -93,8 +96,8 @@ module.exports = {
                     {
                         loader: "css-loader",
                         options: {
-                            sourceMap: !prod
-                        }
+                            sourceMap: !prod,
+                        },
                     },
                     {
                         loader: "postcss-loader",
@@ -103,43 +106,43 @@ module.exports = {
                                 sourceMap: !prod,
                                 plugins: [require("autoprefixer")()],
                             },
-                            sourceMap: !prod
-                        }
+                            sourceMap: !prod,
+                        },
                     },
-                ]
+                ],
             },
             {
                 test: /\.(woff2?|png|svg|jpe?g)$/,
                 loader: "file-loader",
                 options: {
-                    outputPath: "static"
-                }
-            }
+                    outputPath: "static",
+                },
+            },
         ],
     },
     plugins: [
         new MiniCssExtractPlugin({
             filename: "[name].[contenthash].css",
-            chunkFilename: "[name].[contenthash].css"
+            chunkFilename: "[name].[contenthash].css",
         }),
         new HtmlWebpackPlugin({
-            template: "./src/public/index.html"
+            template: "./src/public/index.html",
         }),
         new webpack.ExternalsPlugin("commonjs", [
             "electron",
             "@electron/remote",
             "path",
             "fs",
-        ])
+        ]),
     ],
     resolve: {
         extensions: [".ts", ".js", ".tsx", ".svelte"],
         alias: {
-            "@core": path.resolve(__dirname, "./src/renderer/core/"),
-            "@utils": path.resolve(__dirname, "./src/renderer/utils/"),
-        }
+            "@core": path.resolve(__dirname, "./src/game/core/"),
+            "@utils": path.resolve(__dirname, "./src/game/utils/"),
+        },
     },
     node: {
-        __dirname: false
-    }
+        __dirname: false,
+    },
 };
