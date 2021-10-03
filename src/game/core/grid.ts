@@ -8,7 +8,7 @@ import { Extension } from "@core/extensions";
 
 // yes i'm sorry so many casts
 const context = (require as any).context("../extensions", true, /\.ts$/) as any;
-(context.keys() as string[]).forEach(key => Extension.load(key.substr(-3), context(key).load));
+(context.keys() as string[]).forEach(key => Extension.load(key.substring(2, key.length - 3), context(key).load));
 
 import arr from "create-arr";
 import { doStep } from "./cellUpdates";
