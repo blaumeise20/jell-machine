@@ -115,6 +115,7 @@
 
     export let selectionArea: Size | null = null;
     $: selectionArea = showSelection ? selectionSize : null;
+    $: grid.selectedArea = showSelection ? selectionSize : null;
 
     let selection: CellGrid | null = null;
     $: selectionPos = selection ? Pos(

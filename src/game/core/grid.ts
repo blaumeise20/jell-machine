@@ -34,6 +34,7 @@ export class CellGrid {
     readonly cellList: Cell[] = [];
     initial = true;
     tickCount = 0;
+    selectedArea: Size | null = null;
 
     private constructor() {}
 
