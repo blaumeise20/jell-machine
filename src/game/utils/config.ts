@@ -14,11 +14,12 @@ export class Config {
         const config = writable<any>({});
         const file = safe(() => JSON.parse(readFileSync(appPath("config.json")).toString()), Config.default);
         if (file[1]) file[0] = { ...Config.default, ...file[0] };
-        config.set(file[0]);
 
         config.subscribe(c => {
             safe(() => writeFileSync(appPath("config.json"), JSON.stringify(c)));
         });
+
+        config.set(file[0]);
 
         Config.$ = config;
     }

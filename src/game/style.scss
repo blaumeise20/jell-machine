@@ -97,7 +97,7 @@ button.center {
     height: 20px;
 }
 
-input {
+input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
     appearance: none;
     background-color: #303030;
     border: none;
