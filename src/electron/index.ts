@@ -23,10 +23,10 @@ app.on("ready", () => {
         webPreferences: {
             nodeIntegration: true,
         },
-        width: 800,
-        height: 600,
+        fullscreen: true,
         titleBarStyle: "hidden",
     });
+
     if (dev)
         window.loadURL(
             `http://localhost:${

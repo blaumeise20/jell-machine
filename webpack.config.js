@@ -1,14 +1,13 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { rmSync, existsSync, mkdirSync } = require("fs");
-const CopyPlugin = require("copy-webpack-plugin");
+const { rmdirSync, existsSync, mkdirSync } = require("fs");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 require("dotenv").config();
 
 const prod = process.env.NODE_ENV == "production";
 
-if (existsSync("./src/build")) rmSync("./src/build", { recursive: true });
+if (existsSync("./src/build")) rmdirSync("./src/build", { recursive: true });
 
 mkdirSync("./src/build");
 
