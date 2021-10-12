@@ -1,4 +1,4 @@
-import { onMount } from "svelte/internal";
+import { onMount } from "svelte";
 
 export class Animator {
     private frame = -1;

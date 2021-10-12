@@ -14,7 +14,7 @@ mkdirSync("./src/build");
 /** @type {webpack.Configuration} */
 module.exports = {
     mode: prod ? "production" : "development",
-    target: "electron-renderer",
+    target: ["electron-renderer", "web"],
     entry: {
         main: {
             import: ["./src/game/index.ts"],

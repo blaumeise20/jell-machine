@@ -147,25 +147,29 @@
     on("arrowright").down(() => {
         if (showSelection) {
             grid.move(selectionSize, Direction.Right);
-            selectionSize = selectionSize.move(Direction.Right);
+            selectionStart = selectionStart!.mi(Direction.Right);
+            selectionCurrent = selectionCurrent!.mi(Direction.Right);
         }
     });
     on("arrowdown").down(() => {
         if (showSelection) {
             grid.move(selectionSize, Direction.Down);
-            selectionSize = selectionSize.move(Direction.Down);
+            selectionStart = selectionStart!.mi(Direction.Down);
+            selectionCurrent = selectionCurrent!.mi(Direction.Down);
         }
     });
     on("arrowleft").down(() => {
         if (showSelection) {
             grid.move(selectionSize, Direction.Left);
-            selectionSize = selectionSize.move(Direction.Left);
+            selectionStart = selectionStart!.mi(Direction.Left);
+            selectionCurrent = selectionCurrent!.mi(Direction.Left);
         }
     });
     on("arrowup").down(() => {
         if (showSelection) {
             grid.move(selectionSize, Direction.Up);
-            selectionSize = selectionSize.move(Direction.Up);
+            selectionStart = selectionStart!.mi(Direction.Up);
+            selectionCurrent = selectionCurrent!.mi(Direction.Up);
         }
     });
 
