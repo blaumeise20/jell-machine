@@ -47,7 +47,8 @@ export class CellGrid {
     loadCell(pos: Position, type: CellType, direction: Direction) {
         if (this.isInfinite || this.size.contains(pos)) {
             this.cells.get(pos)?.rm();
-            return this.cells.set(pos, type.newCell(this, pos, direction, !this.initial)), true;
+            this.cells.set(pos, type.newCell(this, pos, direction, !this.initial));
+            return true;
         }
         return false;
     }
