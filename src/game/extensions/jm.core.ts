@@ -155,7 +155,7 @@ export function load(ctx: ExtensionContext) {
         return Object.values(cells).find(t => t.data?.v3id == id);
     }
 
-    ctx.registerLevelCode("V1", (parts, grid) => {
+    ctx.createLevelCode("V1", (parts, grid) => {
         grid.size = new Size(int(parts[1]), int(parts[2]));
 
         // placable stuff
@@ -187,7 +187,7 @@ export function load(ctx: ExtensionContext) {
         grid.name = parts[6]?.trim() || "";
     });
 
-    ctx.registerLevelCode("V3", (parts, grid) => {
+    ctx.createLevelCode("V3", (parts, grid) => {
         grid.size = new Size(decodeBase74(parts[1]), decodeBase74(parts[2]));
 
         if (parts[1][0] == "0") grid.isInfinite = true;

@@ -7,7 +7,7 @@ import { Slot } from "./slot";
 export interface ExtensionContext {
     addSlot(...t: (CellType | CellType[])[]): void;
     createCellType(options: CellTypeOptions): CellType;
-    registerLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void): void;
+    createLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void): void;
     createTool(name: string, viewText: string, runTool: (grid: CellGrid) => void): void;
     on(event: string, fn: (...args: any[]) => void): void;
 }
@@ -50,7 +50,7 @@ export class Extension {
                 extension.slots.push(slot);
                 Extension.slots.push(slot);
             },
-            registerLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void) {
+            createLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void) {
                 extension.levelCodes.push([identification, parse]);
                 Extension.levelCodes[identification] = parse;
             },
