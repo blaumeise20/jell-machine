@@ -71,10 +71,15 @@ export class Position {
      * @returns A new position moved by specified offset.
      */
     mi(offset: Position): this;
+    mi(dir: Direction): this;
     mi(offsetX: number, offsetY: number): this;
     mi(offsetX: number | Position, offsetY?: number) {
-        if (typeof offsetX == "number") {
-            return new Position(this.x + offsetX, this.y + offsetY!);
+        if (typeof offsetY == "number") {
+            return new Position(this.x + (offsetX as number), this.y + offsetY);
+        }
+        else if (typeof offsetX == "number") {
+            const off = Off[offsetX];
+            return new Position(this.x + off.x, this.y + off.y);
         }
         else {
             return new Position(this.x + offsetX.x, this.y + offsetX.y);
