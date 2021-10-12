@@ -1,5 +1,5 @@
 import { ExtensionContext } from "@core/extensions";
-import { Off, Pos } from "@utils/positions";
+import { Pos } from "@utils/positions";
 import { Cell, Direction } from "@core/cell";
 import { UpdateType } from "@core/cellUpdates";
 import { Size } from "@utils/size";
@@ -11,12 +11,12 @@ export function load(ctx: ExtensionContext) {
     const generator = ctx.createCellType({
         behavior: class GeneratorCell extends Cell {
             update() {
-                const source = this.pos.mi(Off[(this.direction + 2) % 4]);
+                const source = this.pos.mi((this.direction + 2) % 4);
 
                 const sourceCell = this.grid.cells.get(source);
                 if (!sourceCell) return;
 
-                const target = this.pos.mi(Off[this.direction]);
+                const target = this.pos.mi(this.direction);
                 if (!this.grid.size.contains(target)) return;
 
                 const targetCell = this.grid.cells.get(target);
@@ -56,10 +56,10 @@ export function load(ctx: ExtensionContext) {
             update() {
                 const rotation = this.type.data.rotation;
 
-                this.grid.cells.get(this.pos.mi(Off[Direction.Right]))?.rotate(rotation);
-                this.grid.cells.get(this.pos.mi(Off[Direction.Down]))?.rotate(rotation);
-                this.grid.cells.get(this.pos.mi(Off[Direction.Left]))?.rotate(rotation);
-                this.grid.cells.get(this.pos.mi(Off[Direction.Up]))?.rotate(rotation);
+                this.grid.cells.get(this.pos.mi(Direction.Right))?.rotate(rotation);
+                this.grid.cells.get(this.pos.mi(Direction.Down))?.rotate(rotation);
+                this.grid.cells.get(this.pos.mi(Direction.Left))?.rotate(rotation);
+                this.grid.cells.get(this.pos.mi(Direction.Up))?.rotate(rotation);
             }
         },
         textureName: "cwRotator",

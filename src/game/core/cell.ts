@@ -1,5 +1,5 @@
 import { rotateBy } from "../utils/misc";
-import { Off, Position } from "../utils/positions";
+import type { Position } from "../utils/positions";
 import type { UpdateType } from "./cellUpdates";
 import { CellGrid } from "./grid";
 
@@ -63,7 +63,7 @@ export class Cell {
     push(dir: Direction, bias: number): PushResult {
         if (bias < 1) return false;
 
-        const target = this.pos.mi(Off[dir]);
+        const target = this.pos.mi(dir);
 
         if (!this.grid.isInfinite && !this.grid.size.contains(target)) return false;
 

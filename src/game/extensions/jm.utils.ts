@@ -2,17 +2,17 @@ import { Cell, Direction } from "@core/cell";
 import { UpdateType } from "@core/cellUpdates";
 import { Extension, ExtensionContext } from "@core/extensions";
 import { CellGrid } from "@core/grid";
-import { Off, Pos } from "@utils/positions";
+import { Pos } from "@utils/positions";
 import { Size } from "@utils/size";
 
 export function load(ctx: ExtensionContext) {
     const orientator = ctx.createCellType({
         behavior: class OrientatorCell extends Cell {
             update() {
-                this.grid.cells.get(this.pos.mi(Off[Direction.Right]))?.setRotation(this.direction);
-                this.grid.cells.get(this.pos.mi(Off[Direction.Down]))?.setRotation(this.direction);
-                this.grid.cells.get(this.pos.mi(Off[Direction.Left]))?.setRotation(this.direction);
-                this.grid.cells.get(this.pos.mi(Off[Direction.Up]))?.setRotation(this.direction);
+                this.grid.cells.get(this.pos.mi(Direction.Right))?.setRotation(this.direction);
+                this.grid.cells.get(this.pos.mi(Direction.Down))?.setRotation(this.direction);
+                this.grid.cells.get(this.pos.mi(Direction.Left))?.setRotation(this.direction);
+                this.grid.cells.get(this.pos.mi(Direction.Up))?.setRotation(this.direction);
             }
 
             rotate() {}
@@ -26,10 +26,10 @@ export function load(ctx: ExtensionContext) {
     const disabler = ctx.createCellType({
         behavior: class DisablerCell extends Cell {
             update() {
-                this.grid.cells.get(this.pos.mi(Off[Direction.Right]))?.disable();
-                this.grid.cells.get(this.pos.mi(Off[Direction.Down]))?.disable();
-                this.grid.cells.get(this.pos.mi(Off[Direction.Left]))?.disable();
-                this.grid.cells.get(this.pos.mi(Off[Direction.Up]))?.disable();
+                this.grid.cells.get(this.pos.mi(Direction.Right))?.disable();
+                this.grid.cells.get(this.pos.mi(Direction.Down))?.disable();
+                this.grid.cells.get(this.pos.mi(Direction.Left))?.disable();
+                this.grid.cells.get(this.pos.mi(Direction.Up))?.disable();
             }
 
             disable() {}
