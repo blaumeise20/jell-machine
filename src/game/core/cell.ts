@@ -153,6 +153,32 @@ export class CellType {
         CellType.types.push(t);
         return t;
     }
+
+    static flipOneWay = (data: CellData, horizontal: boolean) => {
+        const [type, dir] = data;
+        return [type, horizontal ?
+            dir == Direction.Right ? Direction.Left
+                : dir == Direction.Left ? Direction.Right : dir
+            : dir == Direction.Up ? Direction.Down
+                : dir == Direction.Down ? Direction.Up : dir
+        ] as CellData;
+    }
+    static flipTwoWay = (data: CellData, horizontal: boolean) => {
+        const horizontalTable = {
+            [Direction.Right]: Direction.Down,
+            [Direction.Down]: Direction.Right,
+            [Direction.Left]: Direction.Up,
+            [Direction.Up]: Direction.Left,
+        };
+        const verticalTable = {
+            [Direction.Right]: Direction.Up,
+            [Direction.Down]: Direction.Left,
+            [Direction.Left]: Direction.Down,
+            [Direction.Up]: Direction.Right,
+        };
+        const [type, dir] = data;
+        return [type, horizontal ? horizontalTable[dir] : verticalTable[dir]] as CellData;
+    }
 }
 
 export interface CellTypeOptions {
