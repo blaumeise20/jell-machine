@@ -46,34 +46,13 @@ export class Position {
     constructor(public x: number, public y: number) { }
 
     /**
-     * Moves the current position by a specified offset.
-     * @param offsetX
-     * @param offsetY
-     * @returns Itself
-     */
-    move(offset: Position): this;
-    move(offsetX: number, offsetY: number): this;
-    move(offsetX: number | Position, offsetY?: number) {
-        if (typeof offsetX == "number") {
-            this.x += offsetX;
-            this.y += offsetY!;
-        }
-        else {
-            this.x += offsetX.x,
-            this.y += offsetX.x;
-        }
-        return this;
-    }
-    /**
      * Clones the current position by the specified offset.
-     * @param offsetX
-     * @param offsetY
      * @returns A new position moved by specified offset.
      */
-    mi(offset: Position): this;
-    mi(dir: Direction): this;
-    mi(offsetX: number, offsetY: number): this;
-    mi(offsetX: number | Position, offsetY?: number) {
+    public mi(dir: Direction): this;
+    public mi(offset: Position): this;
+    public mi(offsetX: number, offsetY: number): this;
+    public mi(offsetX: number | Position, offsetY?: number) {
         if (typeof offsetY == "number") {
             return new Position(this.x + (offsetX as number), this.y + offsetY);
         }
@@ -90,14 +69,14 @@ export class Position {
      * Clones the current point.
      * @returns New position.
      */
-    c() {
+    public c() {
         return new Position(this.x, this.y);
     }
 
     /**
      * Creates string representation of point.
      */
-    toString() {
+    public toString() {
         return this.x + "," + this.y;
     }
 }
@@ -108,7 +87,7 @@ export class Position {
  * @param y Y coordinate.
  * @returns A `Position` object.
  */
-export const Pos = (x: number, y: number) => new Position(x, y);
+export function Pos(x: number, y: number): Position { return new Position(x, y); }
 export const Off = {
     [Direction.Right]: Pos( 1,  0),
     [Direction.Down ]: Pos( 0, -1),
