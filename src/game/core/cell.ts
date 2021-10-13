@@ -65,22 +65,37 @@ export class Cell {
         this.pos = pos;
     }
 
+    getCellTo(dir: Direction): Movement | null {
+        const pos = this.pos.mi(dir);
+        if (!this.grid.isInfinite && !this.grid.size.contains(pos)) return null;
+        const cell = this.grid.cells.get(pos);
+        if (!cell) return [pos, dir];
+        return cell.getPos(dir);
+    }
+
+    getPos(dir: Direction): Movement | null {
+        return [this.pos, dir];
+    }
+
     push(dir: Direction, bias: number): PushResult {
         if (bias < 1) return false;
 
-        const target = this.pos.mi(dir);
+        const target = this.getCellTo(dir);
+        if (!target) return false;
 
-        if (!this.grid.isInfinite && !this.grid.size.contains(target)) return false;
+        const [pos, pushDir] = target;
 
-        const tc = this.grid.cells.get(target);
+        const tc = this.grid.cells.get(pos);
         if (tc == null) {
-            this.setPosition(target);
+            this.setPosition(pos);
+            if (dir != pushDir) this.direction = (this.direction + (pushDir - dir) + 4) % 4;
             return true;
         }
 
-        const res = tc.push(dir, bias);
+        const res = tc.push(pushDir, bias);
         if (res) {
-            this.setPosition(target);
+            this.setPosition(pos);
+            if (dir != pushDir) this.direction = (this.direction + (pushDir - dir) + 4) % 4;
             return true;
         }
         if (res === null) {
@@ -111,7 +126,7 @@ export enum Direction {
 }
 
 export type PushResult = boolean | null;
-
+export type Movement = [Position, Direction];
 
 export class CellType {
     static types: CellType[] = [];
