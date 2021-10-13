@@ -37,8 +37,10 @@ export function doStep(grid: CellGrid) {
                     }
 
                     while (cells) {
-                        if (!cells.e.deleted && !cells.e.disabled)
+                        if (!cells.e.deleted && !cells.e.disabled && !cells.e.updated) {
                             cells.e.update();
+                            cells.e.updatedIn = grid.tickCount;
+                        }
                         cells = cells.n;
                     }
                 }
