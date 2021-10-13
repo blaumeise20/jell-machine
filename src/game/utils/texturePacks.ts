@@ -6,7 +6,6 @@ import {
     ERR,
     runningPath,
     safe,
-    tryAll,
     tryAllContinue,
     tryFirst,
 } from "./misc";
@@ -26,6 +25,10 @@ const textureMapping = {
     note: ["note.png", "music.png"],
     orientator: ["orientator.png"],
     disabler: ["disabler.png"],
+    redirector: ["redirector.png"],
+    tunnel: ["tunnel.png"],
+    crossway: ["crossway.png"],
+    crossdirector: ["crossdirector.png"],
 
     placable: ["BGPlacable.png", "0.png"],
     bg: ["BG.png", "BGDefault.png"],
