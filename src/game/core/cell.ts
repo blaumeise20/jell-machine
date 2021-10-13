@@ -11,6 +11,10 @@ export class Cell {
     public get disabled(): boolean {
         return this.disabledIn == this.grid.tickCount;
     }
+    public updatedIn = -1;
+    public get updated(): boolean {
+        return this.updatedIn == this.grid.tickCount;
+    }
     id = cellid++;
     readonly initialPosition: Position;
     readonly initialDirection: Direction;
@@ -51,6 +55,7 @@ export class Cell {
         }
 
         this.disabledIn = -1;
+        this.updatedIn = -1;
     }
 
     setPosition(pos: Position) {
