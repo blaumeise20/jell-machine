@@ -122,12 +122,18 @@
         Math.round(mouseCell.x - selection.size.width / 2),
         Math.round(mouseCell.y - selection.size.height / 2)
     ) : Pos(0, 0);
+    let lastSelection: CellGrid | null = selection;
+    $: if (selection) lastSelection = selection;
 
     on("x").down(() => {
         if (showSelection) selection = grid.extract(selectionSize, true), showSelection = false;
     });
     on("c").down(() => {
         if (showSelection) selection = grid.extract(selectionSize), showSelection = false;
+    });
+
+    on("v").when(() => lastSelection && !selection).down(() => {
+        selection = lastSelection;
     });
 
     on("q").when(() => selection).down(() => {
