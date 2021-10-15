@@ -16,13 +16,14 @@ export function load(ctx: ExtensionContext) {
                 const sourceCell = this.grid.cells.get(source);
                 if (!sourceCell) return;
 
-                const target = this.pos.mi(this.direction);
-                if (!this.grid.size.contains(target)) return;
+                const target = this.getCellTo(this.direction);
+                if (!target) return;
+                const [targetPos, targetDir] = target;
 
-                const targetCell = this.grid.cells.get(target);
-                if (targetCell) if (!targetCell.push(this.direction, 1)) return;
+                const targetCell = this.grid.cells.get(targetPos);
+                if (targetCell) if (!targetCell.push(targetDir, 1)) return;
 
-                this.grid.loadCell(target, sourceCell.type, sourceCell.direction);
+                this.grid.loadCell(targetPos, sourceCell.type, sourceCell.direction + targetDir - this.direction);
             }
         },
         textureName: "generator",
@@ -56,10 +57,14 @@ export function load(ctx: ExtensionContext) {
             update() {
                 const rotation = this.type.data.rotation;
 
-                this.grid.cells.get(this.pos.mi(Direction.Right))?.rotate(rotation);
-                this.grid.cells.get(this.pos.mi(Direction.Down))?.rotate(rotation);
-                this.grid.cells.get(this.pos.mi(Direction.Left))?.rotate(rotation);
-                this.grid.cells.get(this.pos.mi(Direction.Up))?.rotate(rotation);
+                const valRight = this.getCellTo(Direction.Right);
+                if (valRight) this.grid.cells.get(valRight[0])?.rotate(rotation);
+                const valDown = this.getCellTo(Direction.Down);
+                if (valDown) this.grid.cells.get(valDown[0])?.rotate(rotation);
+                const valLeft = this.getCellTo(Direction.Left);
+                if (valLeft) this.grid.cells.get(valLeft[0])?.rotate(rotation);
+                const valUp = this.getCellTo(Direction.Up);
+                if (valUp) this.grid.cells.get(valUp[0])?.rotate(rotation);
             }
         },
         textureName: "cwRotator",
