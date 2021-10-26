@@ -3,7 +3,7 @@ import { CellType } from "./cell";
 
 export class Slot {
     items: CellType[];
-    index: number;
+    index: number = 0;
 
     get currentItem() {
         return this.items[this.index];
@@ -11,7 +11,6 @@ export class Slot {
 
     constructor(items: CellType[]) {
         this.items = items;
-        this.index = 0;
     }
 
     next() {
