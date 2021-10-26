@@ -141,6 +141,12 @@ export class CellType {
         return this.options.behavior;
     }
 
+    // onFlip(fn: (cell: CellData, horizontal: boolean) => CellData) {
+    //     this.options.flip = fn;
+    //     return this;
+    // }
+
+
     flip(cell: Cell, horizontal: boolean): CellData {
         if (this.options.flip) return this.options.flip([cell.type, cell.direction], horizontal);
         else {
@@ -159,7 +165,7 @@ export class CellType {
         else return other.options;
     }
 
-    newCell(grid: CellGrid, pos: Position, dir: Direction, generated: boolean) {
+    _newCell(grid: CellGrid, pos: Position, dir: Direction, generated: boolean) {
         return new this.behavior(pos, this, dir, grid, generated);
     }
 
