@@ -4,19 +4,16 @@ import type { UpdateType } from "./cellUpdates";
 import type { CellGrid } from "./grid";
 import { Slot } from "./slot";
 
-export interface ExtensionContext {
-    addSlot(...t: (CellType | CellType[])[]): void;
-    createCellType(options: CellTypeOptions): CellType;
-    createLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void): void;
-    createTool(name: string, viewText: string, runTool: (grid: CellGrid) => void): void;
-    on(event: string, fn: (...args: any[]) => void): void;
-}
+/**
+ * An unique identifier for every item (tools, cell types, etc.) in the game.
+ */
+export type ItemIdentifier = string;
 
 export type ExtensionLoader = (context: ExtensionContext) => void | Record<string, any>;
 
 export class Extension {
-    cells: CellType[] = [];
     id!: string;
+    cells: CellType[] = [];
     data!: Record<string, any>;
     slots: Slot[] = [];
     levelCodes: [string, (parts: string[], grid: CellGrid) => false | void][] = [];
@@ -39,30 +36,7 @@ export class Extension {
         const extension = new Extension();
         extension.id = id;
 
-        extension.data = extensionLoader({
-            createCellType(options: CellTypeOptions) {
-                const cellType = CellType.create(options);
-                extension.cells.push(cellType);
-                return cellType;
-            },
-            addSlot(...t: (CellType | CellType[])[]) {
-                const slot = new Slot(t.flatMap(t => Array.isArray(t) ? t : [t]));
-                extension.slots.push(slot);
-                Extension.slots.push(slot);
-            },
-            createLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void) {
-                extension.levelCodes.push([identification, parse]);
-                Extension.levelCodes[identification] = parse;
-            },
-            createTool(name: string, viewText: string, runTool: (grid: CellGrid) => void) {
-                extension.tools[name] = { name, viewText, runTool };
-                Extension.tools[name] = { name, viewText, runTool };
-            },
-            on(event: string, fn: (...args: any[]) => void) {
-                if (!extension.events[event]) extension.events[event] = [];
-                extension.events[event].push(fn);
-            }
-        }) || {};
+        extension.data = extensionLoader(new ExtensionContext(extension)) || {};
 
         this.extensions.push(extension);
         return extension;
@@ -84,5 +58,38 @@ export class Extension {
         });
 
         return result.sort((a, b) => a[0].options.updateOrder! - b[0].options.updateOrder!);
+    }
+}
+
+export class ExtensionContext {
+    constructor(public extension: Extension) {
+
+    }
+
+    createCellType(options: CellTypeOptions): CellType {
+        const cellType = CellType.create(options);
+        this.extension.cells.push(cellType);
+        return cellType;
+    }
+
+    addSlot(...t: (CellType | CellType[])[]): void {
+        const slot = new Slot(t.flatMap(t => Array.isArray(t) ? t : [t]));
+        this.extension.slots.push(slot);
+        Extension.slots.push(slot);
+    }
+
+    createLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void): void {
+        this.extension.levelCodes.push([identification, parse]);
+        Extension.levelCodes[identification] = parse;
+    }
+
+    createTool(name: string, viewText: string, runTool: (grid: CellGrid) => void): void {
+        this.extension.tools[name] = { name, viewText, runTool };
+        Extension.tools[name] = { name, viewText, runTool };
+    }
+
+    on(event: string, fn: (...args: any[]) => void): void {
+        if (!this.extension.events[event]) this.extension.events[event] = [];
+        this.extension.events[event].push(fn);
     }
 }
