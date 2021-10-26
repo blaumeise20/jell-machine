@@ -102,9 +102,15 @@ export class CellGrid {
         return grid;
     }
 
-    insert(selection: CellGrid, selectionPos: Position) {
+    insert(selection: CellGrid, selectionPos: Position, smartMerge: boolean) {
         for (const cell of selection.cellList) {
-            this.loadCell(cell.pos.mi(selectionPos), cell.type, cell.direction);
+            const newPos = Pos(cell.pos.x + selectionPos.x, cell.pos.y + selectionPos.y);
+            const cellAt = this.cells.get(newPos);
+            if (cellAt && smartMerge) {
+                const newData = cellAt.type.merge(cellAt, cell);
+                this.loadCell(newPos, newData[0], newData[1]);
+            }
+            else this.loadCell(cell.pos.mi(selectionPos), cell.type, cell.direction);
         }
         this.reloadUI();
     }

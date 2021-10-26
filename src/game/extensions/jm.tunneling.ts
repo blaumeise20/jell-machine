@@ -32,6 +32,10 @@ export function load(ctx: ExtensionContext) {
         },
         textureName: "tunnel",
         flip: d => d,
+        merge: (a, b) => {
+            if (b[0] == tunnel && a[1] % 2 != b[1] % 2) return [crossway, Direction.Right];
+            return b;
+        },
     });
 
     const crossway = ctx.createCellType({

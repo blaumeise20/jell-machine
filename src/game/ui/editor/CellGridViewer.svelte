@@ -210,7 +210,7 @@
 
     function mousedownEvent(e: MouseEvent) {
         if (selection) {
-            if (e.button != 2) grid.insert(selection, selectionPos);
+            if (e.button != 2) grid.insert(selection, selectionPos, keys.ctrl);
             selection = null;
             placeCell = false;
         }
