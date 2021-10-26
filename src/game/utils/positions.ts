@@ -3,39 +3,49 @@ import { Direction } from "../core/cell";
 /**
  * A `Map` for indexing with `Position`s.
  */
-export class PosMap<T, X = undefined> extends Map<Position, T> {
-    constructor(private getDefault?: X) {
-        super();
-    }
+export class PosMap<T, X = undefined> {
+    private store: Record<string, T> = {};
 
+    constructor(private getDefault?: X) {}
+
+    clear(): void {
+        this.store = {};
+    }
     delete(key: Position): boolean {
-        return super.delete(key.toString() as any);
+        return delete this.store[`${key.x},${key.y}`];
     }
-    forEach(callbackfn: (value: T, key: Position, map: PosMap<T>) => void, thisArg?: any): void {
-        super.forEach(function (value, key, map) {
-            callbackfn.call(this, value, key, map);
-        }, thisArg);
+    forEach(callbackfn: (value: T, key: Position, map: PosMap<T, X>) => void, thisArg?: any): void {
+        for (const [key, value] of Object.entries(this.store)) {
+            callbackfn.call(thisArg, value, Pos(...(JSON.parse(`[${key}]`) as [number, number])), this);
+        }
     }
-    // @ts-ignore
     get(key: Position): T | X {
-        const val = super.get(key.toString() as any);
+        const val = this.store[`${key.x},${key.y}`];
         // @ts-ignore
         if (val === undefined) return this.getDefault;
         return val;
     }
     has(key: Position): boolean {
-        return super.has(key.toString() as any);
+        return this.store[`${key.x},${key.y}`] !== undefined;
     }
     set(key: Position, value: T | X): this {
-        if (value === this.getDefault) super.delete(key);
-        else super.set(key.toString() as any, value as any);
+        if (value === this.getDefault) delete this.store[`${key.x},${key.y}`];
+        else this.store[`${key.x},${key.y}`] = value as any;
         return this;
     }
 
+    *values(): IterableIterator<T> {
+        for (const value of Object.values(this.store))
+            yield value;
+    }
+
     *entries(): IterableIterator<[Position, T]> {
-        for (const [key, value] of super.entries()) {
+        for (const [key, value] of Object.entries(this.store))
             yield [Pos(...(JSON.parse(`[${key}]`) as [number, number])), value];
-        }
+    }
+
+    get size() {
+        return Object.values(this.store).length;
     }
 }
 
