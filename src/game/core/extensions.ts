@@ -29,7 +29,6 @@ export class Extension {
     }
 
     static extensions: Extension[] = [];
-    static slots: Slot[] = [];
     static levelCodes: Record<string, (parts: string[], grid: CellGrid) => false | void> = {};
     static tools: Record<string, { name: string, viewText: string, runTool: (grid: CellGrid) => void }> = {};
 
@@ -117,18 +116,13 @@ export class ExtensionContext {
     addSlot(...t: (CellType | CellType[])[]): void {
         const slot = new Slot(t.flatMap(t => Array.isArray(t) ? t : [t]));
         this.extension.slots.push(slot);
-        Extension.slots.push(slot);
+        Registry.registerSlot(slot);
     }
 
-    createLevelCode(identification: string, parse: (parts: string[], grid: CellGrid) => false | void): void {
-        this.extension.levelCodes.push([identification, parse]);
-        Extension.levelCodes[identification] = parse;
-    }
-
-    createTool(name: string, viewText: string, runTool: (grid: CellGrid) => void): void {
-        this.extension.tools[name] = { name, viewText, runTool };
-        Extension.tools[name] = { name, viewText, runTool };
-    }
+    // createTool(name: string, viewText: string, runTool: (grid: CellGrid) => void): void {
+    //     this.extension.tools[name] = { name, viewText, runTool };
+    //     Extension.tools[name] = { name, viewText, runTool };
+    // }
 
     on(event: string, fn: (...args: any[]) => void): void {
         if (!this.extension.events[event]) this.extension.events[event] = [];

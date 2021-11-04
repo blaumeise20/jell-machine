@@ -113,7 +113,7 @@ export function load(ctx: ExtensionContext) {
 
     ctx.addSlot(orientator, disabler, note);
 
-    ctx.createTool("canOpen", "Automatically Can Open selected area", canOpen);
+    // ctx.createTool("canOpen", "Automatically Can Open selected area", canOpen);
 
     LevelCode.create("J1")
         .import((parts, grid) => {

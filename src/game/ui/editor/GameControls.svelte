@@ -9,10 +9,9 @@
     import { Animator } from "@utils/animator";
     import { SlotHandler } from "@core/slot";
     import { Direction } from "@core/coord/direction";
+    import { Registry } from "@core/registry";
 
-    let slots = Extension.slots;
-
-    let slotHandler = new SlotHandler(slots);
+    let slotHandler = new SlotHandler(Registry.getSlots());
     const currentSlots = slotHandler.slots;
 
     export const selectedCell = slotHandler.currentCell;

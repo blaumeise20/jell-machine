@@ -26,6 +26,9 @@ export class Registry {
     static getSlots() {
         return this.slots;
     }
+    static registerSlot(slot: Slot) {
+        this.slots.push(slot);
+    }
 
     // level codes
     static registerLevelCode(levelCode: LevelCode) {

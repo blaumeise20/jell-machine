@@ -37,7 +37,6 @@ export function load(ctx: ExtensionContext) {
     const mover = ctx.createCellType("jm.core.mover", {
         behavior: class MoverCell extends Cell {
             update() {
-                console.log("mover update");
                 super.push(this.direction, 1);
             }
 
