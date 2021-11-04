@@ -1,5 +1,5 @@
 <script>
-    import { CellGrid, openLevel } from "@core/grid";
+    import { CellGrid, openLevel } from "@core/cells/grid";
     import { clip } from "@utils/misc";
     import { createLevel, mainMenu, showHelp, settings } from "./uiState";
     import logo from "../logo.png";

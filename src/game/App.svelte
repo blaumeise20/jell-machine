@@ -7,7 +7,7 @@
     import HelpScreen from "./ui/help/HelpScreen.svelte";
     import SettingsScreen from "./ui/settings/SettingsScreen.svelte";
     import { on } from "./ui/keys";
-    import { openLevel } from "@core/grid";
+    import { openLevel } from "@core/cells/grid";
     import { menuOpen, mainMenu, showHelp, createLevel, settings } from "./ui/uiState";
 
     on("escape").when(() => !$mainMenu && $openLevel).down(() => $menuOpen = !$menuOpen);

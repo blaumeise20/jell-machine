@@ -1,19 +1,19 @@
 import { writable, Writable } from "svelte/store";
-import { Size } from "./coord/size";
-import { Off, Pos, Position, PosMap } from "./coord/positions";
+import { Size } from "../coord/size";
+import { Off, Pos, Position, PosMap } from "../coord/positions";
 import { base74Key, encodeBase74 } from "@utils/nums";
-import { Tile } from "./tiles";
+import { Tile } from "../tiles";
 import { Cell, CellType } from "./cell";
-import { Extension } from "./extensions";
+import { Extension } from "../extensions";
 import arr from "create-arr";
-import { Direction } from "./coord/direction";
+import { Direction } from "../coord/direction";
 
 // yes i'm sorry so many casts
-const context = (require as any).context("../extensions", true, /\.ts$/) as any;
+const context = (require as any).context("../../extensions", true, /\.ts$/) as any;
 (context.keys() as string[]).forEach(key => Extension.load(key.substring(2, key.length - 3), context(key).load));
 
 import { doStep } from "./cellUpdates";
-import { Registry } from "./registry";
+import { Registry } from "../registry";
 
 export const openLevel: Writable<CellGrid | null> = writable(null);
 
@@ -57,11 +57,11 @@ export class CellGrid {
     /**
      * Heart of Jell Machine.
      */
-    doStep() {
+    doStep(subtick: boolean) {
         this.initial = false;
         Extension.extensions.forEach(e => e.emit("tickstart"));
 
-        doStep(this);
+        doStep(this, subtick);
 
         this.tickCount++;
         Extension.extensions.forEach(e => e.emit("tickend"));

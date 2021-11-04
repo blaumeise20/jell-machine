@@ -1,7 +1,7 @@
 import { safe } from "@utils/misc";
-import { CellType, CellTypeOptions } from "./cell";
-import type { UpdateType } from "./cellUpdates";
-import type { CellGrid } from "./grid";
+import { CellType, CellTypeOptions } from "./cells/cell";
+import type { UpdateType } from "./cells/cellUpdates";
+import type { CellGrid } from "./cells/grid";
 import { Registry } from "./registry";
 import { Slot } from "./slot";
 

@@ -1,6 +1,6 @@
 <script>
     import { clip } from "@utils/misc";
-    import { openLevel } from "@core/grid";
+    import { openLevel } from "@core/cells/grid";
     import { mainMenu, menuOpen, selection } from "../uiState";
     import { Extension } from "@core/extensions";
 

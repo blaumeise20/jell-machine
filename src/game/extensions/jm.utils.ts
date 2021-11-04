@@ -1,7 +1,7 @@
-import { Cell } from "@core/cell";
-import { UpdateType } from "@core/cellUpdates";
+import { Cell } from "@core/cells/cell";
+import { UpdateType } from "@core/cells/cellUpdates";
 import { Extension, ExtensionContext } from "@core/extensions";
-import { CellGrid } from "@core/grid";
+import { CellGrid } from "@core/cells/grid";
 import { LevelCode } from "@core/levelCode";
 import { Tile } from "@core/tiles";
 import { $config } from "@utils/config";

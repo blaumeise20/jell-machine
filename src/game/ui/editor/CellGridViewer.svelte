@@ -1,6 +1,6 @@
 <script>
     import { Direction } from "@core/coord/direction";
-    import { CellGrid } from "@core/grid";
+    import { CellGrid } from "@core/cells/grid";
     import { currentPack } from "@utils/texturePacks";
     import { onMount, onDestroy } from "svelte";
     import { moving, showControls } from "../uiState";

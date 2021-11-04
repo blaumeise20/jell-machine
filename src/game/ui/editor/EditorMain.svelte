@@ -1,5 +1,5 @@
 <script>
-	import { openLevel } from "@core/grid";
+	import { openLevel } from "@core/cells/grid";
     import CellGridViewer from "./CellGridViewer.svelte";
     import GameControls from "./GameControls.svelte";
     import { selection } from "../uiState";

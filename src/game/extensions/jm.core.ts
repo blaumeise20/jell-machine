@@ -1,7 +1,7 @@
 import { ExtensionContext } from "@core/extensions";
 import { Pos } from "@core/coord/positions";
-import { Cell } from "@core/cell";
-import { UpdateType } from "@core/cellUpdates";
+import { Cell } from "@core/cells/cell";
+import { UpdateType } from "@core/cells/cellUpdates";
 import { Size } from "@core/coord/size";
 import { base74Decode, decodeBase74, int } from "@utils/nums";
 import { Tile } from "@core/tiles";

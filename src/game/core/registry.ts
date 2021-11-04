@@ -1,4 +1,4 @@
-import { CellType } from "./cell";
+import { CellType } from "./cells/cell";
 import { ItemIdentifier } from "./extensions";
 import { LevelCode } from "./levelCode";
 import { Slot } from "./slot";

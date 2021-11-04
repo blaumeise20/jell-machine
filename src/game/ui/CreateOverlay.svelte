@@ -1,5 +1,5 @@
 <script>
-    import { CellGrid, openLevel } from "@core/grid";
+    import { CellGrid, openLevel } from "@core/cells/grid";
     import { createLevel, mainMenu } from "./uiState";
 
     let width = 100;

@@ -1,8 +1,8 @@
-import type { Position } from "./coord/positions";
+import type { Position } from "../coord/positions";
 import type { UpdateType } from "./cellUpdates";
-import { ItemIdentifier } from "./extensions";
+import { ItemIdentifier } from "../extensions";
 import { CellGrid } from "./grid";
-import { Direction } from "./coord/direction";
+import { Direction } from "../coord/direction";
 
 let cellid = 0;
 

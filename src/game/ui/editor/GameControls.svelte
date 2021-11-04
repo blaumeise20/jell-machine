@@ -4,7 +4,7 @@
     import { keys, on } from "../keys";
     import { mainMenu, menuOpen, showControls } from "../uiState";
     import { config } from "@utils/config";
-    import { openLevel } from "@core/grid";
+    import { openLevel } from "@core/cells/grid";
     import { currentPack } from "@utils/texturePacks";
     import { Animator } from "@utils/animator";
     import { SlotHandler } from "@core/slot";
@@ -28,7 +28,7 @@
     on("t").when(() => !$menuOpen && !$mainMenu).down(() => (levelPlaying = false, playTimer.stop(), $openLevel?.reset()));
 
     const playTimer = new Animator(() => {
-        $openLevel?.doStep();
+        $openLevel?.doStep(false);
     });
 
     $: playTimer.setInterval($config.tickSpeed);

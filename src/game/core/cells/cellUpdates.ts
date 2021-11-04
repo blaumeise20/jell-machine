@@ -1,10 +1,10 @@
-import { Position } from "./coord/positions";
+import { Position } from "../coord/positions";
 import { Cell, CellType } from "./cell";
-import { Extension } from "./extensions";
+import { Extension } from "../extensions";
 import { CellGrid } from "./grid";
-import { Direction } from "./coord/direction";
+import { Direction } from "../coord/direction";
 
-export function doStep(grid: CellGrid) {
+export function doStep(grid: CellGrid, subtick: boolean) {
     if ((updateOrder as any).eee) {
         (updateOrder as any).eee = false;
         updateOrder.push(...Extension.getUpdateOrder());
