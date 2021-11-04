@@ -6,10 +6,11 @@ import { Size } from "@core/coord/size";
 import { base74Decode, decodeBase74, int } from "@utils/nums";
 import { Tile } from "@core/tiles";
 import arr from "create-arr";
+import { LevelCode } from "@core/levelCode";
 import { Direction } from "@core/coord/direction";
 
 export function load(ctx: ExtensionContext) {
-    const generator = ctx.createCellType({
+    const generator = ctx.createCellType("jm.core.generator", {
         behavior: class GeneratorCell extends Cell {
             update() {
                 const source = this.pos.mi((this.direction + 2) % 4);
@@ -33,9 +34,10 @@ export function load(ctx: ExtensionContext) {
         updateType: UpdateType.Directional,
     });
 
-    const mover = ctx.createCellType({
+    const mover = ctx.createCellType("jm.core.mover", {
         behavior: class MoverCell extends Cell {
             update() {
+                console.log("mover update");
                 super.push(this.direction, 1);
             }
 
@@ -53,7 +55,7 @@ export function load(ctx: ExtensionContext) {
         updateType: UpdateType.Directional,
     });
 
-    const cwRotator = ctx.createCellType({
+    const cwRotator = ctx.createCellType("jm.core.cw_rotator", {
         behavior: class RotatorCell extends Cell {
             update() {
                 const rotation = this.type.data.rotation;
@@ -74,7 +76,7 @@ export function load(ctx: ExtensionContext) {
         updateOrder: 2,
         updateType: UpdateType.Random,
     });
-    const ccwRotator = ctx.createCellType({
+    const ccwRotator = ctx.createCellType("jm.core.ccw_rotator", {
         behavior: cwRotator.behavior,
         textureName: "ccwRotator",
         data: { v3id: 2, rotation: -1 },
@@ -83,14 +85,14 @@ export function load(ctx: ExtensionContext) {
         updateType: UpdateType.Random,
     });
 
-    const push = ctx.createCellType({
+    const push = ctx.createCellType("jm.core.push", {
         behavior: Cell,
         textureName: "push",
         data: { v3id: 5 },
         flip: d => d,
     });
 
-    const slide = ctx.createCellType({
+    const slide = ctx.createCellType("jm.core.slide", {
         behavior: class SlideCell extends Cell {
             push(dir: Direction, bias: number) {
                 if (this.direction % 2 == dir % 2 || this.disabled) return super.push(dir, bias);
@@ -102,7 +104,7 @@ export function load(ctx: ExtensionContext) {
         flip: d => d,
     });
 
-    const arrow = ctx.createCellType({
+    const arrow = ctx.createCellType("jm.core.arrow", {
         behavior: class ArrowCell extends Cell {
             push(dir: Direction, bias: number) {
                 if (this.direction == dir || this.disabled) return super.push(dir, bias);
@@ -112,7 +114,7 @@ export function load(ctx: ExtensionContext) {
         textureName: "arrow",
     });
 
-    const enemy = ctx.createCellType({
+    const enemy = ctx.createCellType("jm.core.enemy", {
         behavior: class EnemyCell extends Cell {
             push(dir: Direction, bias: number) {
                 // TODO: fix bug where enemies don't break when disabled before
@@ -126,7 +128,7 @@ export function load(ctx: ExtensionContext) {
         flip: d => d,
     });
 
-    const trash = ctx.createCellType({
+    const trash = ctx.createCellType("jm.core.trash", {
         behavior: class TrashCell extends Cell {
             push(dir: Direction, bias: number) {
                 if (this.disabled) return super.push(dir, bias);
@@ -138,7 +140,7 @@ export function load(ctx: ExtensionContext) {
         flip: d => d,
     });
 
-    const wall = ctx.createCellType({
+    const wall = ctx.createCellType("jm.core.wall", {
         behavior: class WallCell extends Cell {
             push() {
                 return false;
@@ -161,7 +163,7 @@ export function load(ctx: ExtensionContext) {
         return Object.values(cells).find(t => t.data?.v3id == id);
     }
 
-    ctx.createLevelCode("V1", (parts, grid) => {
+    LevelCode.create("V1").import((parts, grid) => {
         grid.size = new Size(int(parts[1]), int(parts[2]));
 
         // placable stuff
@@ -193,79 +195,80 @@ export function load(ctx: ExtensionContext) {
         grid.name = parts[6]?.trim() || "";
     });
 
-    ctx.createLevelCode("V3", (parts, grid) => {
-        grid.size = new Size(decodeBase74(parts[1]), decodeBase74(parts[2]));
+    LevelCode.create("V3")
+        .import((parts, grid) => {
+            grid.size = new Size(decodeBase74(parts[1]), decodeBase74(parts[2]));
 
-        if (parts[1][0] == "0") grid.isInfinite = true;
+            if (parts[1][0] == "0") grid.isInfinite = true;
 
-        function setCell(cellContent: number, index: number) {
-            const pos = Pos(index % grid.size!.width, Math.floor(index / grid.size!.width));
-            if (cellContent % 2) {
-                if (!grid.size.contains(pos)) return 0;
-                grid.tiles.set(pos, Tile.Placable);
-            }
-            if (cellContent < 72) {
-                const cellId = Math.floor(cellContent / 2) % 9;
-                const cellType = findCell(cellId);
-                return cellType && grid.loadCell(pos, cellType, Math.floor(cellContent / 18));
-            }
-            return true;
-        }
-
-        const cells = parts[3];
-        const cellArray = arr(grid.size.width * grid.size.height, 0);
-        let cellIndex = 0;
-        for (let i = 0; i < cells.length; i++) {
-            if (cells[i] == ")" || cells[i] == "(") {
-                let offset: number, repeatingLength: number;
-
-                // c = cells
-                // o = offset (cells length - 1)
-                // l = repeating length (cells length * (pattern count - 1))
-                // c)ol
-                // c(o)l
-                // c(o(l)
-
-                if (cells[i] == ")") {
-                    offset = base74Decode[cells[++i]];
-                    repeatingLength = base74Decode[cells[++i]];
+            function setCell(cellContent: number, index: number) {
+                const pos = Pos(index % grid.size!.width, Math.floor(index / grid.size!.width));
+                if (cellContent % 2) {
+                    if (!grid.size.contains(pos)) return 0;
+                    grid.tiles.set(pos, Tile.Placable);
                 }
-                else {
-                    // cells[i] == "("
+                if (cellContent < 72) {
+                    const cellId = Math.floor(cellContent / 2) % 9;
+                    const cellType = findCell(cellId);
+                    return cellType && grid.loadCell(pos, cellType, Math.floor(cellContent / 18));
+                }
+                return true;
+            }
 
-                    i++;
-                    let str = "";
-                    for (; cells[i] != ")" && cells[i] != "("; i++) str += cells[i];
-                    offset = decodeBase74(str);
+            const cells = parts[3];
+            const cellArray = arr(grid.size.width * grid.size.height, 0);
+            let cellIndex = 0;
+            for (let i = 0; i < cells.length; i++) {
+                if (cells[i] == ")" || cells[i] == "(") {
+                    let offset: number, repeatingLength: number;
+
+                    // c = cells
+                    // o = offset (cells length - 1)
+                    // l = repeating length (cells length * (pattern count - 1))
+                    // c)ol
+                    // c(o)l
+                    // c(o(l)
 
                     if (cells[i] == ")") {
-                        i++;
-                        repeatingLength = base74Decode[cells[i]];
+                        offset = base74Decode[cells[++i]];
+                        repeatingLength = base74Decode[cells[++i]];
                     }
                     else {
+                        // cells[i] == "("
+
                         i++;
-                        const str = cells.substring(i, cells.indexOf(")", i));
-                        i += str.length;
-                        repeatingLength = decodeBase74(str);
+                        let str = "";
+                        for (; cells[i] != ")" && cells[i] != "("; i++) str += cells[i];
+                        offset = decodeBase74(str);
+
+                        if (cells[i] == ")") {
+                            i++;
+                            repeatingLength = base74Decode[cells[i]];
+                        }
+                        else {
+                            i++;
+                            const str = cells.substring(i, cells.indexOf(")", i));
+                            i += str.length;
+                            repeatingLength = decodeBase74(str);
+                        }
+                    }
+
+                    for (let j = 0; j < repeatingLength; j++) {
+                        if (!setCell(cellArray[cellIndex - offset - 1], cellIndex)) return false;
+                        cellArray[cellIndex] = cellArray[cellIndex - offset - 1];
+                        cellIndex++;
                     }
                 }
-
-                for (let j = 0; j < repeatingLength; j++) {
-                    if (!setCell(cellArray[cellIndex - offset - 1], cellIndex)) return false;
-                    cellArray[cellIndex] = cellArray[cellIndex - offset - 1];
+                else {
+                    if (!setCell(base74Decode[cells[i]], cellIndex)) return false;
+                    cellArray[cellIndex] = base74Decode[cells[i]];
                     cellIndex++;
                 }
             }
-            else {
-                if (!setCell(base74Decode[cells[i]], cellIndex)) return false;
-                cellArray[cellIndex] = base74Decode[cells[i]];
-                cellIndex++;
-            }
-        }
 
-        grid.description = parts[4]?.trim() || "";
-        grid.name = parts[5]?.trim() || "";
-    });
+            grid.description = parts[4]?.trim() || "";
+            grid.name = parts[5]?.trim() || "";
+        });
 
     const cells = {
         generator,

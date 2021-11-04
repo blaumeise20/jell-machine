@@ -2,6 +2,7 @@ import { safe } from "@utils/misc";
 import { CellType, CellTypeOptions } from "./cell";
 import type { UpdateType } from "./cellUpdates";
 import type { CellGrid } from "./grid";
+import { Registry } from "./registry";
 import { Slot } from "./slot";
 
 /**
@@ -109,7 +110,6 @@ export class ExtensionContext {
     createCellType(id: ItemIdentifier, options: CellTypeOptions): CellType {
         const cellType = CellType.create(options, id);
         this.extension.cells.push(cellType);
-        Extension.cells[id] = cellType;
         Registry.registerCell(cellType);
         return cellType;
     }

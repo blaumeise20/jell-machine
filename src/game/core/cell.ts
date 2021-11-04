@@ -1,5 +1,6 @@
 import type { Position } from "./coord/positions";
 import type { UpdateType } from "./cellUpdates";
+import { ItemIdentifier } from "./extensions";
 import { CellGrid } from "./grid";
 import { Direction } from "./coord/direction";
 
@@ -123,6 +124,7 @@ export type Movement = [Position, Direction];
 
 export class CellType {
     static types: CellType[] = [];
+    id!: ItemIdentifier;
 
     private constructor(public options: Readonly<CellTypeOptions>) {}
 
@@ -162,8 +164,9 @@ export class CellType {
         return new this.behavior(pos, this, dir, grid, generated);
     }
 
-    static create(options: CellTypeOptions) {
+    static create(options: CellTypeOptions, id: ItemIdentifier) {
         const t = new CellType(options);
+        t.id = id;
         CellType.types.push(t);
         return t;
     }

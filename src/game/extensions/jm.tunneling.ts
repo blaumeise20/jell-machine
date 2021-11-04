@@ -1,4 +1,5 @@
-import { Cell, Direction, CellType } from "@core/cell";
+import { Cell, CellType } from "@core/cell";
+import { Direction } from "@core/coord/direction";
 import { ExtensionContext } from "@core/extensions";
 
 export function load(ctx: ExtensionContext) {

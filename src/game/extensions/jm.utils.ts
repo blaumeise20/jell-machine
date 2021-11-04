@@ -8,7 +8,7 @@ import { Size } from "@core/coord/size";
 import { Direction } from "@core/coord/direction";
 
 export function load(ctx: ExtensionContext) {
-    const orientator = ctx.createCellType({
+    const orientator = ctx.createCellType("jm.utils.orientator", {
         behavior: class OrientatorCell extends Cell {
             update() {
                 this.grid.cells.get(this.pos.mi(Direction.Right))?.setRotation(this.direction);
@@ -25,7 +25,7 @@ export function load(ctx: ExtensionContext) {
         updateOrder: 2.5,
     });
 
-    const disabler = ctx.createCellType({
+    const disabler = ctx.createCellType("jm.utils.disabler", {
         behavior: class DisablerCell extends Cell {
             update() {
                 this.grid.cells.get(this.pos.mi(Direction.Right))?.disable();
@@ -85,7 +85,7 @@ export function load(ctx: ExtensionContext) {
     };
     const noteTicks = new Set<keyof typeof notes>();
 
-    const note = ctx.createCellType({
+    const note = ctx.createCellType("jm.utils.note", {
         textureName: "note",
         behavior: class NoteCell extends Cell {
             push() {

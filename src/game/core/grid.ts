@@ -1,10 +1,10 @@
 import { writable, Writable } from "svelte/store";
-import { Size } from "../utils/size";
-import { Off, Pos, Position, PosMap } from "../utils/positions";
-import { base74Key, encodeBase74 } from "../utils/nums";
+import { Size } from "./coord/size";
+import { Off, Pos, Position, PosMap } from "./coord/positions";
+import { base74Key, encodeBase74 } from "@utils/nums";
 import { Tile } from "./tiles";
-import { Cell, CellType, Direction } from "./cell";
-import { Extension } from "@core/extensions";
+import { Cell, CellType } from "./cell";
+import { Extension } from "./extensions";
 
 // yes i'm sorry so many casts
 const context = (require as any).context("../extensions", true, /\.ts$/) as any;
@@ -12,6 +12,8 @@ const context = (require as any).context("../extensions", true, /\.ts$/) as any;
 
 import arr from "create-arr";
 import { doStep } from "./cellUpdates";
+import { Registry } from "./registry";
+import { Direction } from "./coord/direction";
 
 export const openLevel: Writable<CellGrid | null> = writable(null);
 
@@ -255,15 +257,15 @@ export class CellGrid {
     /**
      * Generates a string representation of the grid.
      */
-    toString(format: "V3" = "V3") {
+    toString(format = "J1"): string | boolean {
         // TODO: add infinite grid support
         if (this.isInfinite) throw new Error("oh no i'm infinite");
 
-        let str = "";
 
         switch (format) {
             // TODO: extract to core extension
             case "V3":
+                let str = "";
                 str += `V3;${encodeBase74(this.size.width)};${encodeBase74(this.size.height)};`;
 
                 // TODO: add correct compression
@@ -297,10 +299,17 @@ export class CellGrid {
                     }
                 }
 
-                str += `;${this.description.trim().replace(/;/g, ":")};${this.name.trim().replace(/;/g, ":")}`
+                str += `;${this.description.trim().replace(/;/g, ":")};${this.name.trim().replace(/;/g, ":")}`;
+                return str;
+            default:
+                const stringify = Registry.getLevelCode(format)?.exportFn;
+                if (stringify) {
+                    const result = stringify(this);
+                    if (result) return result;
+                }
         }
 
-        return str;
+        return false;
     }
 
     /**
@@ -328,7 +337,7 @@ export class CellGrid {
         const grid = new CellGrid();
         try {
             // level codes are registered by extensions
-            const parse = Extension.levelCodes[parts[0]];
+            const parse = Registry.getLevelCode(parts[0])?.importFn;
             if (parse) {
                 const result = parse(parts, grid);
                 if (result == null) return [true, grid];
