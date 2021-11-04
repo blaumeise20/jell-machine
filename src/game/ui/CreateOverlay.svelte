@@ -1,11 +1,14 @@
 <script>
     import { CellGrid, openLevel } from "@core/grid";
     import { createLevel, mainMenu } from "./uiState";
+    import { onMount } from "svelte";
 
     let width = 100;
     let height = 100;
     let widthElement = null as any as HTMLInputElement;
     let heightElement = null as any as HTMLInputElement;
+
+    $: if (widthElement) widthElement.focus();
 </script>
 
 <style>
@@ -48,7 +51,7 @@
         <div class="overlay">
             <h2>Create Level</h2>
             <div class="space"></div>
-            <input type="number" class="big" placeholder="Width" bind:value={width} bind:this={widthElement} autofocus on:focus={e => widthElement.select()} />
+            <input type="number" class="big" placeholder="Width" bind:value={width} bind:this={widthElement} on:focus={e => widthElement.select()} />
             <input type="number" class="big" placeholder="Height" bind:value={height} bind:this={heightElement} on:focus={e => heightElement.select()} />
             <div class="space"></div>
             <button class="big" on:click={() => {
