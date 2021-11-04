@@ -2,9 +2,12 @@ import { Cell } from "@core/cell";
 import { UpdateType } from "@core/cellUpdates";
 import { Extension, ExtensionContext } from "@core/extensions";
 import { CellGrid } from "@core/grid";
+import { LevelCode } from "@core/levelCode";
+import { Tile } from "@core/tiles";
 import { $config } from "@utils/config";
 import { Pos } from "@core/coord/positions";
 import { Size } from "@core/coord/size";
+import { Registry } from "@core/registry";
 import { Direction } from "@core/coord/direction";
 
 export function load(ctx: ExtensionContext) {
@@ -111,6 +114,157 @@ export function load(ctx: ExtensionContext) {
     ctx.addSlot(orientator, disabler, note);
 
     ctx.createTool("canOpen", "Automatically Can Open selected area", canOpen);
+
+    LevelCode.create("J1")
+        .import((parts, grid) => {
+            grid.size = new Size(decodeJ1Num(parts[1]), decodeJ1Num(parts[2]));
+
+            const cellMap = parts[3].split(",");
+            const data = parts[4];
+            let ix = 0;
+
+            function loadCell(value: number, placable: boolean, count: number) {
+                value = value - 1;
+
+                const direction = value % 4;
+                const cellIx = (value-direction) / 4;
+
+                let cellId = cellMap[cellIx];
+                if (!cellId) throw new Error();
+                if (cellId[0] == ".") {
+                    if (cellId[1] == ".")
+                        cellId = "jm.utils" + cellId.substr(1);
+                    else
+                        cellId = "jm.core" + cellId;
+                }
+                const cell = Registry.getCell(cellId);
+                if (!cell) throw new Error();
+
+                while (count--) {
+                    const pos = Pos(ix % grid.size.width, Math.floor(ix / grid.size.width));
+
+                    if (placable) grid.tiles.set(pos, Tile.Placable);
+                    if (value >= 0) grid.loadCell(pos, cell, direction);
+
+                    ix++;
+                }
+            }
+
+            for (let i = 0; i < data.length;) {
+                let placable = false;
+                let count = 1;
+
+                if (data[i] == ":") {
+                    i++; placable = true;
+                }
+
+                const value = decodeJ1Num(data[i++]);
+
+                if (data[i] == ">") {
+                    i++;
+                    count = decodeJ1Num(data[i++]) + 4;
+                }
+                else if (data[i] == "<") {
+                    i++;
+                    let ct = "";
+
+                    while (data[i] != ">") ct += data[i++];
+                    i++;
+
+                    count = decodeJ1Num(ct) + 4;
+                }
+
+                loadCell(value, placable, count);
+            }
+
+            grid.description = parts[5]?.trim() || "";
+            grid.name = parts[6]?.trim() || "";
+        })
+        .export(grid => {
+            // const cellMapIx = cellMap.indexOf(grid.cells.get(grid.size.center)?.type.name);
+
+            const cellMap: string[] = [];
+            const cellArr: string[] = [];
+
+            for (let y = 0; y < grid.size.height; y++) {
+                for (let x = 0; x < grid.size.width; x++) {
+                    const pos = Pos(x, y);
+                    const cell = grid.cells.get(pos);
+                    let ct = "";
+
+                    if (grid.tiles.get(pos) == Tile.Placable) ct += ":";
+
+                    if (cell) {
+                        let cellIx = cellMap.indexOf(cell.type.id);
+                        if (cellIx == -1) { cellMap.push(cell.type.id); cellIx = cellMap.length - 1; }
+
+                        console.log(cell.type.id, cellIx, (cellIx * 4 + cell.direction));
+
+                        ct += encodeJ1Num((cellIx * 4 + cell.direction) + 1);
+                    }
+                    else ct += encodeJ1Num(0);
+
+                    cellArr.push(ct);
+                }
+            }
+
+            for (let i = 0; i < cellMap.length; i++) {
+                if (cellMap[i].startsWith("jm.utils")) {
+                    cellMap[i] = "." + cellMap[i].substr(8);
+                }
+                else if (cellMap[i].startsWith("jm.core")) {
+                    cellMap[i] = cellMap[i].substr(7);
+                }
+            }
+
+            let length = cellArr.length;
+            while (cellArr[length - 1] == "0" && length > 0) length--;
+            cellArr.length = length;
+
+
+            const cellsText: string[] = [];
+            let prev = "";
+            let count = 1;
+            for (let i = 0; i <= cellArr.length; i++) {
+                const ca = cellArr[i];
+
+                if (ca == prev) {
+                    count++;
+                }
+                else {
+                    if (prev !== "") {
+                        cellsText.push(prev);
+                        if (count == 2) cellsText.push(prev);
+                        else if (count == 3) cellsText.push(prev, prev);
+                        if (count > 3) {
+                            const num = encodeJ1Num(count - 4);
+                            if (num.length == 1) cellsText.push(">" + num);
+                            else cellsText.push("<" + num + ">");
+                        }
+                    }
+
+                    count = 1;
+                    prev = ca;
+                }
+            }
+
+            const result = [
+                "J1",
+                encodeJ1Num(grid.size.width),
+                encodeJ1Num(grid.size.height),
+                cellMap.join(","),
+                cellsText.join(""),
+            ];
+            const description = grid.description.trim();
+            if (description) {
+                result.push(description);
+
+                const name = grid.name.trim();
+                if (name) result.push(name);
+            }
+
+            return result.join(";");
+        });
 }
 
 function canOpen(grid: CellGrid) {
@@ -180,4 +334,36 @@ function canOpen(grid: CellGrid) {
         // top
         if (!grid.fillCell(new Size(vaultArea.width + 1, 1, vaultArea.bottom + vaultArea.height + canOpenerHeight + canOpenerHeight - 1, vaultArea.left), cell_wall, Direction.Down)) return;
 
+}
+
+const codeJ1 = makeConverter("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.-_+*#'!\"$%&/()=?[]|{}");
+const decodeJ1Num = codeJ1.decode;
+const encodeJ1Num = codeJ1.encode;
+
+function makeConverter(code: string) {
+    const base = code.length;
+
+    const decode = {} as Record<string, number>;
+    for (let i = 0; i < code.length; i++) decode[code[i]] = i;
+
+    return {
+        encode: (num: number) => {
+            if (num == 0) return code[0];
+
+            let str = "";
+            while (num > 0) {
+                str = code[num % base] + str;
+                num = Math.floor(num / base);
+            }
+            return str;
+        },
+        decode: (str: string) => {
+            let num = 0;
+            for (const key of str) {
+                num = num * base + (decode[key])
+                if (isNaN(num)) throw new Error("Invalid input string");
+            };
+            return num;
+        }
+    };
 }
