@@ -1,11 +1,12 @@
 import { ExtensionContext } from "@core/extensions";
-import { Pos } from "@utils/positions";
-import { Cell, Direction } from "@core/cell";
+import { Pos } from "@core/coord/positions";
+import { Cell } from "@core/cell";
 import { UpdateType } from "@core/cellUpdates";
-import { Size } from "@utils/size";
+import { Size } from "@core/coord/size";
 import { base74Decode, decodeBase74, int } from "@utils/nums";
 import { Tile } from "@core/tiles";
 import arr from "create-arr";
+import { Direction } from "@core/coord/direction";
 
 export function load(ctx: ExtensionContext) {
     const generator = ctx.createCellType({

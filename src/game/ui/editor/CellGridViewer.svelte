@@ -1,5 +1,5 @@
 <script>
-    import { Direction } from "@core/cell";
+    import { Direction } from "@core/coord/direction";
     import { CellGrid } from "@core/grid";
     import { currentPack } from "@utils/texturePacks";
     import { onMount, onDestroy } from "svelte";
@@ -7,9 +7,9 @@
     import { Tile } from "@core/tiles";
     import { keys, keys$, on } from "../keys";
     import { mouse } from "@utils/mouse";
-    import { Pos, Position } from "@utils/positions";
+    import { Pos, Position } from "@core/coord/positions";
     import { rotation, selectedCell } from "./GameControls.svelte";
-    import { Size } from "@utils/size";
+    import { Size } from "@core/coord/size";
     import { config } from "@utils/config";
 
     export let grid: CellGrid;

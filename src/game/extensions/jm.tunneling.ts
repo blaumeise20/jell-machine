@@ -2,7 +2,7 @@ import { Cell, Direction, CellType } from "@core/cell";
 import { ExtensionContext } from "@core/extensions";
 
 export function load(ctx: ExtensionContext) {
-    const redirector = ctx.createCellType({
+    const redirector = ctx.createCellType("jm.tunneling.redirector", {
         behavior: class RedirectorCell extends Cell {
             getPos(dir: Direction) {
                 if (dir == (this.direction + 2) % 4) return super.getCellTo((this.direction + 1) % 4);
@@ -19,7 +19,7 @@ export function load(ctx: ExtensionContext) {
         flip: CellType.flipTwoWay,
     });
 
-    const tunnel = ctx.createCellType({
+    const tunnel = ctx.createCellType("jm.tunneling.tunnel", {
         behavior: class TunnelCell extends Cell {
             getPos(dir: Direction) {
                 if (dir % 2 == this.direction % 2) return super.getCellTo(dir);
@@ -38,7 +38,7 @@ export function load(ctx: ExtensionContext) {
         },
     });
 
-    const crossway = ctx.createCellType({
+    const crossway = ctx.createCellType("jm.tunneling.crossway", {
         behavior: class CrosswayCell extends Cell {
             getPos(dir: Direction) {
                 return super.getCellTo(dir);
@@ -48,7 +48,7 @@ export function load(ctx: ExtensionContext) {
         flip: d => d,
     });
 
-    const crossdirector = ctx.createCellType({
+    const crossdirector = ctx.createCellType("jm.tunneling.crossdirector", {
         behavior: class CrossdirectorCell extends Cell {
             getPos(dir: Direction) {
                 if (dir == this.direction) return super.getCellTo((this.direction + 3) % 4);

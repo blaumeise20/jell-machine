@@ -1,6 +1,5 @@
 <script context="module">
     import { writable, derived } from "svelte/store";
-    import { rotateBy } from "@utils/misc";
     import { Extension } from "@core/extensions";
 
     let slots = Extension.slots;
@@ -10,7 +9,7 @@
 
     export const selectedCell = slotHandler.currentCell;
     export const actualRotation = writable(0);
-    export const rotation = derived(actualRotation, $r => rotateBy($r));
+    export const rotation = derived(actualRotation, $r => ($r % 4 + 4) % 4 as Direction);
 </script>
 
 <script>
@@ -21,6 +20,7 @@
     import { currentPack } from "@utils/texturePacks";
     import { Animator } from "@utils/animator";
     import { SlotHandler } from "@core/slot";
+    import { Direction } from "@core/coord/direction";
 
     let show = true;
     on("F1").when(() => !$mainMenu).down(() => (show = !show, showControls.set(show), $menuOpen = false));

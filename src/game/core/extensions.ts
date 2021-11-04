@@ -59,16 +59,58 @@ export class Extension {
 
         return result.sort((a, b) => a[0].options.updateOrder! - b[0].options.updateOrder!);
     }
+
+
+    static createExtension(name: string, identifier: string, data: {}, code: string) {
+        let text: string[] = [];
+
+        text.push("Jell Machine Extension\u0000");
+
+        text.push(name);
+        text.push("\u0001");
+
+        text.push(identifier);
+        text.push("\u0001");
+
+
+
+        text.push(JSON.stringify(data));
+        text.push("\u0002");
+
+        text.push(code);
+
+        return text.join("");
+    }
+
+    static parseExtension(text: string): false | { name: string, data: {}, code: string } {
+        if (!text.startsWith("Jell Machine Extension\u0000")) return false;
+
+        text = text.substr("Jell Machine Extension\u0000".length);
+
+        const name = text.split("\u0001")[0];
+        text = text.substr(name.length + 1);
+
+        const data = JSON.parse(text.split("\u0002")[0]);
+        text = text.substr(JSON.stringify(data).length + 1);
+
+        const code = text;
+
+        return { name, data, code };
+    }
 }
+
+console.log(Extension.parseExtension("Jell Machine Extension\u0000Test\u0001{}\u0002console.log(\"Hello World!\");"));
 
 export class ExtensionContext {
     constructor(public extension: Extension) {
 
     }
 
-    createCellType(options: CellTypeOptions): CellType {
-        const cellType = CellType.create(options);
+    createCellType(id: ItemIdentifier, options: CellTypeOptions): CellType {
+        const cellType = CellType.create(options, id);
         this.extension.cells.push(cellType);
+        Extension.cells[id] = cellType;
+        Registry.registerCell(cellType);
         return cellType;
     }
 

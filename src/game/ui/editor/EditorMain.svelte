@@ -1,5 +1,4 @@
 <script>
-	// import { activeLevel, openLevel1, openLevel2 } from "@core/grid";
 	import { openLevel } from "@core/grid";
     import CellGridViewer from "./CellGridViewer.svelte";
     import GameControls from "./GameControls.svelte";

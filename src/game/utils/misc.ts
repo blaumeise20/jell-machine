@@ -1,7 +1,7 @@
 // import { app } from "@electron/remote";
 import { clipboard } from "electron";
 import { join } from "path";
-import { Direction } from "../core/cell";
+import { Direction } from "@core/coord/direction";
 
 const hashData = JSON.parse(decodeURIComponent(window.location.hash.substr(1)));
 
@@ -55,9 +55,4 @@ export function clip(text?: string) {
 export function ERR() {
     alert("something bad happened but i don't know why\nplease contact a dev AAAA");
     window.close();
-}
-
-
-export function rotateBy(dir: Direction, amount = 0) {
-    return ((dir + amount) % 4 + 4) % 4 as Direction;
 }

@@ -262,6 +262,7 @@ export class CellGrid {
         let str = "";
 
         switch (format) {
+            // TODO: extract to core extension
             case "V3":
                 str += `V3;${encodeBase74(this.size.width)};${encodeBase74(this.size.height)};`;
 
@@ -318,7 +319,7 @@ export class CellGrid {
      * @param code The imported level code (mostly from clipboard).
      * @returns Either an error or the generated CellGrid.
      */
-    static loadFromString(code: string): [true, CellGrid] | [false, LevelError] {
+    static loadFromString(code: string): [true, CellGrid] | [false, LevelError, ...any[]] {
         // we don't need whitespace
         // maybe people copy it with newlines before, that might break it
         code = code.trim();
@@ -338,10 +339,10 @@ export class CellGrid {
                 return [false, LevelError.UnknownFormat];
             }
         }
-        catch {
+        catch (e) {
             // ERROR but we don't know the reason
             // maybe because V1 code's cell type is wrong or something is not an integer?
-            return [false, LevelError.Unknown];
+            return [false, LevelError.Unknown, e];
         }
     }
 }

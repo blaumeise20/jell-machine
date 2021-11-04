@@ -1,4 +1,4 @@
-import { Direction } from "../core/cell";
+import { Direction } from "./direction";
 import { Off, Position } from "./positions";
 
 export class Size {

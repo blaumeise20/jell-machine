@@ -1,7 +1,8 @@
-import { Position } from "../utils/positions";
-import { Cell, CellType, Direction } from "./cell";
+import { Position } from "./coord/positions";
+import { Cell, CellType } from "./cell";
 import { Extension } from "./extensions";
 import { CellGrid } from "./grid";
+import { Direction } from "./coord/direction";
 
 export function doStep(grid: CellGrid) {
     if ((updateOrder as any).eee) {

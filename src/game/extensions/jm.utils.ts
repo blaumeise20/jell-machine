@@ -1,10 +1,11 @@
-import { Cell, Direction } from "@core/cell";
+import { Cell } from "@core/cell";
 import { UpdateType } from "@core/cellUpdates";
 import { Extension, ExtensionContext } from "@core/extensions";
 import { CellGrid } from "@core/grid";
 import { $config } from "@utils/config";
-import { Pos } from "@utils/positions";
-import { Size } from "@utils/size";
+import { Pos } from "@core/coord/positions";
+import { Size } from "@core/coord/size";
+import { Direction } from "@core/coord/direction";
 
 export function load(ctx: ExtensionContext) {
     const orientator = ctx.createCellType({

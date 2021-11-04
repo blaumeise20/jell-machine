@@ -1,7 +1,7 @@
-import { rotateBy } from "../utils/misc";
-import type { Position } from "../utils/positions";
+import type { Position } from "./coord/positions";
 import type { UpdateType } from "./cellUpdates";
 import { CellGrid } from "./grid";
+import { Direction } from "./coord/direction";
 
 let cellid = 0;
 
@@ -106,7 +106,7 @@ export class Cell {
     }
 
     rotate(amount: number) {
-        this.direction = rotateBy(this.direction, amount);
+        this.direction = ((this.direction + amount) % 4 + 4) % 4;
     }
 
     setRotation(amount: number) {
@@ -116,13 +116,6 @@ export class Cell {
     disable() {
         this.disabledIn = this.grid.tickCount;
     }
-}
-
-export enum Direction {
-    Right,
-    Down,
-    Left,
-    Up
 }
 
 export type PushResult = boolean | null;
