@@ -1,4 +1,5 @@
-import { Cell, CellType } from "@core/cells/cell";
+import { Cell } from "@core/cells/cell";
+import { CellType } from "@core/cells/cellType";
 import { Direction } from "@core/coord/direction";
 import { ExtensionContext } from "@core/extensions";
 

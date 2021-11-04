@@ -1,5 +1,6 @@
 import { Position } from "../coord/positions";
-import { Cell, CellType } from "./cell";
+import { Cell } from "./cell";
+import { CellType } from "./cellType";
 import { Extension } from "../extensions";
 import { CellGrid } from "./grid";
 import { Direction } from "../coord/direction";

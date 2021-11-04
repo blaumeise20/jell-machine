@@ -1,4 +1,4 @@
-import { Direction } from "./direction";
+import type { Direction } from "./direction";
 import { Off, Position } from "./positions";
 
 export class Size {

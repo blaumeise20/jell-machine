@@ -1,7 +1,7 @@
-import { CellType } from "./cells/cell";
-import { ItemIdentifier } from "./extensions";
-import { LevelCode } from "./levelCode";
-import { Slot } from "./slot";
+import type { CellType } from "./cells/cellType";
+import type { ItemIdentifier } from "./extensions";
+import type { LevelCode } from "./levelCode";
+import type { Slot } from "./slot";
 
 export class Registry {
     static cells: Record<string, CellType> = {};

@@ -1,5 +1,5 @@
 import { writable, Writable } from "svelte/store";
-import { CellType } from "./cells/cell";
+import type { CellType } from "./cells/cellType";
 
 export class Slot {
     items: CellType[];
