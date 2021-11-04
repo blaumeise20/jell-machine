@@ -4,29 +4,24 @@
     import { createLevel, mainMenu, showHelp, settings } from "./uiState";
     import logo from "../logo.png";
 
-    let showSpoiler = false;
-    let clipboardContent = "";
+    // let showSpoiler = false;
+    // let clipboardContent = "";
 
-    const loadFromClipboard = async () => {
-        try {
-            if ($mainMenu) clipboardContent = clip();
-        }
-        catch {}
+    // const loadFromClipboard = async () => {
+    //     try {
+    //         if ($mainMenu) clipboardContent = clip();
+    //     }
+    //     catch {}
 
-        showSpoiler = clipboardContent.startsWith("V2;");
+    //     showSpoiler = clipboardContent.startsWith("V2;");
 
-        setTimeout(loadFromClipboard, 500);
-    };
+    //     setTimeout(loadFromClipboard, 500);
+    // };
 
-    loadFromClipboard();
+    // loadFromClipboard();
 
     function importClipboard() {
-        clipboardContent = clip();
-        if (clipboardContent.startsWith("V2;")) {
-            alert("WHY YOU USING V2 nobody uses v2 except you so go and load level in different format");
-            return;
-        }
-
+        const clipboardContent = clip();
         const res = CellGrid.loadFromString(clipboardContent);
 
         if (res[0]) {
@@ -35,6 +30,7 @@
         }
         else {
             alert("oh an error occured make sure to copy a valid string");
+            console.log(res);
         }
     }
 </script>
@@ -65,12 +61,12 @@
         width: 100%;
     }
 
-    .import_warning {
+    /* .import_warning {
         color: #fff;
         font: 400 20px/25px "Roboto", sans-serif;
         margin: 20px 0;
         text-align: center;
-    }
+    } */
 
     .help_button {
         bottom: 20px;
@@ -83,9 +79,9 @@
     <div class="overlay">
         <img src="{logo}" alt="Logo" />
         <button class="big" on:click={importClipboard}>Import from clipboard</button>
-        {#if showSpoiler}
+        <!-- {#if showSpoiler}
             <div class="import_warning">SPOILER: be careful with the thing you have in your clipboard</div>
-        {/if}
+        {/if} -->
         <div class="space"></div>
         <button class="big" on:click={() => $createLevel = true}>Create new level</button>
         <div class="space"></div>
