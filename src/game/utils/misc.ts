@@ -1,7 +1,5 @@
-// import { app } from "@electron/remote";
 import { clipboard } from "electron";
 import { join } from "path";
-import { Direction } from "@core/coord/direction";
 
 const hashData = JSON.parse(decodeURIComponent(window.location.hash.substr(1)));
 

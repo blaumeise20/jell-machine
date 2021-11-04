@@ -5,23 +5,19 @@ import { base74Key, encodeBase74 } from "@utils/nums";
 import { Tile } from "./tiles";
 import { Cell, CellType } from "./cell";
 import { Extension } from "./extensions";
+import arr from "create-arr";
+import { Direction } from "./coord/direction";
 
 // yes i'm sorry so many casts
 const context = (require as any).context("../extensions", true, /\.ts$/) as any;
 (context.keys() as string[]).forEach(key => Extension.load(key.substring(2, key.length - 3), context(key).load));
 
-import arr from "create-arr";
 import { doStep } from "./cellUpdates";
 import { Registry } from "./registry";
-import { Direction } from "./coord/direction";
 
 export const openLevel: Writable<CellGrid | null> = writable(null);
 
 openLevel.subscribe(o => (window as any).openLevel = o);
-// export const openLevel2: Writable<CellGrid | null> = writable(null);
-
-// export const activeLevel: Writable<0 | 1 | 2> = writable(0);
-// export const selectedGrid = derived(activeLevel, l => l == 0 ? null : l == 1 ? get(openLevel1) : get(openLevel2));
 
 export enum LevelError {
     Unknown,
@@ -38,6 +34,7 @@ export class CellGrid {
     readonly cellList: Cell[] = [];
     initial = true;
     tickCount = 0;
+    currentSubtick = 0;
     selectedArea: Size | null = null;
 
     private constructor() {}
@@ -257,7 +254,7 @@ export class CellGrid {
     /**
      * Generates a string representation of the grid.
      */
-    toString(format = "J1"): string | boolean {
+    toString(format = "J1"): string | false {
         // TODO: add infinite grid support
         if (this.isInfinite) throw new Error("oh no i'm infinite");
 

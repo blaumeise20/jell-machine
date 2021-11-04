@@ -1,23 +1,6 @@
 <script>
     import { config } from "@utils/config";
     import { settings } from "../uiState";
-
-    const actions = [
-        ["Left click", "place cell"],
-        ["Right click", "delete cell"],
-        ["Shift+click", "edit placables"],
-        ["WASD", "move camera"],
-        ["Scroll", "zoom"],
-        ["Q or E", "rotate cell"],
-        ["ctrl+drag", "select area"],
-        ["C", "copy selected area"],
-        ["X", "cut selected area"],
-        ["arrow keys", "move selected area"],
-        ["Right click while selecting", "delete selection"],
-        ["ESC", "open menu"],
-        ["F1", "toggle UI around cells"],
-        ["space", "toggle simulation"],
-    ];
 </script>
 
 <style>

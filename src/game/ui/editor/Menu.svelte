@@ -85,8 +85,11 @@
             <!-- {#if $openLevel.isInfinite} -->
                 <button on:click={() => {
                     if ($openLevel) {
-                        if ($selection) clip($openLevel.extract($selection).toString());
-                        else clip($openLevel.toString());
+                        let string = $selection ?
+                            $openLevel.extract($selection).toString()
+                            : $openLevel.toString();
+                        if (string) clip(string);
+
                         copyButtonLabel = copiedText;
                         copyTimeout && clearTimeout(copyTimeout);
                         copyTimeout = setTimeout(() => {

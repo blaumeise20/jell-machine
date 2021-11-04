@@ -1,7 +1,6 @@
 <script>
     import { CellGrid, openLevel } from "@core/grid";
     import { createLevel, mainMenu } from "./uiState";
-    import { onMount } from "svelte";
 
     let width = 100;
     let height = 100;

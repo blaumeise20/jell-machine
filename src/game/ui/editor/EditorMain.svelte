@@ -15,10 +15,6 @@
         height: 100%;
         width: 100%;
     }
-    /* .seperator {
-        background-color: #000;
-        width: 10px;
-    } */
 </style>
 
 <div class="cell_controller">
@@ -27,10 +23,6 @@
             <CellGridViewer grid={$openLevel} bind:selectionArea={$selection} />
         {/key}
     {/if}
-    <!-- {#if $openLevel2}
-        <div class="seperator"></div>
-        <CellGridViewer level={$openLevel2} isEditable={$activeLevel == 2} />
-    {/if} -->
     <GameControls />
 </div>
 

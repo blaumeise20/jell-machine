@@ -181,8 +181,6 @@ export function load(ctx: ExtensionContext) {
             grid.name = parts[6]?.trim() || "";
         })
         .export(grid => {
-            // const cellMapIx = cellMap.indexOf(grid.cells.get(grid.size.center)?.type.name);
-
             const cellMap: string[] = [];
             const cellArr: string[] = [];
 

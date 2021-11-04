@@ -1,6 +1,14 @@
 <script context="module">
     import { writable, derived } from "svelte/store";
     import { Extension } from "@core/extensions";
+    import { keys, on } from "../keys";
+    import { mainMenu, menuOpen, showControls } from "../uiState";
+    import { config } from "@utils/config";
+    import { openLevel } from "@core/grid";
+    import { currentPack } from "@utils/texturePacks";
+    import { Animator } from "@utils/animator";
+    import { SlotHandler } from "@core/slot";
+    import { Direction } from "@core/coord/direction";
 
     let slots = Extension.slots;
 
@@ -13,15 +21,6 @@
 </script>
 
 <script>
-    import { keys, on } from "../keys";
-    import { mainMenu, menuOpen, showControls } from "../uiState";
-    import { config } from "@utils/config";
-    import { openLevel } from "@core/grid";
-    import { currentPack } from "@utils/texturePacks";
-    import { Animator } from "@utils/animator";
-    import { SlotHandler } from "@core/slot";
-    import { Direction } from "@core/coord/direction";
-
     let show = true;
     on("F1").when(() => !$mainMenu).down(() => (show = !show, showControls.set(show), $menuOpen = false));
     on("q").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation--);
