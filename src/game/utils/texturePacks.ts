@@ -32,6 +32,7 @@ const textureMapping = {
 
     placable: ["BGPlacable.png", "0.png"],
     bg: ["BG.png", "BGDefault.png"],
+    border: ["_.png"]
 };
 const uiTextures = {
     play: "buttonPlay.png",

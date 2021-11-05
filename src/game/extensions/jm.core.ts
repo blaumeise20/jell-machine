@@ -13,9 +13,11 @@ export function load(ctx: ExtensionContext) {
     const generator = ctx.createCellType("jm.core.generator", {
         behavior: class GeneratorCell extends Cell {
             update() {
-                const source = this.pos.mi((this.direction + 2) % 4);
+                const source = this.getCellTo((this.direction + 2) % 4);
+                if (!source) return;
+                const [sourcePos, sourceDir] = source;
 
-                const sourceCell = this.grid.cells.get(source);
+                const sourceCell = this.grid.cells.get(sourcePos);
                 if (!sourceCell) return;
 
                 const target = this.getCellTo(this.direction);
@@ -144,10 +146,32 @@ export function load(ctx: ExtensionContext) {
             push() {
                 return false;
             }
+
+            rotate() {}
+            setRotation() {}
+            disable() {}
         },
         textureName: "wall",
         data: { v3id: 6 },
         flip: d => d,
+    });
+
+    const border = ctx.createCellType("_", {
+        behavior: class BorderCell extends Cell {
+            getPos() {
+                return null;
+            }
+            push() {
+                return false;
+            }
+
+            rotate() {}
+            setRotation() {}
+            disable() {}
+        },
+        textureName: "border",
+        flip: d => d,
+        merge: d => d,
     });
 
     ctx.addSlot(generator);
@@ -156,7 +180,7 @@ export function load(ctx: ExtensionContext) {
     ctx.addSlot(push, slide, arrow);
     ctx.addSlot(enemy);
     ctx.addSlot(trash);
-    ctx.addSlot(wall);
+    ctx.addSlot(wall, border);
 
     function findCell(id: number) {
         return Object.values(cells).find(t => t.data?.v3id == id);
