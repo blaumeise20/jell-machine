@@ -83,10 +83,11 @@
     }
     .tips {
         right: 5%;
-        bottom: 5%;
+        bottom: 4%;
         position: absolute;
         font-size: medium;
         color: #fff;
+        font: 400 16px/18px "Roboto", sans-serif;
     }
 </style>
 
