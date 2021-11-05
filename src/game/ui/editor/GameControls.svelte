@@ -1,6 +1,5 @@
 <script context="module">
     import { writable, derived } from "svelte/store";
-    import { Extension } from "@core/extensions";
     import { keys, on } from "../keys";
     import { mainMenu, menuOpen, showControls } from "../uiState";
     import { config } from "@utils/config";
@@ -87,6 +86,7 @@
         background-repeat: no-repeat;
         background-size: contain;
         display: block;
+        image-rendering: pixelated;
         position: relative;
         opacity: .4;
         padding-top: 100%;

@@ -255,6 +255,7 @@
         background-size: $CELL_SIZE $CELL_SIZE;
         background-repeat: repeat;
         bottom: 0;
+        image-rendering: pixelated;
         position: absolute;
     }
 
@@ -269,6 +270,7 @@
         width: $CELL_SIZE;
         transform-box: fill-box;
         transform-origin: center center;
+        image-rendering: pixelated;
     }
 
     .show_placable .cell:not(.placable) {
