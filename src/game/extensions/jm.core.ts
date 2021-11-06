@@ -8,6 +8,7 @@ import { Tile } from "@core/tiles";
 import arr from "create-arr";
 import { LevelCode } from "@core/levelCode";
 import { Direction } from "@core/coord/direction";
+import { BorderMode } from "@core/cells/border";
 
 export function load(ctx: ExtensionContext) {
     const generator = ctx.createCellType("jm.core.generator", {
@@ -158,7 +159,8 @@ export function load(ctx: ExtensionContext) {
 
     const border = ctx.createCellType("_", {
         behavior: class BorderCell extends Cell {
-            getPos() {
+            getPos(dir: Direction) {
+                if (this.grid.borderMode == BorderMode.Wrap) return this.getCellTo(dir);
                 return null;
             }
             push() {
@@ -291,6 +293,8 @@ export function load(ctx: ExtensionContext) {
 
             grid.description = parts[4]?.trim() || "";
             grid.name = parts[5]?.trim() || "";
+            grid.borderMode = parseInt(parts[6]?.trim()) || 0;
+            grid.borderMode = grid.borderMode >= 0 && grid.borderMode <= 2 ? grid.borderMode : 0;
         });
 
     const cells = {

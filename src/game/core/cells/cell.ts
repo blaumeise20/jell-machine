@@ -1,7 +1,8 @@
-import type { Position } from "../coord/positions";
+import { Pos, Position } from "../coord/positions";
 import type { CellGrid } from "./grid";
-import type { Direction } from "../coord/direction";
+import { Direction } from "../coord/direction";
 import type { CellType } from "./cellType";
+import { BorderMode } from "./border";
 
 let cellid = 0;
 
@@ -67,7 +68,21 @@ export class Cell {
 
     getCellTo(dir: Direction): Movement | null {
         const pos = this.pos.mi(dir);
-        if (!this.grid.isInfinite && !this.grid.size.contains(pos)) return null;
+        if (!this.grid.isInfinite && !this.grid.size.contains(pos)) {
+            if (this.grid.borderMode == BorderMode.Wrap) {
+                switch (dir) {
+                    case Direction.Right:
+                        return [Pos(0, pos.y), dir];
+                    case Direction.Up:
+                        return [Pos(pos.x, this.grid.size.height - 1), dir];
+                    case Direction.Left:
+                        return [Pos(this.grid.size.width - 1, pos.y), dir];
+                    case Direction.Down:
+                        return [Pos(pos.x, 0), dir];
+                }
+            }
+            return null;
+        }
         const cell = this.grid.cells.get(pos);
         if (!cell) return [pos, dir];
         return cell.getPos(dir);
@@ -81,7 +96,13 @@ export class Cell {
         if (bias < 1) return false;
 
         const target = this.getCellTo(dir);
-        if (!target) return false;
+        if (!target) {
+            if (this.grid.borderMode == BorderMode.Delete) {
+                this.rm();
+                return true;
+            }
+            else return false;
+        }
 
         const [pos, pushDir] = target;
 

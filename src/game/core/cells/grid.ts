@@ -15,6 +15,7 @@ const context = (require as any).context("../../extensions", true, /\.ts$/) as a
 
 import { doStep } from "./cellUpdates";
 import { Registry } from "../registry";
+import { BorderMode } from "./border";
 
 export const openLevel: Writable<CellGrid | null> = writable(null);
 
@@ -37,6 +38,7 @@ export class CellGrid {
     tickCount = 0;
     currentSubtick = 0;
     selectedArea: Size | null = null;
+    borderMode = BorderMode.Default;
 
     private constructor() {}
 
@@ -297,7 +299,7 @@ export class CellGrid {
                     }
                 }
 
-                str += `;${this.description.trim().replace(/;/g, ":")};${this.name.trim().replace(/;/g, ":")}`;
+                str += `;${this.description.trim().replace(/;/g, ":")};${this.name.trim().replace(/;/g, ":")};${this.borderMode}`;
                 return str;
             default:
                 const stringify = Registry.getLevelCode(format)?.exportFn;
