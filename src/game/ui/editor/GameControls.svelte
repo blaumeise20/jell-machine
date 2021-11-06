@@ -50,6 +50,9 @@
     on("<").down(() => {
         slotHandler.loopSlot();
     });
+    on("y").when(() => !levelPlaying).down(() => {
+        $openLevel?.doStep(false);
+    });
 </script>
 
 <style>
