@@ -3,6 +3,8 @@
     import { openLevel } from "@core/cells/grid";
     import { mainMenu, menuOpen, selection } from "../uiState";
     import { Extension } from "@core/extensions";
+    import { Menu } from "@core/ui/menu";
+    import UiElementViewer from "../UIElementViewer.svelte";
 
     const copiedText = "Copied!";
     $: copyText = $selection ? "Copy selected area" : "Copy to Clipboard";
@@ -66,9 +68,13 @@
     <div class="sidebar_backdrop" on:click={() => $menuOpen = false}></div>
     <div class="sidebar">
         <div class="actions">
-            Tick Count: {$openLevel?.tickCount}
-            <button on:click={() => $openLevel?.reset()}>Reset</button>
-
+            {#each Menu.uiComponents as component, i}
+                {#if i}
+                    <div class="space" />
+                    <div class="space" />
+                {/if}
+                <UiElementViewer root={component} />
+            {/each}
         </div>
         <div class="tools">
             {#each Object.values(Extension.tools) as tool}

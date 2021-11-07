@@ -1,7 +1,7 @@
 import { Cell } from "@core/cells/cell";
 import { UpdateType } from "@core/cells/cellUpdates";
 import { Extension, ExtensionContext } from "@core/extensions";
-import { CellGrid } from "@core/cells/grid";
+import { CellGrid, openLevel } from "@core/cells/grid";
 import { LevelCode } from "@core/levelCode";
 import { Tile } from "@core/tiles";
 import { $config } from "@utils/config";
@@ -9,6 +9,9 @@ import { Pos } from "@core/coord/positions";
 import { Size } from "@core/coord/size";
 import { Registry } from "@core/registry";
 import { Direction } from "@core/coord/direction";
+import { Menu } from "@core/ui/menu";
+import { block, button, text, UIText, UITextSize } from "@core/ui/build";
+import { get } from "svelte/store";
 
 export function load(ctx: ExtensionContext) {
     const orientator = ctx.createCellType("jm.utils.orientator", {
@@ -263,6 +266,15 @@ export function load(ctx: ExtensionContext) {
 
             return result.join(";");
         });
+
+    let tickCount: UIText;
+    const ui = block(
+        tickCount = text("Tick Count: 0"),
+        button("Reset", { onClick: () => get(openLevel)!.reset() }),
+    );
+    ctx.on("tickend", () => tickCount.text = "Tick Count: " + get(openLevel)!.tickCount);
+
+    Menu.addUI(ui);
 }
 
 function canOpen(grid: CellGrid) {

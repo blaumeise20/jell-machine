@@ -1,0 +1,24 @@
+.ui-text {
+    font: 400 16px/18px "Roboto", sans-serif;
+    padding: 0;
+    margin: 0 0 10px 0;
+
+    &.ui-text-small {
+        font-size: 14px;
+        line-height: 16px;
+    }
+    &.ui-text-large {
+        font-size: 20px;
+        line-height: 23px;
+    }
+
+    &.ui-text-bold {
+        font-weight: bold;
+    }
+    &.ui-text-italic {
+        font-style: italic;
+    }
+}
+.ui-button {
+    margin-bottom: 10px;
+}
