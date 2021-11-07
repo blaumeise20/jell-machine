@@ -33,6 +33,14 @@
             console.log(res);
         }
     }
+
+    const tips = [  
+        "Jell machine was inspired by Pyll Machine",
+        "This project is fully free and open source",
+        "Try to use keyboard shortcuts as much as you can"
+    ];
+    const tip = tips[Math.floor(Math.random() * tips.length)];
+
 </script>
 
 <style>
@@ -73,6 +81,14 @@
         left: 20px;
         position: absolute;
     }
+    .tips {
+        right: 5%;
+        bottom: 4%;
+        position: absolute;
+        font-size: medium;
+        color: #fff;
+        font: 400 16px/18px "Roboto", sans-serif;
+    }
 </style>
 
 <div class="overlay_container" style="display: {$mainMenu ? "block" : "none"}">
@@ -90,6 +106,9 @@
             <div class="space"></div>
             <button class="center" on:click={() => $mainMenu = false}>Back</button>
         {/if}
+
     </div>
     <button class="center help_button big" on:click={() => $showHelp = true}>Help</button>
+    <h1 class="tips">{tip}</h1>
+
 </div>
