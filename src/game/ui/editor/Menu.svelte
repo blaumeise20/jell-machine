@@ -88,41 +88,34 @@
         </div>
         <div class="action_buttons">
             <button on:click={() => $mainMenu = true}>Go to main screen</button>
-            <!-- {#if $openLevel.isInfinite} -->
-                <button on:click={() => {
-                    if ($openLevel) {
-                        let string = $selection ?
-                            $openLevel.extract($selection).toString("V3")
-                            : $openLevel.toString("V3");
-                        if (string) clip(string);
+            <button on:click={() => {
+                if ($openLevel) {
+                    let string = $selection ?
+                        $openLevel.extract($selection).toString("V3")
+                        : $openLevel.toString("V3");
+                    if (string) clip(string);
 
-                        copyButtonLabel = copiedText;
-                        copyTimeout && clearTimeout(copyTimeout);
-                        copyTimeout = setTimeout(() => {
-                            copyButtonLabel = copyText;
-                        }, 1000);
-                    }
-                }}>{copyButtonLabel} V3</button>
-                <button on:click={() => {
-                    if ($openLevel) {
-                        let string = $selection ?
-                            $openLevel.extract($selection).toString("J1")
-                            : $openLevel.toString("J1");
-                        if (string) clip(string);
+                    copyButtonLabel = copiedText;
+                    copyTimeout && clearTimeout(copyTimeout);
+                    copyTimeout = setTimeout(() => {
+                        copyButtonLabel = copyText;
+                    }, 1000);
+                }
+            }}>{copyButtonLabel} V3</button>
+            <button on:click={() => {
+                if ($openLevel) {
+                    let string = $selection ?
+                        $openLevel.extract($selection).toString("J1")
+                        : $openLevel.toString("J1");
+                    if (string) clip(string);
 
-                        copyButtonLabel = copiedText;
-                        copyTimeout && clearTimeout(copyTimeout);
-                        copyTimeout = setTimeout(() => {
-                            copyButtonLabel = copyText;
-                        }, 1000);
-                    }
-                }}>{copyButtonLabel} J1</button>
-                <!-- <button>Copy (advanced)</button>
-                <button>Copy selection</button> -->
-            <!-- {:else}
-                <button on:click={() => clip("helotest")}>Copy everything</button>
-                <button>Copy selection</button>
-            {/if} -->
+                    copyButtonLabel = copiedText;
+                    copyTimeout && clearTimeout(copyTimeout);
+                    copyTimeout = setTimeout(() => {
+                        copyButtonLabel = copyText;
+                    }, 1000);
+                }
+            }}>{copyButtonLabel} J1</button>
         </div>
     </div>
 {/if}
