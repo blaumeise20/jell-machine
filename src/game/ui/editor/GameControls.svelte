@@ -84,7 +84,6 @@
         padding: 30px;
     }
 
-
     .cell_selection_seperator {
         flex: 1;
     }
