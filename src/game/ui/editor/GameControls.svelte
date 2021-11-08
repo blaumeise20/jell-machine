@@ -64,10 +64,13 @@
         width: 100%;
         z-index: 60;
     }
+
     .buttons {
         padding: 30px 100px 30px 30px;
     }
+
     $selection_size: var(--hotbar-size);
+
     .play {
         background-size: $selection_size, $selection_size;
         background-repeat: no-repeat;
@@ -101,7 +104,7 @@
 </style>
 
 {#if show}
-    <div class="bottom_controls" style="--hotbar-size:{$config.hotbarSize}px;">
+    <div class="bottom_controls" style="--hotbar-size: {$config.hotbarSize}px;">
         <div class="buttons">
             <div class="play" style="background-image: url({$currentPack.ui[levelPlaying ? "pause" : "play"].url})" on:click={() => toggleLevel()}></div>
         </div>
@@ -115,7 +118,6 @@
                     <div class="cell_selection" class:selected={c.isActive} style="
                         background-image: url({$currentPack.textures[c.currentItem.options.textureName].url});
                         transform: rotate({$actualRotation * 90}deg);
-                        
                     " on:click={() => {
                         if (c.isActive)
                             slotHandler.loopSlot();
