@@ -16,6 +16,7 @@
     export const selectedCell = slotHandler.currentCell;
     export const actualRotation = writable(0);
     export const rotation = derived(actualRotation, $r => ($r % 4 + 4) % 4 as Direction);
+
 </script>
 
 <script>
@@ -68,11 +69,14 @@
     .buttons {
         padding: 30px 100px 30px 30px;
     }
+
+    $selection_size: var(--hotbar-size);
+
     .play {
-        background-size: 100px 100px;
+        background-size: $selection_size, $selection_size;
         background-repeat: no-repeat;
-        width: 100px;
-        height: 100px;
+        width: $selection_size;
+        height: $selection_size;
     }
 
     .cells {
@@ -81,7 +85,6 @@
         padding: 30px;
     }
 
-    $selection_size: 100px;
     .cell_selection_seperator {
         flex: 1;
     }
@@ -102,7 +105,7 @@
 </style>
 
 {#if show}
-    <div class="bottom_controls">
+    <div class="bottom_controls" style="--hotbar-size: {$config.hotbarSize}px;">
         <div class="buttons">
             <div class="play" style="background-image: url({$currentPack.ui[levelPlaying ? "pause" : "play"].url})" on:click={() => toggleLevel()}></div>
         </div>

@@ -40,6 +40,7 @@
         <div class="overlay">
             <p>
                 <b>Tick Speed (ms):</b> <input type="number" bind:value={$config.tickSpeed}>
+                <b>Hotbar Size (px):</b> <input type="number" bind:value={$config.hotbarSize}>
             </p>
             <div class="space"></div>
             <button class="center" on:click={() => $settings = false}>Back</button>
