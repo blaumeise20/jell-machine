@@ -7,7 +7,7 @@ export class UIText extends UIElement {
         return this._text;
     }
     set text(value: string) {
-        this.text = value;
+        this._text = value;
         this.element.replaceChild(document.createTextNode(value), this.element.firstChild!);
     }
     bold: boolean;
