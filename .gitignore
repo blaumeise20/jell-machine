@@ -9,3 +9,5 @@ src/build/
 .env
 .env.local
 .env.development
+
+src/game/extensions/jm.testing.ts
