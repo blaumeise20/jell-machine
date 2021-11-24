@@ -62,12 +62,12 @@ export class CellGrid {
      */
     doStep(subtick: boolean) {
         this.initial = false;
-        Extension.extensions.forEach(e => e.emit("tickstart"));
+        Events.emit("tickstart");
 
         doStep(this, subtick);
 
         this.tickCount++;
-        Extension.extensions.forEach(e => e.emit("tickend"));
+        Events.emit("tickend");
         this.reloadUI();
     }
 

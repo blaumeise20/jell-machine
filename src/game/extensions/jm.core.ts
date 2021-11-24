@@ -1,4 +1,3 @@
-import { ExtensionContext } from "@core/extensions";
 import { Pos } from "@core/coord/positions";
 import { Cell } from "@core/cells/cell";
 import { UpdateType } from "@core/cells/cellUpdates";
@@ -9,9 +8,11 @@ import arr from "create-arr";
 import { LevelCode } from "@core/levelCode";
 import { Direction } from "@core/coord/direction";
 import { BorderMode } from "@core/cells/border";
+import { CellType } from "@core/cells/cellType";
+import { Slot } from "@core/slot";
 
-export function load(ctx: ExtensionContext) {
-    const generator = ctx.createCellType("jm.core.generator", {
+export function load() {
+    const generator = CellType.create("jm.core.generator", {
         behavior: class GeneratorCell extends Cell {
             update() {
                 const source = this.getCellTo((this.direction + 2) % 4);
@@ -32,12 +33,11 @@ export function load(ctx: ExtensionContext) {
             }
         },
         textureName: "generator",
-        data: { v3id: 0 },
         updateOrder: 1,
         updateType: UpdateType.Directional,
     });
 
-    const mover = ctx.createCellType("jm.core.mover", {
+    const mover = CellType.create("jm.core.mover", {
         behavior: class MoverCell extends Cell {
             update() {
                 super.push(this.direction, 1);
@@ -52,12 +52,11 @@ export function load(ctx: ExtensionContext) {
             }
         },
         textureName: "mover",
-        data: { v3id: 3 },
         updateOrder: 3,
         updateType: UpdateType.Directional,
     });
 
-    const cwRotator = ctx.createCellType("jm.core.cw_rotator", {
+    const cwRotator = CellType.create("jm.core.cw_rotator", {
         behavior: class RotatorCell extends Cell {
             update() {
                 const rotation = this.type.data.rotation;
@@ -73,28 +72,27 @@ export function load(ctx: ExtensionContext) {
             }
         },
         textureName: "cwRotator",
-        data: { v3id: 1, rotation: 1 },
+        data: { rotation: 1 },
         flip: (options) => [ccwRotator, options[1]],
         updateOrder: 2,
         updateType: UpdateType.Random,
     });
-    const ccwRotator = ctx.createCellType("jm.core.ccw_rotator", {
+    const ccwRotator = CellType.create("jm.core.ccw_rotator", {
         behavior: cwRotator.behavior,
         textureName: "ccwRotator",
-        data: { v3id: 2, rotation: -1 },
+        data: { rotation: -1 },
         flip: (options) => [cwRotator, options[1]],
         updateOrder: 2,
         updateType: UpdateType.Random,
     });
 
-    const push = ctx.createCellType("jm.core.push", {
+    const push = CellType.create("jm.core.push", {
         behavior: Cell,
         textureName: "push",
-        data: { v3id: 5 },
         flip: d => d,
     });
 
-    const slide = ctx.createCellType("jm.core.slide", {
+    const slide = CellType.create("jm.core.slide", {
         behavior: class SlideCell extends Cell {
             push(dir: Direction, bias: number) {
                 if (this.direction % 2 == dir % 2 || this.disabled) return super.push(dir, bias);
@@ -102,11 +100,10 @@ export function load(ctx: ExtensionContext) {
             }
         },
         textureName: "slide",
-        data: { v3id: 4 },
         flip: d => d,
     });
 
-    const arrow = ctx.createCellType("jm.core.arrow", {
+    const arrow = CellType.create("jm.core.arrow", {
         behavior: class ArrowCell extends Cell {
             push(dir: Direction, bias: number) {
                 if (this.direction == dir || this.disabled) return super.push(dir, bias);
@@ -116,7 +113,7 @@ export function load(ctx: ExtensionContext) {
         textureName: "arrow",
     });
 
-    const enemy = ctx.createCellType("jm.core.enemy", {
+    const enemy = CellType.create("jm.core.enemy", {
         behavior: class EnemyCell extends Cell {
             push(dir: Direction, bias: number) {
                 // TODO: fix bug where enemies don't break when disabled before
@@ -126,11 +123,10 @@ export function load(ctx: ExtensionContext) {
             }
         },
         textureName: "enemy",
-        data: { v3id: 7 },
         flip: d => d,
     });
 
-    const trash = ctx.createCellType("jm.core.trash", {
+    const trash = CellType.create("jm.core.trash", {
         behavior: class TrashCell extends Cell {
             push(dir: Direction, bias: number) {
                 if (this.disabled) return super.push(dir, bias);
@@ -138,11 +134,10 @@ export function load(ctx: ExtensionContext) {
             }
         },
         textureName: "trash",
-        data: { v3id: 8 },
         flip: d => d,
     });
 
-    const wall = ctx.createCellType("jm.core.wall", {
+    const wall = CellType.create("jm.core.wall", {
         behavior: class WallCell extends Cell {
             push() {
                 return false;
@@ -153,11 +148,10 @@ export function load(ctx: ExtensionContext) {
             disable() {}
         },
         textureName: "wall",
-        data: { v3id: 6 },
         flip: d => d,
     });
 
-    const border = ctx.createCellType("_", {
+    const border = CellType.create("_", {
         behavior: class BorderCell extends Cell {
             getPos(dir: Direction) {
                 if (this.grid.borderMode == BorderMode.Wrap) return this.getCellTo(dir);
@@ -176,17 +170,25 @@ export function load(ctx: ExtensionContext) {
         merge: d => d,
     });
 
-    ctx.addSlot(generator);
-    ctx.addSlot(mover);
-    ctx.addSlot(cwRotator, ccwRotator);
-    ctx.addSlot(push, slide, arrow);
-    ctx.addSlot(enemy);
-    ctx.addSlot(trash);
-    ctx.addSlot(wall, border);
+    Slot.add(generator);
+    Slot.add(mover);
+    Slot.add(cwRotator, ccwRotator);
+    Slot.add(push, slide, arrow);
+    Slot.add(enemy);
+    Slot.add(trash);
+    Slot.add(wall, border);
 
-    function findCell(id: number) {
-        return Object.values(cells).find(t => t.data?.v3id == id);
-    }
+    const v3Cells = [
+        generator,
+        cwRotator,
+        ccwRotator,
+        mover,
+        slide,
+        push,
+        wall,
+        enemy,
+        trash,
+    ];
 
     LevelCode.create("V1").import((parts, grid) => {
         grid.size = new Size(int(parts[1]), int(parts[2]));
@@ -209,7 +211,7 @@ export function load(ctx: ExtensionContext) {
                 const splitCell = cell.split(".");
                 const cellId = int(splitCell[0]);
                 const pos = Pos(int(splitCell[2]), int(splitCell[3]));
-                const cellType = findCell(cellId);
+                const cellType = v3Cells[cellId];
                 if (!cellType || !grid.loadCell(pos, cellType, int(splitCell[1]))) return false;
             }
         }
@@ -234,7 +236,7 @@ export function load(ctx: ExtensionContext) {
                 }
                 if (cellContent < 72) {
                     const cellId = Math.floor(cellContent / 2) % 9;
-                    const cellType = findCell(cellId);
+                    const cellType = v3Cells[cellId];
                     return cellType && grid.loadCell(pos, cellType, Math.floor(cellContent / 18));
                 }
                 return true;
@@ -297,17 +299,4 @@ export function load(ctx: ExtensionContext) {
             grid.borderMode = grid.borderMode >= 0 && grid.borderMode <= 2 ? grid.borderMode : 0;
         });
 
-    const cells = {
-        generator,
-        mover,
-        cwRotator,
-        ccwRotator,
-        push,
-        slide,
-        arrow,
-        enemy,
-        trash,
-        wall,
-    }
-    return cells;
 }

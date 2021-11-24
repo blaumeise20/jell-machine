@@ -4,10 +4,10 @@ import type { CellGrid } from "./grid";
 import { Direction } from "../coord/direction";
 import type { Cell, CellData } from "./cell";
 import type { UpdateType } from "./cellUpdates";
+import { Registry } from "@core/registry";
 
 
 export class CellType {
-    static types: CellType[] = [];
     id!: ItemIdentifier;
 
     private constructor(public options: Readonly<CellTypeOptions>) { }
@@ -49,10 +49,10 @@ export class CellType {
         return new this.behavior(pos, this, dir, grid, generated);
     }
 
-    static create(options: CellTypeOptions, id: ItemIdentifier) {
+    static create(id: ItemIdentifier, options: CellTypeOptions) {
         const t = new CellType(options);
         t.id = id;
-        CellType.types.push(t);
+        Registry.registerCell(t);
         return t;
     }
 

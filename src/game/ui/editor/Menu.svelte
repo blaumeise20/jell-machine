@@ -2,7 +2,7 @@
     import { clip } from "@utils/misc";
     import { openLevel } from "@core/cells/grid";
     import { mainMenu, menuOpen, selection } from "../uiState";
-    import { Extension } from "@core/extensions";
+    // import { Extension } from "@core/extensions";
     import { Menu } from "@core/ui/menu";
     import UiElementViewer from "../UIElementViewer.svelte";
 
@@ -77,14 +77,14 @@
             {/each}
         </div>
         <div class="tools">
-            {#each Object.values(Extension.tools) as tool}
+            <!-- {#each Object.values(Extension.tools) as tool}
                 <button on:click={() => {
                     if ($openLevel) {
                         $menuOpen = false;
                         tool.runTool($openLevel);
                     }
                 }}>{tool.viewText}</button>
-            {/each}
+            {/each} -->
         </div>
         <div class="action_buttons">
             <button on:click={() => $mainMenu = true}>Go to main screen</button>

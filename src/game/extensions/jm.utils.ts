@@ -1,6 +1,5 @@
 import { Cell } from "@core/cells/cell";
 import { UpdateType } from "@core/cells/cellUpdates";
-import { Extension, ExtensionContext } from "@core/extensions";
 import { CellGrid, openLevel } from "@core/cells/grid";
 import { LevelCode } from "@core/levelCode";
 import { Tile } from "@core/tiles";
@@ -12,9 +11,12 @@ import { Direction } from "@core/coord/direction";
 import { Menu } from "@core/ui/menu";
 import { block, button, text, UIText, UITextSize } from "@core/ui/build";
 import { get } from "svelte/store";
+import { CellType } from "@core/cells/cellType";
+import { Events } from "@core/events";
+import { Slot } from "@core/slot";
 
-export function load(ctx: ExtensionContext) {
-    const orientator = ctx.createCellType("jm.utils.orientator", {
+export function load() {
+    const orientator = CellType.create("jm.utils.orientator", {
         behavior: class OrientatorCell extends Cell {
             update() {
                 this.grid.cells.get(this.pos.mi(Direction.Right))?.setRotation(this.direction);
@@ -31,7 +33,7 @@ export function load(ctx: ExtensionContext) {
         updateOrder: 2.5,
     });
 
-    const disabler = ctx.createCellType("jm.utils.disabler", {
+    const disabler = CellType.create("jm.utils.disabler", {
         behavior: class DisablerCell extends Cell {
             update() {
                 this.grid.cells.get(this.pos.mi(Direction.Right))?.disable();
@@ -91,7 +93,7 @@ export function load(ctx: ExtensionContext) {
     };
     const noteTicks = new Set<keyof typeof notes>();
 
-    const note = ctx.createCellType("jm.utils.note", {
+    const note = CellType.create("jm.utils.note", {
         textureName: "note",
         behavior: class NoteCell extends Cell {
             push() {
@@ -102,7 +104,7 @@ export function load(ctx: ExtensionContext) {
         flip: d => d
     });
 
-    ctx.on("tickend", () => {
+    Events.on("tickend", () => {
         noteTicks.forEach(note => play(note));
         noteTicks.clear();
 
@@ -114,7 +116,7 @@ export function load(ctx: ExtensionContext) {
         oscillators.length = 0;
     });
 
-    ctx.addSlot(orientator, disabler, note);
+    Slot.add(orientator, disabler, note);
 
     // ctx.createTool("canOpen", "Automatically Can Open selected area", canOpen);
 
@@ -272,7 +274,7 @@ export function load(ctx: ExtensionContext) {
         tickCount = text("Tick Count: 0"),
         button("Reset", { onClick: () => get(openLevel)!.reset() }),
     );
-    ctx.on("tickend", () => tickCount.text = "Tick Count: " + get(openLevel)!.tickCount);
+    Events.on("tickend", () => tickCount.text = "Tick Count: " + get(openLevel)!.tickCount);
 
     Menu.addUI(ui);
 }
@@ -281,15 +283,13 @@ function canOpen(grid: CellGrid) {
     const vaultArea = grid.selectedArea;
     if (!vaultArea) return;
 
-    const core_ = Extension.get("jm.core");
-    if (!core_) return;
-    const cell_trash = core_.data.trash;
-    const cell_wall = core_.data.wall;
-    const cell_generator = core_.data.generator;
-    const cell_push = core_.data.push;
-    const cell_slide = core_.data.slide;
-    const cell_mover = core_.data.mover;
-    const cell_rotator = core_.data.ccwRotator;
+    const cell_trash = Registry.getCell("jm.core.trash")!;
+    const cell_wall = Registry.getCell("jm.core.wall")!;
+    const cell_generator = Registry.getCell("jm.core.generator")!;
+    const cell_push = Registry.getCell("jm.core.push")!;
+    const cell_slide = Registry.getCell("jm.core.slide")!;
+    const cell_mover = Registry.getCell("jm.core.mover")!;
+    const cell_rotator = Registry.getCell("jm.core.ccw_rotator")!;
 
     // place can opener
     const canOpenerHeight = vaultArea.height + 2;

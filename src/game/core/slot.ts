@@ -1,5 +1,6 @@
 import { writable, Writable } from "svelte/store";
 import type { CellType } from "./cells/cellType";
+import { Registry } from "./registry";
 
 export class Slot {
     items: CellType[];
@@ -15,6 +16,10 @@ export class Slot {
 
     next() {
         this.index = (this.index + 1) % this.items.length;
+    }
+
+    static add(...t: (CellType | CellType[])[]): void {
+        Registry.registerSlot(new Slot(t.flatMap(t => Array.isArray(t) ? t : [t])));
     }
 }
 
