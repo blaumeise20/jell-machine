@@ -2,7 +2,6 @@ import { Pos } from "@core/coord/positions";
 import { Cell } from "@core/cells/cell";
 import { UpdateType } from "@core/cells/cellUpdates";
 import { Size } from "@core/coord/size";
-import { base74Decode, decodeBase74, int } from "@utils/nums";
 import { Tile } from "@core/tiles";
 import arr from "create-arr";
 import { LevelCode } from "@core/levelCode";
@@ -297,6 +296,73 @@ export function load() {
             grid.name = parts[5]?.trim() || "";
             grid.borderMode = parseInt(parts[6]?.trim()) || 0;
             grid.borderMode = grid.borderMode >= 0 && grid.borderMode <= 2 ? grid.borderMode : 0;
-        });
+        })
+        .export(grid => {
+            let str = "";
+            str += `V3;${encodeBase74(grid.size.width)};${encodeBase74(grid.size.height)};`;
 
+            // TODO: add correct compression
+
+            const cellData = arr(grid.size.width * grid.size.height, 72);
+
+            for (let y = 0; y < grid.size.height; y++)
+                for (let x = 0; x < grid.size.width; x++)
+                    if (grid.tiles.get(Pos(x, y)) == Tile.Placable)
+                        cellData[x + (y * grid.size.width)] = 73;
+
+            for (const cell of grid.cells.values()) {
+                const v3id = cell.type.data?.v3id;
+                if (v3id != null)
+                    cellData[cell.pos.x + (cell.pos.y * grid.size.width)] += (2 * cell.type.data.v3id) + (18 * cell.direction) - 72;
+            }
+
+
+            let runLength = 1;
+            for (let i = 0; i < cellData.length; i++) {
+                if (i + 1 < cellData.length && cellData[i] == cellData[i + 1]) runLength++;
+                else {
+                    if (runLength > 3) {
+                        if (encodeBase74(runLength - 1).length > 1)
+                            str += base74Key[cellData[i]] + "(0(" + encodeBase74(runLength - 1) + ")";
+                        else
+                            str += base74Key[cellData[i]] + ")0" + encodeBase74(runLength - 1);
+                    }
+                    else str += base74Key[cellData[i]].repeat(runLength);
+                    runLength = 1;
+                }
+            }
+
+            str += `;${grid.description.trim().replace(/;/g, ":")};${grid.name.trim().replace(/;/g, ":")};${grid.borderMode}`;
+            return str;
+        });
+}
+
+const base74Key = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&+-.=?^{}";
+const base74Decode = {} as Record<string, number>;
+for (let i = 0; i < base74Key.length; i++) base74Decode[base74Key[i]] = i;
+const base = 74;
+
+function int(x: string) {
+    const parsed = parseInt(x);
+    if (Number.isNaN(parsed)) throw new Error("");
+    return parsed;
+}
+
+function decodeBase74(str: string) {
+    let num = 0;
+    for (const key of str) {
+        num = num * base + (base74Decode[key])
+        if (isNaN(num)) throw new Error("Invalid input string");
+    };
+    return num;
+}
+
+function encodeBase74(num: number) {
+    if (num == 0) return "0";
+    const arr: number[] = [];
+    while (num != 0) {
+        arr.unshift(num % base);
+        num = Math.floor(num / base);
+    }
+    return arr.map(n => base74Key[n]).join("");
 }

@@ -22,8 +22,6 @@ export class Extension {
         extensionLoader();
 
         this.extensions.push(extension);
-        return extension;
-    }
     }
 
     static getUpdateOrder(): [CellType, UpdateType][] {

@@ -1,12 +1,10 @@
 import { writable, Writable } from "svelte/store";
 import { Size } from "../coord/size";
 import { Off, Pos, Position, PosMap } from "../coord/positions";
-import { base74Key, encodeBase74 } from "@utils/nums";
 import { Tile } from "../tiles";
 import { Cell } from "./cell";
 import { CellType } from "./cellType";
 import { Extension } from "../extensions";
-import arr from "create-arr";
 import { Direction } from "../coord/direction";
 
 // yes i'm sorry so many casts
@@ -16,6 +14,7 @@ const context = (require as any).context("../../extensions", true, /\.ts$/) as a
 import { doStep } from "./cellUpdates";
 import { Registry } from "../registry";
 import { BorderMode } from "./border";
+import { Events } from "@core/events";
 
 export const openLevel: Writable<CellGrid | null> = writable(null);
 
@@ -262,51 +261,15 @@ export class CellGrid {
         if (this.isInfinite) throw new Error("oh no i'm infinite");
 
 
-        switch (format) {
-            // TODO: extract to core extension
-            case "V3":
-                let str = "";
-                str += `V3;${encodeBase74(this.size.width)};${encodeBase74(this.size.height)};`;
-
-                // TODO: add correct compression
-
-                const cellData = arr(this.size.width * this.size.height, 72);
-
-                for (let y = 0; y < this.size.height; y++)
-                    for (let x = 0; x < this.size.width; x++)
-                        if (this.tiles.get(Pos(x, y)) == Tile.Placable)
-                            cellData[x + (y * this.size.width)] = 73;
-
-                for (const cell of this.cells.values()) {
-                    const v3id = cell.type.data?.v3id;
-                    if (v3id != null)
-                        cellData[cell.pos.x + (cell.pos.y * this.size.width)] += (2 * cell.type.data.v3id) + (18 * cell.direction) - 72;
-                }
-
-
-                let runLength = 1;
-                for (let i = 0; i < cellData.length; i++) {
-                    if (i + 1 < cellData.length && cellData[i] == cellData[i + 1]) runLength++;
-                    else {
-                        if (runLength > 3) {
-                            if (encodeBase74(runLength - 1).length > 1)
-                                str += base74Key[cellData[i]] + "(0(" + encodeBase74(runLength - 1) + ")";
-                            else
-                                str += base74Key[cellData[i]] + ")0" + encodeBase74(runLength - 1);
-                        }
-                        else str += base74Key[cellData[i]].repeat(runLength);
-                        runLength = 1;
-                    }
-                }
-
-                str += `;${this.description.trim().replace(/;/g, ":")};${this.name.trim().replace(/;/g, ":")};${this.borderMode}`;
-                return str;
-            default:
-                const stringify = Registry.getLevelCode(format)?.exportFn;
-                if (stringify) {
-                    const result = stringify(this);
-                    if (result) return result;
-                }
+        const stringify = Registry.getLevelCode(format)?.exportFn;
+        if (stringify) {
+            try {
+                const result = stringify(this);
+                if (result) return result;
+            }
+            catch {
+                return false;
+            }
         }
 
         return false;
