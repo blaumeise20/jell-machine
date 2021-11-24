@@ -1,6 +1,7 @@
 import { derived, writable } from "svelte/store";
 import { Size } from "@core/coord/size";
 import { on } from "./keys";
+import { CellGrid } from "@core/cells/grid";
 
 export const menuOpen = writable(false);
 let $menuOpen = false;
@@ -52,3 +53,4 @@ function addMoveKey(k: string, p: keyof typeof moving) {
 }
 
 export const selection = writable<Size | null>(null);
+export const selectionContent = writable<CellGrid | null>(null);

@@ -117,7 +117,7 @@
     $: selectionArea = showSelection ? selectionSize : null;
     $: grid.selectedArea = showSelection ? selectionSize : null;
 
-    let selection: CellGrid | null = null;
+    export let selection: CellGrid | null = null;
     $: selectionPos = selection ? Pos(
         Math.round(mouseCell.x - selection.size.width / 2),
         Math.round(mouseCell.y - selection.size.height / 2)

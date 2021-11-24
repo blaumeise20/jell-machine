@@ -2,7 +2,7 @@
 	import { openLevel } from "@core/cells/grid";
     import CellGridViewer from "./CellGridViewer.svelte";
     import GameControls from "./GameControls.svelte";
-    import { selection } from "../uiState";
+    import { selection, selectionContent } from "../uiState";
     import Menu from "./Menu.svelte";
 
     // $openLevel = CellGrid.loadFromString("V3;1;1;e;;")[1] as CellGrid;
@@ -20,7 +20,7 @@
 <div class="cell_controller">
     {#if $openLevel}
         {#key $openLevel}
-            <CellGridViewer grid={$openLevel} bind:selectionArea={$selection} />
+            <CellGridViewer grid={$openLevel} bind:selectionArea={$selection} bind:selection={$selectionContent} />
         {/key}
     {/if}
     <GameControls />
