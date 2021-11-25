@@ -49,9 +49,9 @@
         color: #fff;
         padding: 10px;
 
-        button {
+        /* button {
             margin-bottom: 10px;
-        }
+        } */
     }
 
     .action_buttons {

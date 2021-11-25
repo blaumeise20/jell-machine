@@ -201,8 +201,6 @@ export function load() {
                         let cellIx = cellMap.indexOf(cell.type.id);
                         if (cellIx == -1) { cellMap.push(cell.type.id); cellIx = cellMap.length - 1; }
 
-                        console.log(cell.type.id, cellIx, (cellIx * 4 + cell.direction));
-
                         ct += encodeJ1Num((cellIx * 4 + cell.direction) + 1);
                     }
                     else ct += encodeJ1Num(0);

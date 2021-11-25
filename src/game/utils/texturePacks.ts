@@ -21,10 +21,12 @@ const textureMapping = {
     arrow: ["arrow.png"],
     enemy: ["enemy.png"],
     trash: ["trash.png"],
+
     wall: ["wall.png", "immobile.png"],
     note: ["note.png", "music.png"],
     orientator: ["orientator.png"],
     disabler: ["disabler.png"],
+
     redirector: ["redirector.png"],
     tunnel: ["tunnel.png"],
     crossway: ["crossway.png"],

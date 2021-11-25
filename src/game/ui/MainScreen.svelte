@@ -34,7 +34,7 @@
         }
     }
 
-    const tips = [  
+    const tips = [
         "Jell machine was inspired by Pyll Machine",
         "This project is fully free and open source",
         "Try to use keyboard shortcuts as much as you can"
