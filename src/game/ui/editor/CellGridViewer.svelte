@@ -11,6 +11,7 @@
     import { rotation, selectedCell } from "./GameControls.svelte";
     import { Size } from "@core/coord/size";
     import { config } from "@utils/config";
+    import { Events } from "@core/events";
 
     export let grid: CellGrid;
     if (grid.isInfinite) throw new Error("OH NO");
@@ -77,10 +78,15 @@
             }
             else if (placeCell) {
                 if (keys.shift) grid.tiles.set(clickedCell, Tile.Placable);
-                else grid.loadCell(clickedCell, $selectedCell, $rotation);
+                else {
+                    const originalCell = grid.cells.get(clickedCell);
+                    if (!originalCell || originalCell.type != $selectedCell || originalCell.direction != $rotation) {
+                        grid.loadCell(clickedCell, $selectedCell, $rotation);
+                        Events.emit("cell-placed", clickedCell, $selectedCell, $rotation);
+                        cellChanged = true;
+                    }
+                }
             }
-
-            cellChanged = true;
         }
         else if (mouseButton == 2) {
             if (keys.shift) grid.tiles.delete(clickedCell);

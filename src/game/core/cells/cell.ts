@@ -24,11 +24,18 @@ export class Cell {
         this.initialPosition = pos;
         this.initialDirection = direction;
         grid.cellList.push(this);
+
+        this.init();
     }
+
 
     public get options(): CellData {
         return [this.type, this.direction];
     }
+
+    init() {}
+    update() {}
+    delete() {}
 
     rm() {
         if (this.deleted) return;
@@ -38,9 +45,8 @@ export class Cell {
             if (i >= 0) this.grid.cellList.splice(i, 1);
         }
         this.deleted = true;
+        this.delete();
     }
-
-    update() {}
 
     reset() {
         if (this.generated) {
