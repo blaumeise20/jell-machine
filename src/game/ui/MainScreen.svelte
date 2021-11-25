@@ -30,7 +30,7 @@
         }
         else {
             alert("oh an error occured make sure to copy a valid string");
-            console.log(res);
+            console.error(res);
         }
     }
 

@@ -256,7 +256,7 @@ export class CellGrid {
     /**
      * Generates a string representation of the grid.
      */
-    toString(format = "J1"): string | false {
+    toString(format: string): string | false {
         // TODO: add infinite grid support
         if (this.isInfinite) throw new Error("oh no i'm infinite");
 
@@ -267,7 +267,8 @@ export class CellGrid {
                 const result = stringify(this);
                 if (result) return result;
             }
-            catch {
+            catch (e) {
+                console.error(e);
                 return false;
             }
         }
