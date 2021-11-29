@@ -45,6 +45,13 @@ export class CellType {
             return other.options;
     }
 
+    getTex(cell: Cell) {
+        if (this.options.textureOverride)
+            return this.options.textureOverride(cell);
+        else
+            return this.options.textureName;
+    }
+
     _newCell(grid: CellGrid, pos: Position, dir: Direction, generated: boolean) {
         return new this.behavior(pos, this, dir, grid, generated);
     }
@@ -86,6 +93,7 @@ export class CellType {
 export interface CellTypeOptions {
     behavior: typeof Cell;
     textureName: string;
+    textureOverride?(cell: Cell): string;
     flip?(cell: CellData, horizontal: boolean): CellData;
     merge?(self: CellData, other: CellData): CellData;
     data?: any;

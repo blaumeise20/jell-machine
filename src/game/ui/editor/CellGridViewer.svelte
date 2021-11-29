@@ -330,7 +330,7 @@
                     class:placable={grid.tiles.get(cell.pos) == Tile.Placable}
                     x={CELL_SIZE * cell.pos.x}
                     y={CELL_SIZE * (grid.size.height - cell.pos.y - 1)}
-                    href={$currentPack.textures[cell.type.options.textureName].url}
+                    href={$currentPack.textures[cell.type.getTex(cell)].url}
                     transform="rotate({cell.direction * 90})"
                 />
             {/each}
@@ -350,7 +350,7 @@
                         class="cell"
                         x={CELL_SIZE * cell.pos.x}
                         y={CELL_SIZE * (selection.size.height - cell.pos.y - 1)}
-                        href={$currentPack.textures[cell.type.options.textureName].url}
+                        href={$currentPack.textures[cell.type.getTex(cell)].url}
                         transform="rotate({cell.direction * 90})"
                     />
                 {/each}
