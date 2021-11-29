@@ -313,7 +313,7 @@ export function load() {
             for (const cell of grid.cells.values()) {
                 const v3id = v3Cells.indexOf(cell.type);
                 if (v3id != -1)
-                    cellData[cell.pos.x + (cell.pos.y * grid.size.width)] += (2 * cell.type.data.v3id) + (18 * cell.direction) - 72;
+                    cellData[cell.pos.x + (cell.pos.y * grid.size.width)] += (2 * v3id) + (18 * cell.direction) - 72;
             }
 
 
