@@ -1,4 +1,4 @@
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { get, writable, Writable } from "svelte/store";
 import {
@@ -52,12 +52,13 @@ export class Textures {
 
         config.subscribe((c) => {
             if (c.texturePack != get(this.currentPack)?.name)
-                this.use(c.texturePack) ||
-                    (this._copyDefaultPack(), this.use(c.texturePack) || ERR());
+                this.use(c.texturePack);
         });
     }
 
-    reload(copied = false) {
+    reload() {
+        this._copyDefaultPack();
+
         let packs: string[] = [];
         try {
             packs = readdirSync(appPath("textures"), { withFileTypes: true })
@@ -71,17 +72,17 @@ export class Textures {
             }
         }
 
-        if (packs.length == 0) {
-            if (copied) ERR();
-
-            this._copyDefaultPack();
-            this.reload(true);
-        } else this.packPaths = packs.map((p) => appPath(p));
+        if (packs.length == 0)
+            ERR();
+        else
+            this.packPaths = packs.map((p) => appPath(p));
     }
 
     private _copyDefaultPack() {
         try {
-            mkdirSync(appPath("textures", "HighRes"));
+            const path = appPath("textures", "HighRes");
+            if (!existsSync(path))
+                mkdirSync(path);
         } catch {
             ERR();
         }
