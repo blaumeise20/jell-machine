@@ -81,16 +81,27 @@
                 else {
                     const originalCell = grid.cells.get(clickedCell);
                     if (!originalCell || originalCell.type != $selectedCell || originalCell.direction != $rotation) {
-                        grid.loadCell(clickedCell, $selectedCell, $rotation);
-                        Events.emit("cell-placed", clickedCell, $selectedCell, $rotation);
-                        cellChanged = true;
+                        if (grid.isInfinite || grid.size.contains(clickedCell)) {
+                            grid.cells.get(clickedCell)?.rm();
+                            const cell = $selectedCell._newCell(grid, clickedCell, $rotation, !grid.initial);
+                            grid.cells.set(clickedCell, cell);
+                            Events.emit("cell-placed", clickedCell, cell);
+                            cellChanged = true;
+                        }
                     }
                 }
             }
         }
         else if (mouseButton == 2) {
             if (keys.shift) grid.tiles.delete(clickedCell);
-            else grid.cells.get(clickedCell)?.rm();
+            else {
+                const cell = grid.cells.get(clickedCell);
+                if (cell) {
+                    cell.rm();
+                    Events.emit("cell-deleted", clickedCell, cell);
+                    cellChanged = true;
+                }
+            }
 
             cellChanged = true;
         }
