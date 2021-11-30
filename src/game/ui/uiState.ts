@@ -2,6 +2,7 @@ import { derived, writable } from "svelte/store";
 import { Size } from "@core/coord/size";
 import { on } from "./keys";
 import { CellGrid } from "@core/cells/grid";
+import { Position } from "@core/coord/positions";
 
 export const menuOpen = writable(false);
 let $menuOpen = false;
@@ -24,12 +25,12 @@ export const settings = writable(false);
 export const activeLayer = derived(
     [menuOpen, mainMenu, showHelp, createLevel, settings],
     ([$menuOpen, $mainMenu, $showHelp, $createLevel, $settings]) => {
-        if ($showHelp   ) return "help"       ;
-        if ($createLevel) return "createLevel";
-        if ($settings   ) return "settings"   ;
-        if ($mainMenu   ) return "main"       ;
-        if ($menuOpen   ) return "menu"       ;
-        else              return "game"       ;
+        if ($showHelp   ) return "help"        as const;
+        if ($createLevel) return "createLevel" as const;
+        if ($settings   ) return "settings"    as const;
+        if ($mainMenu   ) return "main"        as const;
+        if ($menuOpen   ) return "menu"        as const;
+        else              return "game"        as const;
     }
 );
 
@@ -54,3 +55,5 @@ function addMoveKey(k: string, p: keyof typeof moving) {
 
 export const selection = writable<Size | null>(null);
 export const selectionContent = writable<CellGrid | null>(null);
+export const cursorPosition = writable<{ x: number, y: number }>({ x: 0, y: 0 });
+export const screenPosition = writable<{ x: number, y: number }>({ x: 0, y: 0 });

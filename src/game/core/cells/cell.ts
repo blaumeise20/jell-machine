@@ -36,6 +36,7 @@ export class Cell {
     init() {}
     update() {}
     delete() {}
+    debugText() { return ""; }
 
     rm() {
         if (this.deleted) return;

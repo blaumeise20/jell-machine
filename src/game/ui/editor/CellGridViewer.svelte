@@ -23,9 +23,9 @@
 
     let editorElement: HTMLDivElement;
     const editorSize = { width: 0, height: 0 };
-    const center = { x: grid.size.width / 2, y: grid.size.height / 2 }
+    export const center = { x: grid.size.width / 2, y: grid.size.height / 2 }
     const gridOffset = { left: 0, bottom: 0 };
-    const mouseCell = { x: 0, y: 0 };
+    export const mouseCell = { x: 0, y: 0 };
     let zoom = 1;
     let mouseButton = -1;
 
