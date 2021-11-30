@@ -50,8 +50,9 @@ export class CellGrid {
     loadCell(pos: Position, type: CellType, direction: Direction) {
         if (this.isInfinite || this.size.contains(pos)) {
             this.cells.get(pos)?.rm();
-            this.cells.set(pos, type._newCell(this, pos, direction, !this.initial));
-            return true;
+            const cell = type._newCell(this, pos, direction, !this.initial)
+            this.cells.set(pos, cell);
+            return cell;
         }
         return false;
     }
@@ -77,6 +78,9 @@ export class CellGrid {
             this.initial = true;
 
             this.reloadUI();
+
+            this.tickCount = 0;
+            this.currentSubtick = 0;
         }
     }
 
