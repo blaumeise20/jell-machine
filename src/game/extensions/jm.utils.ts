@@ -116,7 +116,119 @@ export function load() {
         oscillators.length = 0;
     });
 
-    Slot.add(orientator, disabler, note);
+    const jell = CellType.create("jm.utils.jell", {
+        behavior: class JellCell extends Cell {
+            private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
+            private get isGen() { return this.grid.tickCount == this._generatedIn; }
+
+            update() {
+                if (this.isGen) return;
+
+                const rightCell = this.grid.cells.get(this.pos.mi(Direction.Right));
+                const downCell = this.grid.cells.get(this.pos.mi(Direction.Down));
+                const leftCell = this.grid.cells.get(this.pos.mi(Direction.Left));
+                const upCell = this.grid.cells.get(this.pos.mi(Direction.Up));
+
+                if (rightCell && rightCell.type != this.type) this.grid.loadCell(rightCell.pos, this.type, rightCell.direction);
+                if (downCell && downCell.type != this.type) this.grid.loadCell(downCell.pos, this.type, downCell.direction);
+                if (leftCell && leftCell.type != this.type) this.grid.loadCell(leftCell.pos, this.type, leftCell.direction);
+                if (upCell && upCell.type != this.type) this.grid.loadCell(upCell.pos, this.type, upCell.direction);
+            }
+        },
+        textureName: "jell",
+        updateType: UpdateType.Random,
+        updateOrder: -127,
+    });
+
+    const random = CellType.create("jm.utils.random", {
+        behavior: class RandomCell extends Cell {
+            update() {
+                const pos = this.getCellTo((Direction.Right + this.direction) % 4);
+                if (!pos) return;
+
+                this.grid.cells.get(pos[0])?.rotate(Math.random() > 0.5 ? 1 : -1);
+            }
+        },
+        textureName: "random",
+        updateType: UpdateType.Directional,
+        updateOrder: 2.1,
+    });
+
+    const piston = CellType.create("jm.utils.piston", {
+        behavior: class PistonCell extends Cell {
+            extended = false;
+            actuallyExtended = false;
+
+            reset() {
+                super.reset();
+                this.extended = false;
+                this.actuallyExtended = false;
+            }
+            update() {
+                if (this.extended) {
+                    const pos = this.getCellTo(this.direction);
+                    if (!pos) return;
+
+                    const cell = this.grid.cells.get(pos[0]);
+
+                    if (cell) {
+                        if (cell.type == pistonHead) return;
+                        if (!cell.push(pos[1], 1)) return;
+                    }
+
+                    this.actuallyExtended = true;
+                    this.grid.loadCell(pos[0], pistonHead, pos[1]);
+                }
+                else {
+                    const pos = this.getCellTo(this.direction);
+                    if (!pos) return;
+
+                    const cell = this.grid.cells.get(pos[0]);
+
+                    if (cell && cell.type == pistonHead && cell.direction == pos[1]) {
+                        cell.rm();
+                        this.actuallyExtended = false;
+                    }
+                }
+            }
+
+            push(dir: Direction, bias: number) {
+                if (dir == this.direction) {
+                    this.extended = !this.extended;
+                    return null;
+                }
+                if (this.extended) return false;
+                return super.push(dir, bias);
+            }
+            rotate(dir: number) {
+                if (this.extended) return;
+                super.rotate(dir);
+            }
+            setRotation(dir: number) {
+                if (this.extended) return;
+                super.setRotation(dir);
+            }
+        },
+        textureName: "pistonOff",
+        textureOverride: c => (c as any).actuallyExtended ? "pistonOn" : "pistonOff",
+        updateType: UpdateType.Directional,
+        updateOrder: 5,
+    });
+
+    const pistonHead = CellType.create("jm.utils.piston_head", {
+        behavior: class PistonHeadCell extends Cell {
+            push() {
+                return false;
+            }
+
+            rotate() {}
+            setRotation() {}
+        },
+        textureName: "pistonHead",
+    });
+
+
+    Slot.add(orientator, disabler, note, jell, random, piston);
 
     // ctx.createTool("canOpen", "Automatically Can Open selected area", canOpen);
 

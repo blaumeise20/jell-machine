@@ -26,6 +26,11 @@ const textureMapping = {
     note: ["note.png", "music.png"],
     orientator: ["orientator.png"],
     disabler: ["disabler.png"],
+    jell: ["jell.png"],
+    random: ["random.png"],
+    pistonOn: ["pistonOn.png"],
+    pistonOff: ["pistonOff.png"],
+    pistonHead: ["pistonHead.png"],
 
     redirector: ["redirector.png"],
     tunnel: ["tunnel.png"],
