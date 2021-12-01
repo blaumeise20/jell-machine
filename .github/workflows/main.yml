@@ -10,29 +10,18 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Install packages
         run: npm install
-        
-      - name: Install Wine
-        run: |
-          sudo dpkg --add-architecture i386 
-          wget -nc https://dl.winehq.org/wine-builds/winehq.key
-          sudo apt-key add winehq.key
-          sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ impish main'
-          sudo apt update
-          sudo apt install wine-stable
-          sudo apt update
-          sudo apt install --install-recommends winehq-stable
           
       - name: Build project
         run: npm run build
         
-      - name: test tree
+      - name: test tree, will remove
         run: tree
         
       - name: Upload built files
