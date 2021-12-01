@@ -49,6 +49,7 @@ export function load() {
         updateOrder: 0,
     });
 
+    //#region note cell
     const audioContext = new AudioContext();
     const gainNode = audioContext.createGain();
     gainNode.connect(audioContext.destination);
@@ -158,6 +159,10 @@ export function load() {
         behavior: class PistonCell extends Cell {
             extended = false;
             actuallyExtended = false;
+
+            debugText() {
+                return "Extended: " + this.extended;
+            }
 
             reset() {
                 super.reset();
