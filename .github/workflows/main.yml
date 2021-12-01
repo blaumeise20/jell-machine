@@ -17,6 +17,25 @@ jobs:
 
       - name: Install packages
         run: npm install
-
-      - name: Run a multi-line script
+        
+      - name: Install Wine
+        run: |
+          sudo dpkg --add-architecture i386 
+          wget -nc https://dl.winehq.org/wine-builds/winehq.key
+          sudo apt-key add winehq.key
+          sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ impish main'
+          sudo apt update
+          sudo apt install --install-recommends winehq-stable
+          
+      - name: Build project
         run: npm run build
+        
+      - name: test tree
+        run: tree
+        
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: Built files
+          path: build
+          if-no-files-found: error
