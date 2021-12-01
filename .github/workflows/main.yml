@@ -25,6 +25,8 @@ jobs:
           sudo apt-key add winehq.key
           sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ impish main'
           sudo apt update
+          sudo apt install wine-stable
+          sudo apt update
           sudo apt install --install-recommends winehq-stable
           
       - name: Build project
@@ -33,7 +35,7 @@ jobs:
       - name: test tree
         run: tree
         
-      - name: Upload a Build Artifact
+      - name: Upload built files
         uses: actions/upload-artifact@v2.2.4
         with:
           name: Built files
