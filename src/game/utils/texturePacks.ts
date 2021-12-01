@@ -74,16 +74,16 @@ export class Textures {
             packs = readdirSync(appPath("textures"), { withFileTypes: true })
                 .filter((f) => f.isDirectory())
                 .map((f) => f.name);
-        } catch {
+        } catch (e1) {
             try {
                 mkdirSync(appPath("textures"), { recursive: true });
-            } catch (e) {
-                ERR();
+            } catch (e2) {
+                ERR({ e1, e2, msg: "Could not create textures directory, threw error" });
             }
         }
 
         if (packs.length == 0)
-            ERR();
+            ERR({ msg: "No texture packs found" });
         else
             this.packPaths = packs.map((p) => appPath(p));
     }
@@ -93,20 +93,22 @@ export class Textures {
             const path = appPath("textures", "HighRes");
             if (!existsSync(path))
                 mkdirSync(path);
-        } catch {
-            ERR();
+        } catch (e) {
+            ERR({ e, msg: "Could not create default pack directory" });
         }
 
         try {
             const packPath = join(runningPath, "../../assets/defaultPack");
             const defaults = readdirSync(packPath);
-            tryAllContinue(defaults, (file) => {
+            const errors = tryAllContinue(defaults, (file) => {
                 const filePath = appPath("textures/HighRes", file);
                 writeFileSync(filePath, readFileSync(join(packPath, file)));
                 return true;
-            }) || ERR();
-        } catch {
-            ERR();
+            });
+            if (errors.length > 0)
+                ERR({ errors, msg: "Could not copy default pack" });
+        } catch (e) {
+            ERR({ e, msg: "Could not copy default pack, threw error" });
         }
     }
 

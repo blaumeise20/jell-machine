@@ -35,12 +35,12 @@ export function tryAll<T>(arr: T[], fn: (t: T) => boolean) {
 }
 
 export function tryAllContinue<T>(arr: T[], fn: (t: T) => boolean) {
-    let errors = false;
+    const errors = [];
     for (const t of arr) {
         const result = safe(() => fn(t));
-        if (!result[0] || !result[1]) errors = true;
+        if (!result[0] || !result[1]) errors.push({ result, t });
     }
-    return !errors;
+    return errors;
 }
 
 export function clip(): string;
@@ -50,7 +50,7 @@ export function clip(text?: string) {
     return clipboard.readText();
 }
 
-export function ERR() {
-    alert("something bad happened but i don't know why\nplease contact a dev AAAA");
+export function ERR(data: any) {
+    alert("something bad happened but i don't know why\nplease contact a dev AAAA\nsend this: " + btoa(JSON.stringify(data)));
     window.close();
 }
