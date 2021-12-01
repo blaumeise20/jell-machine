@@ -1,4 +1,4 @@
-import { clipboard } from "electron";
+import { clipboard, ipcRenderer } from "electron";
 import { join } from "path";
 
 const hashData = JSON.parse(decodeURIComponent(window.location.hash.substr(1)));
@@ -51,6 +51,8 @@ export function clip(text?: string) {
 }
 
 export function ERR(data: any) {
-    alert("something bad happened but i don't know why\nplease contact a dev AAAA\nsend this: " + btoa(JSON.stringify(data)));
+    data = btoa(JSON.stringify(data));
+    ipcRenderer.send("ERR", data);
+    alert("something bad happened but i don't know why\nplease contact a dev AAAA\nsend this: " + data);
     window.close();
 }

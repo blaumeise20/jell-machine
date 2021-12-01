@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
 
 import { config } from "dotenv";
@@ -41,4 +41,8 @@ app.on("ready", () => {
 
 app.on("window-all-closed", () => {
     app.quit();
+});
+
+ipcMain.on("ERR", (_, data) => {
+    console.log(data);
 });
