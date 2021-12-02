@@ -50,8 +50,9 @@ export class CellGrid {
     loadCell(pos: Position, type: CellType, direction: Direction) {
         if (this.isInfinite || this.size.contains(pos)) {
             this.cells.get(pos)?.rm();
-            const cell = type._newCell(this, pos, direction, !this.initial)
+            const cell = type._newCell(this, pos, direction % 4, !this.initial)
             this.cells.set(pos, cell);
+            cell.init();
             return cell;
         }
         return false;

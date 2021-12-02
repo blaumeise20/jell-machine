@@ -89,6 +89,17 @@ export class Position {
     public toString() {
         return this.x + "," + this.y;
     }
+
+    /**
+     * Formats the position to a human-readable string.
+     */
+    public format(digits: number = 3) {
+        return `${this.x.toFixed(digits)} ${this.y.toFixed(digits)}`;
+    }
+
+    public equals(other: Position) {
+        return this.x == other.x && this.y == other.y;
+    }
 }
 
 /**

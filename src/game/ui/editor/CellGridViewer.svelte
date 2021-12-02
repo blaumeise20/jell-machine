@@ -82,9 +82,7 @@
                     const originalCell = grid.cells.get(clickedCell);
                     if (!originalCell || originalCell.type != $selectedCell || originalCell.direction != $rotation) {
                         if (grid.isInfinite || grid.size.contains(clickedCell)) {
-                            grid.cells.get(clickedCell)?.rm();
-                            const cell = $selectedCell._newCell(grid, clickedCell, $rotation, !grid.initial);
-                            grid.cells.set(clickedCell, cell);
+                            const cell = grid.loadCell(clickedCell, $selectedCell, $rotation)!;
                             Events.emit("cell-placed", clickedCell, cell);
                             cellChanged = true;
                         }

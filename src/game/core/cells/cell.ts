@@ -24,8 +24,6 @@ export class Cell {
         this.initialPosition = pos;
         this.initialDirection = direction;
         grid.cellList.push(this);
-
-        this.init();
     }
 
 

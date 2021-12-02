@@ -49,6 +49,7 @@ export function load() {
         updateOrder: 0,
     });
 
+    //#region note cell
     const audioContext = new AudioContext();
     const gainNode = audioContext.createGain();
     gainNode.connect(audioContext.destination);
@@ -116,6 +117,8 @@ export function load() {
         oscillators.length = 0;
     });
 
+    //#endregion
+
     const jell = CellType.create("jm.utils.jell", {
         behavior: class JellCell extends Cell {
             private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
@@ -154,10 +157,67 @@ export function load() {
         updateOrder: 2.1,
     });
 
+    //#region portal
+    let sourcePortal: PortalCell | null = null;
+    class PortalCell extends Cell {
+        connectedCell!: PortalCell;
+
+        debugText() {
+            if (this.connectedCell)
+                return "Connected to: " + this.connectedCell.pos.format(0);
+
+            return "Not connected";
+        }
+
+        getPos(dir: Direction) {
+            console.log("getPos", dir, this.connectedCell);
+
+            if (!this.connectedCell) return super.getPos(dir); // annoying ts
+            return this.connectedCell.getCellTo(dir);
+        }
+    }
+
+    const portal = CellType.create("jm.utils.portal", {
+        behavior: PortalCell,
+        textureName: "portal",
+        textureOverride: c => (c as any).connectedCell ? "portal" : "portalOff",
+        flip: d => d,
+    });
+
+    Events.on("cell-placed", (_, cell) => {
+        if (cell.type != portal) return;
+
+        if (sourcePortal == null) {
+            sourcePortal = cell;
+        }
+        else {
+            cell.connectedCell = sourcePortal;
+            sourcePortal.connectedCell = cell;
+            sourcePortal = null;
+        }
+    });
+    Events.on("cell-deleted", (pos, cell) => {
+        if (cell.type != portal) return;
+
+        if (sourcePortal == cell) {
+            sourcePortal = null;
+        }
+
+        if (cell.connectedCell) {
+            cell.connectedCell.connectedCell = undefined!;
+            cell.connectedCell.rm();
+        }
+    });
+    //#endregion
+
     const piston = CellType.create("jm.utils.piston", {
         behavior: class PistonCell extends Cell {
             extended = false;
             actuallyExtended = false;
+
+            debugText() {
+                return "Extended: " + this.extended;
+            }
 
             reset() {
                 super.reset();
@@ -227,8 +287,144 @@ export function load() {
         textureName: "pistonHead",
     });
 
+    const stickyPiston = CellType.create("jm.utils.sticky_piston", {
+        // sticky piston is like normal piston, but pulls the cell when retracting
 
-    Slot.add(orientator, disabler, note, jell, random, piston);
+        behavior: class StickyPistonCell extends Cell {
+            extended = false;
+            actuallyExtended = false;
+
+            debugText() {
+                return "Extended: " + this.extended;
+            }
+
+            reset() {
+                super.reset();
+                this.extended = false;
+                this.actuallyExtended = false;
+            }
+            update() {
+                if (this.extended) {
+                    // Get head position
+                    const pos = this.getCellTo(this.direction);
+                    if (!pos) return;
+
+                    // Get cell
+                    const cell = this.grid.cells.get(pos[0]);
+
+                    if (cell) {
+                        // If cell is piston head, we don't have anything to do.
+                        // There are two cases:
+                        // 1. The cell is our own piston head with the correct rotation. Nothing to do.
+                        // 2. The cell is another piston head. We still don't have anything to do, because piston heads can't be moved.
+                        if (cell.type == stickyPistonHead) return;
+
+                        // Otherwise try to push. If we can't, the piston can't extend.
+                        if (!cell.push(pos[1], 1)) return;
+                    }
+
+                    this.actuallyExtended = true;
+                    this.grid.loadCell(pos[0], stickyPistonHead, pos[1]);
+                }
+                else {
+                    const pos = this.getCellTo(this.direction);
+                    if (!pos) return;
+
+                    const cell = this.grid.cells.get(pos[0]);
+
+                    if (cell && cell.type == stickyPistonHead && cell.direction == pos[1]) {
+                        const front = cell.getCellTo(cell.direction);
+                        cell.rm();
+                        if (front)
+                            this.grid.cells.get(front[0])?.push((front[1] + 2) % 4, 1);
+
+                        this.actuallyExtended = false;
+                    }
+                }
+            }
+
+            push(dir: Direction, bias: number) {
+                if (dir == this.direction) {
+                    this.extended = !this.extended;
+                    return null;
+                }
+                if (this.extended) return false;
+                return super.push(dir, bias);
+            }
+            rotate(dir: number) {
+                if (this.extended) return;
+                super.rotate(dir);
+            }
+            setRotation(dir: number) {
+                if (this.extended) return;
+                super.setRotation(dir);
+            }
+        },
+        textureName: "pistonSticky",
+        textureOverride: c => (c as any).actuallyExtended ? "pistonOn" : "pistonSticky",
+        updateType: UpdateType.Directional,
+        updateOrder: 5,
+    });
+
+    const stickyPistonHead = CellType.create("jm.utils.sticky_piston_head", {
+        // used for sticky pistons
+        // not placable
+
+        behavior: class StickyPistonHeadCell extends Cell {
+            push() {
+                return false;
+            }
+
+            rotate() {}
+            setRotation() {}
+        },
+        textureName: "pistonStickyHead",
+    });
+
+    const nuke = CellType.create("jm.testing.nuke", {
+        // duplicates itself to a random direction
+
+        behavior: class NukeCell extends Cell {
+            private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
+            private get isGen() { return this.grid.tickCount == this._generatedIn; }
+
+            update() {
+                if (this.isGen) return;
+
+                const dirs = [Direction.Right, Direction.Down, Direction.Left, Direction.Up];
+
+                let runsLeft = 2;
+                while (dirs.length && runsLeft--) {
+                    // get and remove random direction
+                    const dir = dirs.splice(Math.floor(Math.random() * dirs.length), 1)[0];
+
+                    // get pos to push
+                    const pos = this.getCellTo(dir);
+                    if (!pos) continue;
+
+                    // get cell to push
+                    const cell = this.grid.cells.get(pos[0]);
+
+                    // if cell exists push it
+                    if (cell) {
+                        if (!cell.push(pos[1], 1)) continue;
+                    }
+
+                    // load nuke cell in that direction
+                    this.grid.loadCell(pos[0], nuke, pos[1]);
+                    break;
+                }
+            }
+        },
+        textureName: "nuke",
+        flip: d => d,
+        updateType: UpdateType.Directional,
+        updateOrder: 4,
+    });
+
+    Slot.add(orientator, disabler, note);
+    Slot.add(jell, random, portal, nuke);
+    Slot.add(piston, stickyPiston);
 
     // ctx.createTool("canOpen", "Automatically Can Open selected area", canOpen);
 
