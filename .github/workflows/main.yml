@@ -10,6 +10,26 @@ on:
 
 jobs:
   build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install packages
+        run: npm install
+          
+      - name: Build project for Windows and Linux
+        run: |
+          npm run build:electron:windows
+          npm run build:electron:linux
+        
+      - name: Upload built files
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: Built files
+          path: dist/
+          if-no-files-found: error
+  build-mac:
     runs-on: macos-latest
 
     steps:
@@ -18,15 +38,12 @@ jobs:
       - name: Install packages
         run: npm install
           
-      - name: Build project
-        run: npm run build
-        
-      - name: test tree, will remove
-        run: tree
+      - name: Build project for Mac
+        run: npm run build:electron:mac
         
       - name: Upload built files
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: Built files
-          path: build
+          name: Built files for Mac
+          path: dist/
           if-no-files-found: error
