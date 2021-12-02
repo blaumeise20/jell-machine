@@ -1,5 +1,5 @@
 # Jell Machine
-[![Build](https://github.com/jerbear2008/jell-machine/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/jerbear2008/jell-machine/actions/workflows/main.yml)
+[![Build](https://github.com/blaumeise20/jell-machine/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/jerbear2008/jell-machine/actions/workflows/main.yml)
 
 *Note Jell Machine is not done yet so all following is just a description of what will be.*
 
