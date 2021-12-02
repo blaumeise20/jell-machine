@@ -18,16 +18,24 @@ jobs:
       - name: Install packages
         run: npm install
           
-      - name: Build project for Windows and Linux
-        run: |
-          npm run build:electron:windows
-          npm run build:electron:linux
+      - name: Build project for Windows
+        run: npm run build:electron:windows
         
-      - name: Upload built files
+      - name: Upload Windows build
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: Built files
-          path: dist/
+          name: Windows
+          path: dist/Jell Machine-win32-x64
+          if-no-files-found: error
+          
+      - name: Build project for Linux
+        run: npm run build:electron:linux
+          
+      - name: Upload Linux build
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: Linux
+          path: dist/Jell Machine-linux-x64
           if-no-files-found: error
   build-mac:
     runs-on: macos-latest
@@ -41,9 +49,9 @@ jobs:
       - name: Build project for Mac
         run: npm run build:electron:mac
         
-      - name: Upload built files
+      - name: Upload Mac build
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: Built files for Mac
-          path: dist/
+          name: MacOS
+          path: dist/Jell Machine-darwin-x64
           if-no-files-found: error
