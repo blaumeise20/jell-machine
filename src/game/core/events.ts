@@ -13,8 +13,10 @@ export namespace Events {
     }
 
     export function emit(event: string, ...args: any[]): void {
-        if (callbacks[event])
-            for (const callback of callbacks[event])
-                callback(...args);
+        try {
+            if (callbacks[event])
+                for (const callback of callbacks[event])
+                    callback(...args);
+        } catch {}
     }
 }

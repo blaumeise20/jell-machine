@@ -65,7 +65,7 @@ export class CellGrid {
         this.initial = false;
         Events.emit("tickstart");
 
-        doStep(this, subtick);
+        try { doStep(this, subtick); } catch {}
 
         this.tickCount++;
         Events.emit("tickend");

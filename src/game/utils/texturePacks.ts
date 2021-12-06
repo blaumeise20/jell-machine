@@ -30,12 +30,13 @@ const textureMapping = {
     random: ["random.png"],
     portal: ["portal.png"],
     portalOff: ["portalOff.png"],
+    nuke: ["nuke.png"],
+
     pistonOn: ["pistonOn.png"],
     pistonOff: ["pistonOff.png"],
     pistonHead: ["pistonHead.png"],
     pistonSticky: ["pistonSticky.png"],
     pistonStickyHead: ["pistonStickyHead.png"],
-    nuke: ["nuke.png"],
 
     redirector: ["redirector.png"],
     tunnel: ["tunnel.png"],
