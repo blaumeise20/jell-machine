@@ -253,11 +253,15 @@ export function load() {
             }
 
             push(dir: Direction, bias: number) {
+                // If a cell comes in from the back, we flip our state.
                 if (dir == this.direction) {
                     this.extended = !this.extended;
                     return null;
                 }
-                if (this.extended) return false;
+
+                // If the piston is extended it can't be moved,
+                if (this.extended || this.actuallyExtended) return false;
+                // otherwise push.
                 return super.push(dir, bias);
             }
             rotate(dir: number) {
@@ -344,11 +348,15 @@ export function load() {
             }
 
             push(dir: Direction, bias: number) {
+                // If a cell comes in from the back, we flip our state.
                 if (dir == this.direction) {
                     this.extended = !this.extended;
                     return null;
                 }
-                if (this.extended) return false;
+
+                // If the piston is extended it can't be moved,
+                if (this.extended || this.actuallyExtended) return false;
+                // otherwise push.
                 return super.push(dir, bias);
             }
             rotate(dir: number) {
@@ -381,7 +389,7 @@ export function load() {
         textureName: "pistonStickyHead",
     });
 
-    const nuke = CellType.create("jm.testing.nuke", {
+    const nuke = CellType.create("jm.utils.nuke", {
         // duplicates itself to a random direction
 
         behavior: class NukeCell extends Cell {
