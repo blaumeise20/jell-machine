@@ -24,7 +24,8 @@ module.exports = {
     devtool: prod ? "source-map" : "inline-source-map",
     devServer: {
         port: process.env.ELECTRON_WEBPACK_DEV_PORT || 6357,
-        contentBase: "./src/build",
+        static: "./src/build",
+        liveReload: false,
     },
     output: {
         path: path.resolve(__dirname, "src/build"),

@@ -22,6 +22,7 @@ app.on("ready", () => {
     const window = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false,
         },
         fullscreen: true,
         titleBarStyle: "hidden",
