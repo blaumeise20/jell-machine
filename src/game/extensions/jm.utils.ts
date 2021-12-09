@@ -211,6 +211,9 @@ export function load() {
     //#endregion
 
     const piston = CellType.create("jm.utils.piston", {
+        // Extends and retracts if a cell comes in from behind.
+        // If extended it is immovable.
+
         behavior: class PistonCell extends Cell {
             extended = false;
             actuallyExtended = false;
@@ -226,20 +229,30 @@ export function load() {
             }
             update() {
                 if (this.extended) {
+                    // Get head position
                     const pos = this.getCellTo(this.direction);
                     if (!pos) return;
 
+                    // Get cell
                     const cell = this.grid.cells.get(pos[0]);
 
                     if (cell) {
+                        // If cell is piston head, we don't have anything to do.
+                        // There are two cases:
+                        // 1. The cell is our own piston head with the correct rotation. Nothing to do.
+                        // 2. The cell is another piston head. We still don't have anything to do, because piston heads can't be moved.
                         if (cell.type == pistonHead) return;
+
+                        // Otherwise try to push. If we can't, the piston can't extend.
                         if (!cell.push(pos[1], 1)) return;
                     }
 
+                    // Visually extend the piston and load the head.
                     this.actuallyExtended = true;
                     this.grid.loadCell(pos[0], pistonHead, pos[1]);
                 }
                 else {
+
                     const pos = this.getCellTo(this.direction);
                     if (!pos) return;
 
@@ -280,6 +293,9 @@ export function load() {
     });
 
     const pistonHead = CellType.create("jm.utils.piston_head", {
+        // Used for sticky pistons,
+        // not placable.
+
         behavior: class PistonHeadCell extends Cell {
             push() {
                 return false;
@@ -292,7 +308,7 @@ export function load() {
     });
 
     const stickyPiston = CellType.create("jm.utils.sticky_piston", {
-        // sticky piston is like normal piston, but pulls the cell when retracting
+        // Sticky piston is like normal piston, but pulls the cell when retracting.
 
         behavior: class StickyPistonCell extends Cell {
             extended = false;
@@ -327,6 +343,7 @@ export function load() {
                         if (!cell.push(pos[1], 1)) return;
                     }
 
+                    // Visually extend the piston and load the head.
                     this.actuallyExtended = true;
                     this.grid.loadCell(pos[0], stickyPistonHead, pos[1]);
                 }
@@ -375,8 +392,8 @@ export function load() {
     });
 
     const stickyPistonHead = CellType.create("jm.utils.sticky_piston_head", {
-        // used for sticky pistons
-        // not placable
+        // Used for sticky pistons,
+        // not placable.
 
         behavior: class StickyPistonHeadCell extends Cell {
             push() {
@@ -390,7 +407,7 @@ export function load() {
     });
 
     const nuke = CellType.create("jm.utils.nuke", {
-        // duplicates itself to a random direction
+        // Duplicates itself to a random direction.
 
         behavior: class NukeCell extends Cell {
             private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
@@ -459,7 +476,7 @@ export function load() {
                         cellId = "jm.core" + cellId;
                 }
                 const cell = Registry.getCell(cellId);
-                if (!cell) throw new Error();
+                if (!cell) throw new Error(cellId);
 
                 while (count--) {
                     const pos = Pos(ix % grid.size.width, Math.floor(ix / grid.size.width));

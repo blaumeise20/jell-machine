@@ -17,6 +17,8 @@ import { BorderMode } from "./border";
 import { Events } from "@core/events";
 
 export const openLevel: Writable<CellGrid | null> = writable(null);
+export let grid: CellGrid | null = null;
+openLevel.subscribe(g => grid = g);
 
 openLevel.subscribe(o => (window as any).openLevel = o);
 

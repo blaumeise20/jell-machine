@@ -8,10 +8,10 @@
     import SettingsScreen from "./ui/settings/SettingsScreen.svelte";
     import { on } from "./ui/keys";
     import { openLevel } from "@core/cells/grid";
-    import { menuOpen, mainMenu, showHelp, createLevel, settings } from "./ui/uiState";
+    import { menuOpen, mainMenu, showHelp, createLevel, settings, activeLayer } from "./ui/uiState";
 
     on("escape").when(() => !$mainMenu && $openLevel).down(() => $menuOpen = !$menuOpen);
-    on("escape").when(() => $mainMenu && $openLevel && !$showHelp && !$createLevel && !$settings).down(() => $mainMenu = false);
+    on("escape").when(() => $activeLayer == "main").down(() => $mainMenu = false);
     on("escape").when(() => $showHelp).down(() => $showHelp = false);
     on("escape").when(() => $createLevel).down(() => $createLevel = false);
     on("escape").when(() => $settings).down(() => $settings = false);
