@@ -312,6 +312,7 @@
             width: {grid.size.width * CELL_SIZE}px;
             height: {grid.size.height * CELL_SIZE}px;
             background-image: url({$currentPack.textures.bg.url});
+            display: {$config.showBackgroundGrid ? "block" : "none"};
         "></div>
         <svg class="cell_container" width={grid.size.width * CELL_SIZE} height={grid.size.height * CELL_SIZE}>
             {#each [...grid.tiles.entries()] as [pos, tile]}

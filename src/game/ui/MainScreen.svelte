@@ -20,8 +20,8 @@
 
     // loadFromClipboard();
 
-    function importClipboard() {
-        const clipboardContent = clip();
+    async function importClipboard() {
+        const clipboardContent = await clip();
         const res = CellGrid.loadFromString(clipboardContent);
 
         if (res[0]) {

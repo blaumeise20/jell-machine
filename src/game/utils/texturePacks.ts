@@ -1,15 +1,15 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
-import { join } from "path";
+import { getFs, appPath, runningPath, resolvePath } from "./platform";
 import { get, writable, Writable } from "svelte/store";
 import {
-    appPath,
     ERR,
-    runningPath,
     safe,
     tryAllContinue,
     tryFirst,
 } from "./misc";
 import { config } from "./config";
+
+if (!getFs()) throw new Error();
+const { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } = getFs()!;
 
 const textureMapping = {
     generator: ["generator.png"],
@@ -43,6 +43,8 @@ const textureMapping = {
     crossway: ["crossway.png"],
     crossdirector: ["crossdirector.png"],
 
+    network: ["network.png"],
+
     placable: ["BGPlacable.png", "0.png"],
     bg: ["BG.png", "BGDefault.png"],
     border: ["_.png"]
@@ -50,6 +52,7 @@ const textureMapping = {
 const uiTextures = {
     play: "buttonPlay.png",
     pause: "buttonPause.png",
+    structures: "buttonStructures.png",
 };
 
 export class Textures {
@@ -99,11 +102,11 @@ export class Textures {
         }
 
         try {
-            const packPath = join(runningPath, "../../assets/defaultPack");
+            const packPath = resolvePath(runningPath, "../../assets/defaultPack");
             const defaults = readdirSync(packPath);
             const errors = tryAllContinue(defaults, (file) => {
                 const filePath = appPath("textures/HighRes", file);
-                writeFileSync(filePath, readFileSync(join(packPath, file)));
+                writeFileSync(filePath, readFileSync(resolvePath(packPath, file)));
                 return true;
             });
             if (errors.length > 0)
@@ -189,6 +192,7 @@ export interface TexturePack {
     ui: {
         play: Texture;
         pause: Texture;
+        structures: Texture;
     };
 }
 export interface Texture {

@@ -1,6 +1,11 @@
 <script>
     import { config } from "@utils/config";
     import { settings } from "../uiState";
+
+    let animations = $config.animation ? "on" : "off";
+    $: if (animations == "on" || animations == "off") {
+        $config.animation = animations == "on";
+    }
 </script>
 
 <style>
@@ -41,6 +46,7 @@
             <p>
                 <b>Tick Speed (ms):</b> <input type="number" bind:value={$config.tickSpeed}>
                 <b>Hotbar Size (px):</b> <input type="number" bind:value={$config.hotbarSize}>
+                <b>Animations ("on"/"off"):</b> <input type="text" bind:value={animations}>
             </p>
             <div class="space"></div>
             <button class="center" on:click={() => $settings = false}>Back</button>

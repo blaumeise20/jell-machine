@@ -26,6 +26,7 @@ module.exports = {
         port: process.env.ELECTRON_WEBPACK_DEV_PORT || 6357,
         static: "./src/build",
         liveReload: false,
+        hot: false,
     },
     output: {
         path: path.resolve(__dirname, "src/build"),
@@ -130,7 +131,6 @@ module.exports = {
         }),
         new webpack.ExternalsPlugin("commonjs", [
             "electron",
-            "@electron/remote",
             "path",
             "fs",
         ]),

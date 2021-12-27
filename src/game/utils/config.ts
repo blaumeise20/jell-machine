@@ -1,32 +1,49 @@
-import { readFileSync, writeFileSync } from "fs";
 import { Writable, writable } from "svelte/store";
-import { appPath, safe } from "./misc";
+import { safe } from "./misc";
+import { getFs, appPath } from "./platform";
 
-export class Config {
-    static instance: Config;
-    static default = { texturePack: "HighRes", tickSpeed: 200, hotbarSize: 70, animation: false, showDebug: false };
+const fs = getFs();
 
-    constructor() { return Config.instance ?? (this.init(), Config.instance = this) }
+const configPath = appPath("config.json");
+function write(config: Config) {
+    if (fs) fs.writeFileSync(configPath, JSON.stringify(config));
+    else localStorage.setItem("config", JSON.stringify(config));
+}
 
-    static $: Writable<typeof Config.default>;
+class ConfigManager {
+    static instance: ConfigManager;
+    static default = { texturePack: "HighRes", tickSpeed: 200, hotbarSize: 70, animation: false, showDebug: false, showBackgroundGrid: true };
+
+    constructor() { return ConfigManager.instance ?? (this.init(), ConfigManager.instance = this) }
+
+    static $: Writable<Config>;
 
     init() {
         const config = writable<any>({});
-        const file = safe(() => JSON.parse(readFileSync(appPath("config.json")).toString()), Config.default);
-        if (file[1]) file[0] = { ...Config.default, ...file[0] };
+        let file: Partial<Config>;
+        if (fs) {
+            file = safe(() => JSON.parse(fs.readFileSync(configPath, "utf8")), ConfigManager.default)[0];
+        }
+        else {
+            const data = localStorage.getItem("config");
+            if (data) file = safe(() => JSON.parse(data), ConfigManager.default)[0];
+            else file = ConfigManager.default;
+        }
 
         config.subscribe(c => {
-            safe(() => writeFileSync(appPath("config.json"), JSON.stringify(c)));
+            safe(() => write(c));
         });
 
-        config.set(file[0]);
+        config.set({ ...ConfigManager.default, ...file });
 
-        Config.$ = config;
+        ConfigManager.$ = config;
     }
 }
 
-Config.instance = new Config();
+export type Config = typeof ConfigManager.default;
 
-export const config = Config.$;
-export let $config = Config.default;
-Config.$.subscribe(v => $config = v);
+ConfigManager.instance = new ConfigManager();
+
+export const config = ConfigManager.$;
+export let $config = ConfigManager.default;
+ConfigManager.$.subscribe(v => $config = v);

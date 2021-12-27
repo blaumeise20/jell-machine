@@ -22,6 +22,7 @@
 <script>
     let show = true;
     on("F1").when(() => !$mainMenu).down(() => (show = !show, showControls.set(show), $menuOpen = false));
+    on("F2").when(() => !$mainMenu).down(() => $config.showBackgroundGrid = !$config.showBackgroundGrid);
     on("q").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation--);
     on("e").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation++);
     on("t").when(() => !$menuOpen && !$mainMenu).down(() => (levelPlaying = false, playTimer.stop(), $openLevel?.reset()));
@@ -67,7 +68,7 @@
     }
 
     .buttons {
-        padding: 30px 100px 30px 30px;
+        padding: 30px;
     }
 
     $selection_size: var(--hotbar-size);

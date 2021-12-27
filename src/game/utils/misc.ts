@@ -1,14 +1,7 @@
-import { clipboard, ipcRenderer } from "electron";
-import { join } from "path";
-
-const hashData = JSON.parse(decodeURIComponent(window.location.hash.substr(1)));
-
-export const appPath = (...paths: string[]) => join(appPath.path, ...paths);
-appPath.path = hashData[0];
-export const runningPath = hashData[1];
+import { sendIpcError } from "./platform";
 
 export function safe<T>(fn: () => T): [T, true] | [null, false];
-export function safe<T>(fn: () => T, fallback: T): [T, true] | [null, false];
+export function safe<T>(fn: () => T, fallback: T): [T, true] | [T, false];
 export function safe(fn: () => any, fallback = null): [any, boolean] {
 	try {
 		return [fn(), true];
@@ -43,16 +36,16 @@ export function tryAllContinue<T>(arr: T[], fn: (t: T) => boolean) {
     return errors;
 }
 
-export function clip(): string;
-export function clip(text: string): void;
+export function clip(): Promise<string>;
+export function clip(text: string): Promise<void>;
 export function clip(text?: string) {
-    if (text != undefined) return clipboard.writeText(text);
-    return clipboard.readText();
+    if (text != undefined) return navigator.clipboard.writeText(text);
+    return navigator.clipboard.readText();
 }
 
 export function ERR(data: any) {
     data = btoa(JSON.stringify(data));
-    ipcRenderer.send("ERR", data);
+    sendIpcError(data);
     alert("something bad happened but i don't know why\nplease contact a dev AAAA\nsend this: " + data);
     window.close();
 }
