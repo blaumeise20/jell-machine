@@ -74,4 +74,3 @@ export class Extension {
 }
 
 console.log(Extension.parseExtension("Jell Machine Extension\u0000Test\u0001{}\u0002console.log(\"Hello World!\");"));
-

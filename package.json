@@ -20,7 +20,7 @@
     },
     "license": "MIT",
     "devDependencies": {
-        "@types/node": "^16.11.12",
+        "@types/node": "^17.0.8",
         "autoprefixer": "^10.4.0",
         "copy-webpack-plugin": "^10.0.0",
         "create-arr": "^1.1.1",
@@ -47,6 +47,6 @@
         "webpack-dev-server": "^4.6.0"
     },
     "dependencies": {
-        "dotenv": "^10.0.0"
+        "dotenv": "^11.0.0"
     }
 }
