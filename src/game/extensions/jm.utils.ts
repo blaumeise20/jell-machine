@@ -611,6 +611,7 @@ export function load() {
     Menu.addUI(ui);
 }
 
+// @ts-ignore
 function _canOpen(grid: CellGrid) {
     const vaultArea = grid.selectedArea;
     if (!vaultArea) return;
