@@ -13,10 +13,10 @@ import { Slot } from "@core/slot";
 export function load() {
     const generator = CellType.create("jm.core.generator", {
         behavior: class GeneratorCell extends Cell {
-            update() {
+            override update() {
                 const source = this.getCellTo((this.direction + 2) % 4);
                 if (!source) return;
-                const [sourcePos, sourceDir] = source;
+                const [sourcePos, _] = source;
 
                 const sourceCell = this.grid.cells.get(sourcePos);
                 if (!sourceCell) return;
@@ -38,11 +38,11 @@ export function load() {
 
     const mover = CellType.create("jm.core.mover", {
         behavior: class MoverCell extends Cell {
-            update() {
+            override update() {
                 super.push(this.direction, 1);
             }
 
-            push(dir: Direction, bias: number) {
+            override push(dir: Direction, bias: number) {
                 if (this.disabled) return super.push(dir, bias);
 
                 if (dir == this.direction) return super.push(dir, bias + 1);
@@ -57,7 +57,7 @@ export function load() {
 
     const cwRotator = CellType.create("jm.core.cw_rotator", {
         behavior: class RotatorCell extends Cell {
-            update() {
+            override update() {
                 const rotation = this.type.data.rotation;
 
                 const valRight = this.getCellTo(Direction.Right);
@@ -93,7 +93,7 @@ export function load() {
 
     const slide = CellType.create("jm.core.slide", {
         behavior: class SlideCell extends Cell {
-            push(dir: Direction, bias: number) {
+            override push(dir: Direction, bias: number) {
                 if (this.direction % 2 == dir % 2 || this.disabled) return super.push(dir, bias);
                 return false;
             }
@@ -104,7 +104,7 @@ export function load() {
 
     const arrow = CellType.create("jm.core.arrow", {
         behavior: class ArrowCell extends Cell {
-            push(dir: Direction, bias: number) {
+            override push(dir: Direction, bias: number) {
                 if (this.direction == dir || this.disabled) return super.push(dir, bias);
                 return false;
             }
@@ -114,7 +114,7 @@ export function load() {
 
     const enemy = CellType.create("jm.core.enemy", {
         behavior: class EnemyCell extends Cell {
-            push(dir: Direction, bias: number) {
+            override push(dir: Direction, bias: number) {
                 // TODO: fix bug where enemies don't break when disabled before
                 if (this.disabled) return super.push(dir, bias);
                 this.rm();
@@ -127,7 +127,7 @@ export function load() {
 
     const trash = CellType.create("jm.core.trash", {
         behavior: class TrashCell extends Cell {
-            push(dir: Direction, bias: number) {
+            override push(dir: Direction, bias: number) {
                 if (this.disabled) return super.push(dir, bias);
                 return null;
             }
@@ -138,13 +138,13 @@ export function load() {
 
     const wall = CellType.create("jm.core.wall", {
         behavior: class WallCell extends Cell {
-            push() {
+            override push() {
                 return false;
             }
 
-            rotate() {}
-            setRotation() {}
-            disable() {}
+            override rotate() {}
+            override setRotation() {}
+            override disable() {}
         },
         textureName: "wall",
         flip: d => d,
@@ -152,17 +152,17 @@ export function load() {
 
     const border = CellType.create("_", {
         behavior: class BorderCell extends Cell {
-            getPos(dir: Direction) {
+            override getPos(dir: Direction) {
                 if (this.grid.borderMode == BorderMode.Wrap) return this.getCellTo(dir);
                 return null;
             }
-            push() {
+            override push() {
                 return false;
             }
 
-            rotate() {}
-            setRotation() {}
-            disable() {}
+            override rotate() {}
+            override setRotation() {}
+            override disable() {}
         },
         textureName: "border",
         flip: d => d,
@@ -219,6 +219,7 @@ export function load() {
         // optional to avoid errors when people forget to put ;; at the end
         grid.description = parts[5]?.trim() || "";
         grid.name = parts[6]?.trim() || "";
+        return true;
     });
 
     LevelCode.create("V3")
@@ -296,6 +297,7 @@ export function load() {
             grid.name = parts[5]?.trim() || "";
             grid.borderMode = parseInt(parts[6]?.trim()) || 0;
             grid.borderMode = grid.borderMode >= 0 && grid.borderMode <= 2 ? grid.borderMode : 0;
+            return true;
         })
         .export(grid => {
             let str = "";

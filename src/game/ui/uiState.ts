@@ -2,7 +2,6 @@ import { derived, writable } from "svelte/store";
 import { Size } from "@core/coord/size";
 import { on } from "./keys";
 import { CellGrid } from "@core/cells/grid";
-import { Position } from "@core/coord/positions";
 
 export const menuOpen = writable(false);
 let $menuOpen = false;

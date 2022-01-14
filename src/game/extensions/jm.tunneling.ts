@@ -6,7 +6,7 @@ import { Slot } from "@core/slot";
 export function load() {
     const redirector = CellType.create("jm.tunneling.redirector", {
         behavior: class RedirectorCell extends Cell {
-            getPos(dir: Direction) {
+            override getPos(dir: Direction) {
                 if (dir == (this.direction + 2) % 4) return super.getCellTo((this.direction + 1) % 4);
 
                 if (dir == (this.direction + 3) % 4) return super.getCellTo(this.direction);
@@ -14,8 +14,8 @@ export function load() {
                 return super.getPos(dir);
             }
 
-            rotate() {}
-            setRotation() {}
+            override rotate() {}
+            override setRotation() {}
         },
         textureName: "redirector",
         flip: CellType.flipTwoWay,
@@ -23,14 +23,14 @@ export function load() {
 
     const tunnel = CellType.create("jm.tunneling.tunnel", {
         behavior: class TunnelCell extends Cell {
-            getPos(dir: Direction) {
+            override getPos(dir: Direction) {
                 if (dir % 2 == this.direction % 2) return super.getCellTo(dir);
 
                 return super.getPos(dir);
             }
 
-            rotate() {}
-            setRotation() {}
+            override rotate() {}
+            override setRotation() {}
         },
         textureName: "tunnel",
         flip: d => d,
@@ -42,7 +42,7 @@ export function load() {
 
     const crossway = CellType.create("jm.tunneling.crossway", {
         behavior: class CrosswayCell extends Cell {
-            getPos(dir: Direction) {
+            override getPos(dir: Direction) {
                 return super.getCellTo(dir);
             }
         },
@@ -52,7 +52,7 @@ export function load() {
 
     const crossdirector = CellType.create("jm.tunneling.crossdirector", {
         behavior: class CrossdirectorCell extends Cell {
-            getPos(dir: Direction) {
+            override getPos(dir: Direction) {
                 if (dir == this.direction) return super.getCellTo((this.direction + 3) % 4);
 
                 if (dir == (this.direction + 1) % 4) return super.getCellTo((this.direction + 2) % 4);
@@ -64,8 +64,8 @@ export function load() {
                 return super.getPos(dir);
             }
 
-            rotate() {}
-            setRotation() {}
+            override rotate() {}
+            override setRotation() {}
         },
         textureName: "crossdirector",
         flip: CellType.flipTwoWay,

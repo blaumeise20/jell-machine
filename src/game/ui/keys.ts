@@ -93,6 +93,7 @@ function makeObject(key: string, whens: ((key: string) => any)[], mounter?: { mo
             return this;
         },
 
+        // @ts-ignore
         observe(object?: any, key?: any) {
             if (object) {
                 this.observe().subscribe((v: boolean) => object[key] = v);

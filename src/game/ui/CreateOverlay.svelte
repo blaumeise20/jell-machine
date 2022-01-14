@@ -50,8 +50,8 @@
         <div class="overlay">
             <h2>Create Level</h2>
             <div class="space"></div>
-            <input type="number" class="big" placeholder="Width" bind:value={width} bind:this={widthElement} on:focus={e => widthElement.select()} />
-            <input type="number" class="big" placeholder="Height" bind:value={height} bind:this={heightElement} on:focus={e => heightElement.select()} />
+            <input type="number" class="big" placeholder="Width" bind:value={width} bind:this={widthElement} on:focus={_ => widthElement.select()} />
+            <input type="number" class="big" placeholder="Height" bind:value={height} bind:this={heightElement} on:focus={_ => heightElement.select()} />
             <div class="space"></div>
             <button class="big" on:click={() => {
                 $openLevel = CellGrid.createEmpty(width, height);

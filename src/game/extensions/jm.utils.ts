@@ -9,7 +9,7 @@ import { Size } from "@core/coord/size";
 import { Registry } from "@core/registry";
 import { Direction } from "@core/coord/direction";
 import { Menu } from "@core/ui/menu";
-import { block, button, text, UIText, UITextSize } from "@core/ui/build";
+import { block, button, text, UIText } from "@core/ui/build";
 import { get } from "svelte/store";
 import { CellType } from "@core/cells/cellType";
 import { Events } from "@core/events";
@@ -18,15 +18,15 @@ import { Slot } from "@core/slot";
 export function load() {
     const orientator = CellType.create("jm.utils.orientator", {
         behavior: class OrientatorCell extends Cell {
-            update() {
+            override update() {
                 this.grid.cells.get(this.pos.mi(Direction.Right))?.setRotation(this.direction);
                 this.grid.cells.get(this.pos.mi(Direction.Down))?.setRotation(this.direction);
                 this.grid.cells.get(this.pos.mi(Direction.Left))?.setRotation(this.direction);
                 this.grid.cells.get(this.pos.mi(Direction.Up))?.setRotation(this.direction);
             }
 
-            rotate() {}
-            setRotation() {}
+            override rotate() {}
+            override setRotation() {}
         },
         textureName: "orientator",
         updateType: UpdateType.Directional,
@@ -35,14 +35,14 @@ export function load() {
 
     const disabler = CellType.create("jm.utils.disabler", {
         behavior: class DisablerCell extends Cell {
-            update() {
+            override update() {
                 this.grid.cells.get(this.pos.mi(Direction.Right))?.disable();
                 this.grid.cells.get(this.pos.mi(Direction.Down))?.disable();
                 this.grid.cells.get(this.pos.mi(Direction.Left))?.disable();
                 this.grid.cells.get(this.pos.mi(Direction.Up))?.disable();
             }
 
-            disable() {}
+            override disable() {}
         },
         textureName: "disabler",
         updateType: UpdateType.Random,
@@ -97,7 +97,7 @@ export function load() {
     const note = CellType.create("jm.utils.note", {
         textureName: "note",
         behavior: class NoteCell extends Cell {
-            push() {
+            override push() {
                 noteTicks.add(noteNames[this.pos.y % noteNames.length] as keyof typeof notes);
                 return null;
             }
@@ -124,7 +124,7 @@ export function load() {
             private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
             private get isGen() { return this.grid.tickCount == this._generatedIn; }
 
-            update() {
+            override update() {
                 if (this.isGen) return;
 
                 const rightCell = this.grid.cells.get(this.pos.mi(Direction.Right));
@@ -145,7 +145,7 @@ export function load() {
 
     const random = CellType.create("jm.utils.random", {
         behavior: class RandomCell extends Cell {
-            update() {
+            override update() {
                 const pos = this.getCellTo((Direction.Right + this.direction) % 4);
                 if (!pos) return;
 
@@ -162,14 +162,14 @@ export function load() {
     class PortalCell extends Cell {
         connectedCell!: PortalCell;
 
-        debugText() {
+        override debugText() {
             if (this.connectedCell)
                 return "Connected to: " + this.connectedCell.pos.format(0);
 
             return "Not connected";
         }
 
-        getPos(dir: Direction) {
+        override getPos(dir: Direction) {
             console.log("getPos", dir, this.connectedCell);
 
             if (!this.connectedCell) return super.getPos(dir); // annoying ts
@@ -196,7 +196,7 @@ export function load() {
             sourcePortal = null;
         }
     });
-    Events.on("cell-deleted", (pos, cell) => {
+    Events.on("cell-deleted", (_, cell) => {
         if (cell.type != portal) return;
 
         if (sourcePortal == cell) {
@@ -218,16 +218,16 @@ export function load() {
             extended = false;
             actuallyExtended = false;
 
-            debugText() {
+            override debugText() {
                 return "Extended: " + this.extended;
             }
 
-            reset() {
+            override reset() {
                 super.reset();
                 this.extended = false;
                 this.actuallyExtended = false;
             }
-            update() {
+            override update() {
                 if (this.extended) {
                     // Get head position
                     const pos = this.getCellTo(this.direction);
@@ -265,7 +265,7 @@ export function load() {
                 }
             }
 
-            push(dir: Direction, bias: number) {
+            override push(dir: Direction, bias: number) {
                 // If a cell comes in from the back, we flip our state.
                 if (dir == this.direction) {
                     this.extended = !this.extended;
@@ -277,11 +277,11 @@ export function load() {
                 // otherwise push.
                 return super.push(dir, bias);
             }
-            rotate(dir: number) {
+            override rotate(dir: number) {
                 if (this.extended) return;
                 super.rotate(dir);
             }
-            setRotation(dir: number) {
+            override setRotation(dir: number) {
                 if (this.extended) return;
                 super.setRotation(dir);
             }
@@ -297,12 +297,12 @@ export function load() {
         // not placable.
 
         behavior: class PistonHeadCell extends Cell {
-            push() {
+            override push() {
                 return false;
             }
 
-            rotate() {}
-            setRotation() {}
+            override rotate() {}
+            override setRotation() {}
         },
         textureName: "pistonHead",
     });
@@ -314,16 +314,16 @@ export function load() {
             extended = false;
             actuallyExtended = false;
 
-            debugText() {
+            override debugText() {
                 return "Extended: " + this.extended;
             }
 
-            reset() {
+            override reset() {
                 super.reset();
                 this.extended = false;
                 this.actuallyExtended = false;
             }
-            update() {
+            override update() {
                 if (this.extended) {
                     // Get head position
                     const pos = this.getCellTo(this.direction);
@@ -364,7 +364,7 @@ export function load() {
                 }
             }
 
-            push(dir: Direction, bias: number) {
+            override push(dir: Direction, bias: number) {
                 // If a cell comes in from the back, we flip our state.
                 if (dir == this.direction) {
                     this.extended = !this.extended;
@@ -376,11 +376,11 @@ export function load() {
                 // otherwise push.
                 return super.push(dir, bias);
             }
-            rotate(dir: number) {
+            override rotate(dir: number) {
                 if (this.extended) return;
                 super.rotate(dir);
             }
-            setRotation(dir: number) {
+            override setRotation(dir: number) {
                 if (this.extended) return;
                 super.setRotation(dir);
             }
@@ -396,12 +396,12 @@ export function load() {
         // not placable.
 
         behavior: class StickyPistonHeadCell extends Cell {
-            push() {
+            override push() {
                 return false;
             }
 
-            rotate() {}
-            setRotation() {}
+            override rotate() {}
+            override setRotation() {}
         },
         textureName: "pistonStickyHead",
     });
@@ -413,7 +413,7 @@ export function load() {
             private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
             private get isGen() { return this.grid.tickCount == this._generatedIn; }
 
-            update() {
+            override update() {
                 if (this.isGen) return;
 
                 const dirs = [Direction.Right, Direction.Down, Direction.Left, Direction.Up];
@@ -517,6 +517,7 @@ export function load() {
 
             grid.description = parts[5]?.trim() || "";
             grid.name = parts[6]?.trim() || "";
+            return true;
         })
         .export(grid => {
             const cellMap: string[] = [];
@@ -610,7 +611,7 @@ export function load() {
     Menu.addUI(ui);
 }
 
-function canOpen(grid: CellGrid) {
+function _canOpen(grid: CellGrid) {
     const vaultArea = grid.selectedArea;
     if (!vaultArea) return;
 

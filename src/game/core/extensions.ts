@@ -1,7 +1,6 @@
 import type { CellType } from "./cells/cellType";
 import type { UpdateType } from "./cells/cellUpdates";
 import { Registry } from "./registry";
-import { Slot } from "./slot";
 
 /**
  * An unique identifier for every item (tools, cell types, etc.) in the game.

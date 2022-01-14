@@ -236,7 +236,7 @@
             showSelection = false;
         }
     }
-    function mouseupEvent(e: MouseEvent) {
+    function mouseupEvent(_e: MouseEvent) {
         mouseButton = -1;
         selecting = false;
         placeCell = !showSelection;
@@ -315,7 +315,7 @@
             display: {$config.showBackgroundGrid ? "block" : "none"};
         "></div>
         <svg class="cell_container" width={grid.size.width * CELL_SIZE} height={grid.size.height * CELL_SIZE}>
-            {#each [...grid.tiles.entries()] as [pos, tile]}
+            {#each [...grid.tiles.entries()] as [pos, _]}
                 <image
                     class="cell placable placable_bg"
                     x={CELL_SIZE * pos.x}

@@ -5,7 +5,7 @@ import { Extension } from "../extensions";
 import { CellGrid } from "./grid";
 import { Direction } from "../coord/direction";
 
-export function doStep(grid: CellGrid, subtick: boolean) {
+export function doStep(grid: CellGrid, _subtick: boolean) {
     if ((updateOrder as any).eee) {
         (updateOrder as any).eee = false;
         updateOrder.push(...Extension.getUpdateOrder());

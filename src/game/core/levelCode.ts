@@ -2,12 +2,12 @@ import type { CellGrid } from "./cells/grid";
 import { Registry } from "./registry";
 
 export class LevelCode {
-    public importFn: (parts: string[], grid: CellGrid) => boolean | void = () => false;
+    public importFn: (parts: string[], grid: CellGrid) => boolean = () => false;
     public exportFn: (grid: CellGrid) => string | false = () => false;
 
     private constructor(public id: string) {}
 
-    public import(fn: (parts: string[], grid: CellGrid) => boolean | void) {
+    public import(fn: (parts: string[], grid: CellGrid) => boolean) {
         this.importFn = fn;
         return this;
     }
