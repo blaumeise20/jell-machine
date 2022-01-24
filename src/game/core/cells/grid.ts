@@ -311,7 +311,7 @@ export class CellGrid {
             const parse = Registry.getLevelCode(parts[0])?.importFn;
             if (parse) {
                 const result = parse(parts, grid);
-                if (result == null) return [true, grid];
+                if (result) return [true, grid];
                 else return [false, LevelError.Unknown];
             }
             else {
