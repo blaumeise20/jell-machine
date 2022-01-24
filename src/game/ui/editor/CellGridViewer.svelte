@@ -1,7 +1,7 @@
 <script>
     import { Direction } from "@core/coord/direction";
     import { CellGrid } from "@core/cells/grid";
-    import { currentPack } from "@utils/texturePacks";
+    import { textures } from "@utils/texturePacks";
     import { onMount, onDestroy } from "svelte";
     import { moving, showControls } from "../uiState";
     import { Tile } from "@core/tiles";
@@ -311,7 +311,7 @@
         <div class="background" style="
             width: {grid.size.width * CELL_SIZE}px;
             height: {grid.size.height * CELL_SIZE}px;
-            background-image: url({$currentPack.textures.bg.url});
+            background-image: url({$textures.cells.bg.url});
             display: {$config.showBackgroundGrid ? "block" : "none"};
         "></div>
         <svg class="cell_container" width={grid.size.width * CELL_SIZE} height={grid.size.height * CELL_SIZE}>
@@ -320,7 +320,7 @@
                     class="cell placable placable_bg"
                     x={CELL_SIZE * pos.x}
                     y={CELL_SIZE * (grid.size.height - pos.y - 1)}
-                    href={$currentPack.textures.placable.url}
+                    href={$textures.cells.placable.url}
                 />
             {/each}
             {#each [...grid.cells.values()] as cell (cell.id)}
@@ -329,7 +329,7 @@
                     class:placable={grid.tiles.get(cell.pos) == Tile.Placable}
                     x={CELL_SIZE * cell.pos.x}
                     y={CELL_SIZE * (grid.size.height - cell.pos.y - 1)}
-                    href={$currentPack.textures[cell.type.getTex(cell)].url}
+                    href={$textures.cells[cell.type.getTex(cell)].url}
                     transform="rotate({cell.direction * 90})"
                 />
             {/each}
@@ -349,7 +349,7 @@
                         class="cell"
                         x={CELL_SIZE * cell.pos.x}
                         y={CELL_SIZE * (selection.size.height - cell.pos.y - 1)}
-                        href={$currentPack.textures[cell.type.getTex(cell)].url}
+                        href={$textures.cells[cell.type.getTex(cell)].url}
                         transform="rotate({cell.direction * 90})"
                     />
                 {/each}

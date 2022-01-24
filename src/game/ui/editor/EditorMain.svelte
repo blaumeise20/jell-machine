@@ -11,7 +11,7 @@
 
 <style>
     .cell_controller {
-        background-color: #2a2a2a;
+        background-color: #272727;
         display: flex;
         height: 100%;
         width: 100%;

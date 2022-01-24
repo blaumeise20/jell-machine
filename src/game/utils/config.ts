@@ -12,7 +12,7 @@ function write(config: Config) {
 
 class ConfigManager {
     static instance: ConfigManager;
-    static default = { texturePack: "HighRes", tickSpeed: 200, hotbarSize: 70, animation: false, showDebug: false, showBackgroundGrid: true };
+    static default = { texturePack: false as string | false, tickSpeed: 200, hotbarSize: 70, animation: false, showDebug: false, showBackgroundGrid: true };
 
     constructor() { return ConfigManager.instance ?? (this.init(), ConfigManager.instance = this) }
 
@@ -29,6 +29,9 @@ class ConfigManager {
             if (data) file = safe(() => JSON.parse(data), ConfigManager.default)[0];
             else file = ConfigManager.default;
         }
+
+        // TODO(maybe): remove on release
+        if (file.texturePack == "HighRes") file.texturePack = false;
 
         config.subscribe(c => {
             safe(() => write(c));

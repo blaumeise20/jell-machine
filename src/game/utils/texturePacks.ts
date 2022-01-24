@@ -1,15 +1,13 @@
-import { getFs, appPath, runningPath, resolvePath } from "./platform";
-import { get, writable, Writable } from "svelte/store";
+import { getFs, appPath, resolvePath, runningPath } from "./platform";
+import { writable, Writable } from "svelte/store";
 import {
-    ERR,
     safe,
-    tryAllContinue,
     tryFirst,
 } from "./misc";
 import { config } from "./config";
 
 if (!getFs()) throw new Error();
-const { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } = getFs()!;
+const { mkdirSync, readdirSync, readFileSync } = getFs()!;
 
 const textureMapping = {
     generator: ["generator.png"],
@@ -52,81 +50,63 @@ const textureMapping = {
 const uiTextures = {
     play: "buttonPlay.png",
     pause: "buttonPause.png",
-    structures: "buttonStructures.png",
 };
 
-export class Textures {
+class Textures {
     currentPack: Writable<TexturePack> = writable(null as any as TexturePack);
+    defaultPack: TexturePack;
     packPaths!: string[];
+    supported = true;
 
     static instance: Textures;
 
     constructor() {
-        this.reload();
+        this.defaultPack = this.loadDefaultPack();
 
-        config.subscribe((c) => {
-            if (c.texturePack != get(this.currentPack)?.name)
-                this.use(c.texturePack);
-        });
-    }
-
-    reload() {
-        this._copyDefaultPack();
-
-        let packs: string[] = [];
         try {
-            packs = readdirSync(appPath("textures"), { withFileTypes: true })
+            // try read texture packs
+            const packs = readdirSync(appPath("textures"), { withFileTypes: true })
                 .filter((f) => f.isDirectory())
                 .map((f) => f.name);
+
+            this.packPaths = packs.map((p) => appPath(p));
         } catch (e1) {
             try {
+                // packs don't exist
                 mkdirSync(appPath("textures"), { recursive: true });
+                this.packPaths = [];
             } catch (e2) {
-                ERR({ e1, e2, msg: "Could not create textures directory, threw error" });
+                // can't create pack folder, texture packs not supported
+                this.supported = false;
             }
         }
 
-        if (packs.length == 0)
-            ERR({ msg: "No texture packs found" });
-        else
-            this.packPaths = packs.map((p) => appPath(p));
+        config.subscribe((c) => {
+            console.log("hi");
+            if (!c.texturePack) {
+                console.log("hi2");
+                this.currentPack.set(this.defaultPack);
+            }
+            else {
+                this.use(c.texturePack);
+            }
+        });
     }
 
-    private _copyDefaultPack() {
-        try {
-            const path = appPath("textures", "HighRes");
-            if (!existsSync(path))
-                mkdirSync(path);
-        } catch (e) {
-            ERR({ e, msg: "Could not create default pack directory" });
-        }
-
-        try {
-            const packPath = resolvePath(runningPath, "../../assets/defaultPack");
-            const defaults = readdirSync(packPath);
-            const errors = tryAllContinue(defaults, (file) => {
-                const filePath = appPath("textures/HighRes", file);
-                writeFileSync(filePath, readFileSync(resolvePath(packPath, file)));
-                return true;
-            });
-            if (errors.length > 0)
-                ERR({ errors, msg: "Could not copy default pack" });
-        } catch (e) {
-            ERR({ e, msg: "Could not copy default pack, threw error" });
-        }
+    loadDefaultPack() {
+        const path = resolvePath(runningPath, "../../assets/defaultPack");
+        const textures = this.load(false, path)
+        console.log(path, textures);
+        return textures as TexturePack;
     }
 
-    load(name: string): TexturePack | false {
-        const textures = {} as any;
+    load(name: string | false, path: string): TexturePack | false {
+        const cells = {} as any;
 
-        for (const k of Object.keys(
-            textureMapping
-        ) as (keyof typeof textureMapping)[]) {
+        for (const k of Object.keys(textureMapping) as (keyof typeof textureMapping)[]) {
             if (
                 !tryFirst(textureMapping[k], (filename) => {
-                    const imageContent = safe(() =>
-                        readFileSync(appPath("textures", name, filename))
-                    );
+                    const imageContent = safe(() => readFileSync(path + "/" + filename));
                     if (!imageContent[1]) return false;
 
                     const blob = new Blob(
@@ -134,7 +114,7 @@ export class Textures {
                         { type: "image/png" }
                     );
                     const url = URL.createObjectURL(blob);
-                    textures[k] = { blob, url };
+                    cells[k] = { blob, url };
 
                     return true;
                 })
@@ -143,21 +123,17 @@ export class Textures {
         }
 
         return {
-            textures,
-            ui: this.loadUI(name),
+            cells,
+            ui: this.loadUI(path),
             name,
         };
     }
 
-    loadUI(name: string): TexturePack["ui"] {
+    loadUI(path: string): TexturePack["ui"] {
         const ui = {} as any;
 
-        for (const k of Object.keys(
-            uiTextures
-        ) as (keyof typeof uiTextures)[]) {
-            const imageContent = safe(() =>
-                readFileSync(appPath("textures", name, uiTextures[k]))
-            );
+        for (const k of Object.keys(uiTextures) as (keyof typeof uiTextures)[]) {
+            const imageContent = safe(() => readFileSync(path + "/" + uiTextures[k]));
             if (!imageContent[1]) continue;
 
             try {
@@ -175,9 +151,9 @@ export class Textures {
 
     use(name: string) {
         let defaultUI = {} as any;
-        if (name != "HighRes") defaultUI = this.loadUI(name);
+        if (name) defaultUI = this.loadUI(name);
 
-        const pack = this.load(name);
+        const pack = this.load(name, appPath("textures", name));
         if (pack) {
             pack.ui = { ...defaultUI, ...pack.ui };
             this.currentPack.set(pack);
@@ -187,12 +163,11 @@ export class Textures {
 }
 
 export interface TexturePack {
-    name: string;
-    textures: Record<string, Texture>;
+    name: string | false;
+    cells: Record<string, Texture>;
     ui: {
         play: Texture;
         pause: Texture;
-        structures: Texture;
     };
 }
 export interface Texture {
@@ -202,4 +177,4 @@ export interface Texture {
 
 Textures.instance = new Textures();
 
-export const currentPack = Textures.instance.currentPack;
+export const textures = Textures.instance.currentPack;

@@ -4,7 +4,7 @@
     import { mainMenu, menuOpen, showControls } from "../uiState";
     import { config } from "@utils/config";
     import { openLevel } from "@core/cells/grid";
-    import { currentPack } from "@utils/texturePacks";
+    import { textures } from "@utils/texturePacks";
     import { Animator } from "@utils/animator";
     import { SlotHandler } from "@core/slot";
     import { Direction } from "@core/coord/direction";
@@ -108,7 +108,7 @@
 {#if show}
     <div class="bottom_controls" style="--hotbar-size: {$config.hotbarSize}px;">
         <div class="buttons">
-            <div class="play" style="background-image: url({$currentPack.ui[levelPlaying ? "pause" : "play"].url})" on:click={() => toggleLevel()}></div>
+            <div class="play" style="background-image: url({$textures.ui[levelPlaying ? "pause" : "play"].url})" on:click={() => toggleLevel()}></div>
         </div>
 
         <div class="cells">
@@ -118,7 +118,7 @@
                 {/if}
                 <div>
                     <div class="cell_selection" class:selected={c.isActive} style="
-                        background-image: url({$currentPack.textures[c.currentItem.options.textureName].url});
+                        background-image: url({$textures.cells[c.currentItem.options.textureName].url});
                         transform: rotate({$actualRotation * 90}deg);
                     " on:click={() => {
                         if (c.isActive)
