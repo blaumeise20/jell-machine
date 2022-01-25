@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { CellGrid, openLevel } from "@core/cells/grid";
     import { createLevel, mainMenu } from "./uiState";
 
@@ -10,7 +10,7 @@
     $: if (widthElement) widthElement.focus();
 </script>
 
-<style>
+<style lang="scss">
     .overlay_container {
         background-color: #363636;
         left: 0;

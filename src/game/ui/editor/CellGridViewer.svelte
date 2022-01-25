@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { Direction } from "@core/coord/direction";
     import { CellGrid } from "@core/cells/grid";
     import { textures } from "@utils/texturePacks";
@@ -244,7 +244,7 @@
     //#endregion
 </script>
 
-<style>
+<style lang="scss">
     $CELL_SIZE: 64px;
 
     .cell_editor {

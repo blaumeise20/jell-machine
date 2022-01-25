@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import "@utils/config";
     import "@utils/texturePacks";
     import EditorMain from "./ui/editor/EditorMain.svelte";

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { UIElement } from "@core/ui/components/element";
     import { onMount } from "svelte";
 

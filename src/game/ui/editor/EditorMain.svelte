@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { openLevel } from "@core/cells/grid";
     import CellGridViewer from "./CellGridViewer.svelte";
     import DebugMenu from "./DebugMenu.svelte";
@@ -9,7 +9,7 @@
     // $openLevel = CellGrid.loadFromString("V3;1;1;e;;")[1] as CellGrid;
 </script>
 
-<style>
+<style lang="scss">
     .cell_controller {
         background-color: #272727;
         display: flex;

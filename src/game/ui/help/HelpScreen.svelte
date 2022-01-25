@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { showHelp } from "../uiState";
 
     const actions = [
@@ -21,7 +21,7 @@
     ];
 </script>
 
-<style>
+<style lang="scss">
     .overlay_container {
         background-color: #363636;
         left: 0;

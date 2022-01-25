@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { Cell } from "@core/cells/cell";
     import { openLevel } from "@core/cells/grid";
     import { Direction } from "@core/coord/direction";
@@ -16,7 +16,7 @@
     $: if (!targetedCell?.pos.equals(targetedCellPosition)) targetedCell = $openLevel ? $openLevel.cells.get(targetedCellPosition) : null;
 </script>
 
-<style>
+<style lang="scss">
     .debug {
         font: 400 14px/17px "Menlo", monospace;
         color: #fff;

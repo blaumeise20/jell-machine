@@ -1,8 +1,7 @@
-<script>
+<script lang="ts">
     import { clip } from "@utils/misc";
     import { openLevel } from "@core/cells/grid";
     import { mainMenu, menuOpen, selection } from "../uiState";
-    // import { Extension } from "@core/extensions";
     import { Menu } from "@core/ui/menu";
     import UiElementViewer from "../UIElementViewer.svelte";
 
@@ -12,7 +11,7 @@
     let copyTimeout: any = null;
 </script>
 
-<style>
+<style lang="scss">
     .sidebar_backdrop {
         background-color: rgba(0, 0, 0, .2);
         width: 100%;

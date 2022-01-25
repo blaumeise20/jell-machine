@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { config } from "@utils/config";
     import { settings } from "../uiState";
 
@@ -8,7 +8,7 @@
     }
 </script>
 
-<style>
+<style lang="scss">
     .overlay_container {
         background-color: #363636;
         left: 0;

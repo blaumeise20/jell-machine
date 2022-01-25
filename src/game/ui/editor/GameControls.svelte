@@ -1,4 +1,4 @@
-<script context="module">
+<script lang="ts" context="module">
     import { writable, derived } from "svelte/store";
     import { keys, on } from "../keys";
     import { mainMenu, menuOpen, showControls } from "../uiState";
@@ -19,7 +19,7 @@
 
 </script>
 
-<script>
+<script lang="ts">
     let show = true;
     on("F1").when(() => !$mainMenu).down(() => (show = !show, showControls.set(show), $menuOpen = false));
     on("F2").when(() => !$mainMenu).down(() => $config.showBackgroundGrid = !$config.showBackgroundGrid);
@@ -57,7 +57,7 @@
     });
 </script>
 
-<style>
+<style lang="scss">
     .bottom_controls {
         background-color: rgba(65, 65, 65, .7);
         bottom: 0;
