@@ -170,8 +170,6 @@ export function load() {
         }
 
         override getPos(dir: Direction) {
-            console.log("getPos", dir, this.connectedCell);
-
             if (!this.connectedCell) return super.getPos(dir); // annoying ts
             return this.connectedCell.getCellTo(dir);
         }

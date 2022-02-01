@@ -80,9 +80,7 @@ class Textures {
         }
 
         config.subscribe((c) => {
-            console.log("hi");
             if (!c.texturePack) {
-                console.log("hi2");
                 this.currentPack.set(this.defaultPack);
             }
             else {
@@ -94,7 +92,6 @@ class Textures {
     loadDefaultPack() {
         const path = resolvePath(runningPath, "../../assets/defaultPack");
         const textures = this.load(false, path)
-        console.log(path, textures);
         return textures as TexturePack;
     }
 
