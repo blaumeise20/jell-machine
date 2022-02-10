@@ -31,8 +31,8 @@ export function sendIpcError(data: string) {
 }
 
 export function resolvePath(...paths: string[]): string {
-    let result = "";
-    for (const path of paths) {
+    let result = paths[0];
+    for (const path of paths.slice(1)) {
         if (path.startsWith("/")) {
             result = path;
         }
