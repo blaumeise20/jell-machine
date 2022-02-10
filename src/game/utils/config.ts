@@ -31,7 +31,8 @@ class ConfigManager {
         }
 
         // TODO(maybe): remove on release
-        if (file.texturePack == "HighRes") file.texturePack = false;
+        // if (file.texturePack == "HighRes") file.texturePack = false;
+        file.texturePack = false;
 
         config.subscribe(c => {
             safe(() => write(c));
