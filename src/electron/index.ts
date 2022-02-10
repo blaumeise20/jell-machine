@@ -16,7 +16,7 @@ app.on("ready", () => {
                   )
                 : app.getPath("userData"),
             __dirname,
-        ])
+        ].map(a => a.replace(/\\/g, "/")))
     );
 
     const window = new BrowserWindow({
