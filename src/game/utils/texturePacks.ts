@@ -91,7 +91,8 @@ class Textures {
 
     loadDefaultPack() {
         const path = resolvePath(runningPath, "../../assets/defaultPack");
-        const textures = this.load(false, path)
+        const textures = this.load(false, path);
+        console.log(runningPath, path);
         return textures as TexturePack;
     }
 
