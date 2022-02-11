@@ -50,8 +50,10 @@ export function doStep(grid: CellGrid, _subtick: boolean) {
                 break;
             case UpdateType.Random:
                 for (const cell of grid.cellList)
-                    if (cell.type == updateType[0] && !cell.deleted && !cell.disabled)
+                    if (cell.type == updateType[0] && !cell.deleted && !cell.disabled && !cell.updated) {
                         cell.update();
+                        cell.updatedIn = grid.tickCount;
+                    }
                 break;
         }
     }
