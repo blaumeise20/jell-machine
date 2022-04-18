@@ -225,13 +225,39 @@
 
     function mousedownEvent(e: MouseEvent) {
         if (selection) {
-            if (e.button != 2) grid.insert(selection, selectionPos, keys.ctrl);
+            if (e.button != 2) {
+                for (const cell of selection.cellList) {
+                    const newPos = Pos(cell.pos.x + selectionPos.x, cell.pos.y + selectionPos.y);
+                    const cellAt = grid.cells.get(newPos);
+                    if (cellAt && keys.ctrl) {
+                        const newData = cellAt.type.merge(cellAt, cell);
+                        const newCell = grid.loadCell(newPos, newData[0], newData[1]);
+                        if (newCell) Events.emit("cell-placed", newPos, newCell);
+                    }
+                    else {
+                        const newCell = grid.loadCell(cell.pos.mi(selectionPos), cell.type, cell.direction);
+                        if (newCell) Events.emit("cell-placed", cell.pos, newCell);
+                    }
+                }
+                grid.reloadUI();
+            }
             selection = null;
             placeCell = false;
         }
         else {
             mouseButton = e.button;
-            if (mouseButton == 2 && showSelection) grid.clear(selectionSize);
+            if (mouseButton == 2 && showSelection) {
+                for (let x = 0; x < selectionSize.width; x++) {
+                    for (let y = 0; y < selectionSize.height; y++) {
+                        const cell = grid.cells.get(Pos(x + selectionSize.left, y + selectionSize.bottom));
+                        if (cell) {
+                            cell.rm();
+                            Events.emit("cell-deleted", cell.pos, cell);
+                        }
+                    }
+                }
+                grid.reloadUI();
+            }
             selecting = keys.ctrl;
             showSelection = false;
         }
