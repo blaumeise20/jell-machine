@@ -67,27 +67,12 @@
         z-index: 60;
     }
 
-    .buttons {
-        padding: 30px;
-    }
-
     $selection_size: var(--hotbar-size);
-
-    .play {
-        background-size: $selection_size, $selection_size;
-        background-repeat: no-repeat;
-        width: $selection_size;
-        height: $selection_size;
-    }
 
     .cells {
         flex: 1;
         display: flex;
-        padding: 30px;
-    }
-
-    .cell_selection_seperator {
-        flex: 1;
+        padding: calc($selection_size / 4) 0 calc($selection_size / 4) 0;
     }
     .cell_selection {
         background-repeat: no-repeat;
@@ -96,9 +81,10 @@
         image-rendering: pixelated;
         position: relative;
         opacity: .4;
-        padding-top: 100%;
+        margin-left: calc($selection_size / 4);
         transition: transform .15s, opacity .1s;
         width: $selection_size;
+        height: $selection_size;
     }
     .selected {
         opacity: 1;
@@ -107,26 +93,17 @@
 
 {#if show}
     <div class="bottom_controls" style="--hotbar-size: {$config.hotbarSize}px;">
-        <div class="buttons">
-            <div class="play" style="background-image: url({$textures.ui[levelPlaying ? "pause" : "play"].url})" on:click={() => toggleLevel()}></div>
-        </div>
-
         <div class="cells">
             {#each $currentSlots as c, i}
-                {#if i}
-                    <div class="cell_selection_seperator"></div>
-                {/if}
-                <div>
-                    <div class="cell_selection" class:selected={c.isActive} style="
-                        background-image: url({$textures.cells[c.currentItem.options.textureName].url});
-                        transform: rotate({$actualRotation * 90}deg);
-                    " on:click={() => {
-                        if (c.isActive)
-                            slotHandler.loopSlot();
-                        else
-                            slotHandler.to(i);
-                    }}></div>
-                </div>
+                <div class="cell_selection" class:selected={c.isActive} style="
+                    background-image: url({$textures.cells[c.currentItem.options.textureName].url});
+                    transform: rotate({$actualRotation * 90}deg);
+                " on:click={() => {
+                    if (c.isActive)
+                        slotHandler.loopSlot();
+                    else
+                        slotHandler.to(i);
+                }}></div>
             {/each}
         </div>
     </div>
