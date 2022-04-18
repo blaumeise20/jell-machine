@@ -6,8 +6,20 @@ const fs = getFs();
 
 const configPath = appPath("config.json");
 function write(config: Config) {
-    if (fs) fs.writeFileSync(configPath, JSON.stringify(config));
-    else localStorage.setItem("config", JSON.stringify(config));
+    const newConfig = {} as Record<string, any>;
+
+    for (const key in config) {
+        if (config.hasOwnProperty(key)) {
+            // @ts-ignore
+            const val = config[key], def = ConfigManager.default[key];
+            if (val !== def) {
+                newConfig[key] = val;
+            }
+        }
+    }
+
+    if (fs) fs.writeFileSync(configPath, JSON.stringify(newConfig));
+    else localStorage.setItem("config", JSON.stringify(newConfig));
 }
 
 class ConfigManager {
