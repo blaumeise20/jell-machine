@@ -9,6 +9,7 @@
     import { SlotHandler } from "@core/slot";
     import { Direction } from "@core/coord/direction";
     import { Registry } from "@core/registry";
+    import { currentConnection } from "@core/multiplayer/connection";
 
     let slotHandler = new SlotHandler(Registry.getSlots());
     const currentSlots = slotHandler.slots;
@@ -25,7 +26,14 @@
     on("F2").when(() => !$mainMenu).down(() => $config.showBackgroundGrid = !$config.showBackgroundGrid);
     on("q").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation--);
     on("e").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation++);
-    on("t").when(() => !$menuOpen && !$mainMenu).down(() => (levelPlaying = false, playTimer.stop(), $openLevel?.reset()));
+    on("t").when(() => !$menuOpen && !$mainMenu).down(() => {
+        levelPlaying = false;
+        playTimer.stop();
+        $openLevel?.reset();
+        if (currentConnection?.isConnected) {
+            currentConnection.loadGrid();
+        }
+    });
 
     const playTimer = new Animator(() => {
         $openLevel?.doStep(false);

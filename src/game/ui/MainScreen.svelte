@@ -1,8 +1,9 @@
 <script lang="ts">
     import { CellGrid, openLevel } from "@core/cells/grid";
     import { clip } from "@utils/misc";
-    import { createLevel, mainMenu, showHelp, settings } from "./uiState";
+    import { createLevel, mainMenu, showHelp, settings, connectServer } from "./uiState";
     import logo from "../logo.png";
+    import { disconnect } from "@core/multiplayer/connection";
 
     // let showSpoiler = false;
     // let clipboardContent = "";
@@ -26,6 +27,7 @@
 
         if (res[0]) {
             $mainMenu = false;
+            disconnect();
             $openLevel = res[1];
         }
         else {
@@ -101,6 +103,8 @@
         {/if} -->
         <div class="space"></div>
         <button class="big" on:click={() => $createLevel = true}>Create new level</button>
+        <div class="space"></div>
+        <button class="big" on:click={() => $connectServer = true}>Connect to server</button>
         <div class="space"></div>
         <button on:click={() => $settings = true}>Settings</button>
         {#if $openLevel}

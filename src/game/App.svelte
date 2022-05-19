@@ -4,6 +4,7 @@
     import EditorMain from "./ui/editor/EditorMain.svelte";
     import MainScreen from "./ui/MainScreen.svelte";
     import CreateOverlay from "./ui/CreateOverlay.svelte";
+    import ConnectOverlay from "./ui/ConnectOverlay.svelte";
     import HelpScreen from "./ui/help/HelpScreen.svelte";
     import SettingsScreen from "./ui/settings/SettingsScreen.svelte";
     import { on } from "./ui/keys";
@@ -22,6 +23,8 @@
 <MainScreen />
 
 <CreateOverlay />
+
+<ConnectOverlay />
 
 <HelpScreen />
 

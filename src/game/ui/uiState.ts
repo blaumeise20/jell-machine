@@ -19,17 +19,20 @@ export const showHelp = writable(false);
 
 export const createLevel = writable(false);
 
+export const connectServer = writable(false);
+
 export const settings = writable(false);
 
 export const activeLayer = derived(
-    [menuOpen, mainMenu, showHelp, createLevel, settings],
-    ([$menuOpen, $mainMenu, $showHelp, $createLevel, $settings]) => {
-        if ($showHelp   ) return "help"        as const;
-        if ($createLevel) return "createLevel" as const;
-        if ($settings   ) return "settings"    as const;
-        if ($mainMenu   ) return "main"        as const;
-        if ($menuOpen   ) return "menu"        as const;
-        else              return "game"        as const;
+    [menuOpen, mainMenu, showHelp, createLevel, connectServer, settings],
+    ([$menuOpen, $mainMenu, $showHelp, $createLevel, $connectServer, $settings]) => {
+        if ($showHelp     ) return "help"        as const;
+        if ($createLevel  ) return "createLevel" as const;
+        if ($connectServer) return "connect"     as const;
+        if ($settings     ) return "settings"    as const;
+        if ($mainMenu     ) return "main"        as const;
+        if ($menuOpen     ) return "menu"        as const;
+        else                return "game"        as const;
     }
 );
 

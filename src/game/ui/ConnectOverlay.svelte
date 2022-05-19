@@ -1,14 +1,13 @@
 <script lang="ts">
     import { CellGrid, openLevel } from "@core/cells/grid";
-    import { disconnect } from "@core/multiplayer/connection";
-    import { createLevel, mainMenu } from "./uiState";
+    import { connect, disconnect } from "@core/multiplayer/connection";
 
-    let width = 100;
-    let height = 100;
-    let widthElement = null as any as HTMLInputElement;
-    let heightElement = null as any as HTMLInputElement;
+    // import { CellGrid, openLevel } from "@core/cells/grid";
+    import { connectServer, mainMenu } from "./uiState";
 
-    $: if (widthElement) widthElement.focus();
+    let url = "";
+    let urlElement = null as any as HTMLInputElement;
+    $: if (urlElement) urlElement.focus();
 </script>
 
 <style lang="scss">
@@ -42,28 +41,28 @@
 
     input {
         text-align: center;
-        width: 150px;
+        width: 100%;
+        margin: 0;
     }
 </style>
 
-{#if $createLevel}
+{#if $connectServer}
     <div class="overlay_container">
         <div class="overlay">
-            <h2>Create Level</h2>
+            <h2>Connect to server</h2>
             <div class="space"></div>
-            <input type="number" class="big" placeholder="Width" bind:value={width} bind:this={widthElement} on:focus={_ => widthElement.select()} />
-            <input type="number" class="big" placeholder="Height" bind:value={height} bind:this={heightElement} on:focus={_ => heightElement.select()} />
+            <input type="url" class="big" placeholder="Location" bind:value={url} bind:this={urlElement} />
             <div class="space"></div>
             <button class="big" on:click={() => {
                 disconnect();
-                $openLevel = CellGrid.createEmpty(width, height);
-                width = 100;
-                height = 100;
-                $createLevel = false;
+                $openLevel = CellGrid.createEmpty(1, 1);
+                connect(url);
+                url = "";
+                $connectServer = false;
                 $mainMenu = false;
-            }}>Create new level</button>
+            }}>Connect</button>
             <div class="space"></div>
-            <button class="center" on:click={() => $createLevel = false}>Back</button>
+            <button class="center" on:click={() => $connectServer = false}>Back</button>
         </div>
     </div>
 {/if}
