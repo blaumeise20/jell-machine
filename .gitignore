@@ -11,3 +11,5 @@ src/build/
 .env.development
 
 src/game/extensions/jm.testing.ts
+test.ts
+src/game/core/console/
