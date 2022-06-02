@@ -168,6 +168,11 @@ export function load() {
         flip: d => d,
         merge: d => d,
     });
+    CellType.create("?", {
+        behavior: Cell,
+        textureName: "unknown",
+        flip: d => d,
+    });
 
     Slot.add(generator);
     Slot.add(mover);

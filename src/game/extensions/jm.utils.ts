@@ -473,8 +473,8 @@ export function load() {
                     else
                         cellId = "jm.core" + cellId;
                 }
-                const cell = Registry.getCell(cellId);
-                if (!cell) throw new Error(cellId);
+                let cell = Registry.getCell(cellId);
+                if (!cell) cell = Registry.getCell("?")!;
 
                 while (count--) {
                     const pos = Pos(ix % grid.size.width, Math.floor(ix / grid.size.width));
