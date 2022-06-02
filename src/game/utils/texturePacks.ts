@@ -49,6 +49,7 @@ const textureMapping = {
 const uiTextures = {
     play: "buttonPlay.png",
     pause: "buttonPause.png",
+    structures: "buttonStructures.png",
 };
 
 class Textures {
@@ -165,6 +166,7 @@ export interface TexturePack {
     ui: {
         play: Texture;
         pause: Texture;
+        structures: Texture;
     };
 }
 export interface Texture {

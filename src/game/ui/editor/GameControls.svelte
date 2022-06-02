@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
     import { writable, derived } from "svelte/store";
     import { keys, on } from "../keys";
-    import { mainMenu, menuOpen, showControls } from "../uiState";
+    import { mainMenu, menuOpen, selectionContent, showControls } from "../uiState";
     import { config } from "@utils/config";
     import { openLevel } from "@core/cells/grid";
     import { textures } from "@utils/texturePacks";
@@ -9,6 +9,9 @@
     import { SlotHandler } from "@core/slot";
     import { Direction } from "@core/coord/direction";
     import { Registry } from "@core/registry";
+    import UiElementViewer from "../UIElementViewer.svelte";
+    import { block, button, text, UITextSize } from "@core/ui/build";
+    import { structures } from "@utils/structures";
     import { currentConnection } from "@core/multiplayer/connection";
 
     let slotHandler = new SlotHandler(Registry.getSlots());
@@ -63,6 +66,29 @@
     on("y").when(() => !levelPlaying).down(() => {
         $openLevel?.doStep(false);
     });
+
+    let showStructures = false;
+
+    const structureList = block(
+        ...structures.map(s =>
+            button(s.name, {
+                onClick: () => {
+                    $selectionContent = s.read();
+                    showStructures = false;
+                },
+            })
+        )
+    );
+    const structuresUI = block(
+        text("Structures", { size: UITextSize.Large }),
+        structureList,
+        text("Save:"),
+        button("Save Selection", {
+            onClick: () => {
+
+            },
+        }),
+    );
 </script>
 
 <style lang="scss">
@@ -97,6 +123,31 @@
     .selected {
         opacity: 1;
     }
+
+    .structures {
+        position: relative;
+    }
+
+    .structure_selection {
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+        cursor: pointer;
+        height: $selection_size;
+        margin: 30px;
+        width: $selection_size;
+    }
+
+    .structure_overlay {
+        border: 1px solid #404040;
+        background-color: #363636;
+        bottom: 100%;
+        color: #fff;
+        padding: 10px;
+        position: absolute;
+        right: 30px;
+        z-index: 10;
+    }
 </style>
 
 {#if show}
@@ -113,6 +164,16 @@
                         slotHandler.to(i);
                 }}></div>
             {/each}
+        </div>
+
+        <div class="structures" style="display: none">
+            <div class="structure_selection" style="
+                background-image: url({$textures.ui["structures"].url});
+            " on:click={() => showStructures = !showStructures}></div>
+
+            <div class="structure_overlay" style="display: {showStructures ? "block" : "none"}">
+                <UiElementViewer root={structuresUI} />
+            </div>
         </div>
     </div>
 {/if}
