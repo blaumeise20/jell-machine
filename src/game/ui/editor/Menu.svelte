@@ -4,6 +4,7 @@
     import { mainMenu, menuOpen, selection } from "../uiState";
     import { Menu } from "@core/ui/menu";
     import UiElementViewer from "../UIElementViewer.svelte";
+    import { BorderMode } from "@core/cells/border";
 
     const copiedText = "Copied!";
     $: copyText = $selection ? "Copy selected area" : "Copy to Clipboard";
@@ -67,6 +68,10 @@
     <div class="sidebar_backdrop" on:click={() => $menuOpen = false}></div>
     <div class="sidebar">
         <div class="actions">
+            Border mode:
+            <button on:click={() => $openLevel && ($openLevel.borderMode = BorderMode.Default)}>Default</button>
+            <button on:click={() => $openLevel && ($openLevel.borderMode = BorderMode.Wrap)}>Wrap</button>
+            <button on:click={() => $openLevel && ($openLevel.borderMode = BorderMode.Delete)}>Delete</button>
             {#each Menu.uiComponents as component, i}
                 {#if i}
                     <div class="space" />
