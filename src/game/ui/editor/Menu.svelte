@@ -1,10 +1,14 @@
 <script lang="ts">
     import { clip } from "@utils/misc";
     import { openLevel } from "@core/cells/grid";
-    import { mainMenu, menuOpen, selection } from "../uiState";
+    import { selection } from "../uiState";
     import { Menu } from "@core/ui/menu";
     import UiElementViewer from "../UIElementViewer.svelte";
     import { BorderMode } from "@core/cells/border";
+    import { Stack } from "@utils/stack";
+
+    export let open: boolean;
+    export let layers: Stack<string>;
 
     const copiedText = "Copied!";
     $: copyText = $selection ? "Copy selected area" : "Copy to Clipboard";
@@ -64,8 +68,8 @@
     }
 </style>
 
-{#if $menuOpen}
-    <div class="sidebar_backdrop" on:click={() => $menuOpen = false}></div>
+{#if open}
+    <div class="sidebar_backdrop" on:click={() => open = false}></div>
     <div class="sidebar">
         <div class="actions">
             Border mode:
@@ -84,14 +88,17 @@
             <!-- {#each Object.values(Extension.tools) as tool}
                 <button on:click={() => {
                     if ($openLevel) {
-                        $menuOpen = false;
+                        open = false;
                         tool.runTool($openLevel);
                     }
                 }}>{tool.viewText}</button>
             {/each} -->
         </div>
         <div class="action_buttons">
-            <button on:click={() => $mainMenu = true}>Go to main screen</button>
+            <button on:click={() => {
+                open = false;
+                layers = layers.next("main");
+            }}>Go to main screen</button>
             <button on:click={() => {
                 if ($openLevel) {
                     let string = $selection ?

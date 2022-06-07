@@ -1,5 +1,11 @@
 <script lang="ts">
-    import { showHelp } from "../uiState";
+    import { Stack } from "@utils/stack";
+    import { on } from "../keys";
+
+    export let visible: boolean;
+    export let layers: Stack<string>;
+
+    on("escape").when(() => visible).down(() => layers = layers.back());
 
     const actions = [
         ["Left click", "place cell"],
@@ -49,14 +55,14 @@
     }
 </style>
 
-{#if $showHelp}
+{#if visible}
     <div class="overlay_container">
         <div class="overlay">
             {#each actions as [ trigger, what ]}
                 <p><b>{trigger}:</b> {what}</p>
             {/each}
             <div class="space"></div>
-            <button class="center" on:click={() => $showHelp = false}>Back</button>
+            <button class="center" on:click={() => layers = layers.back()}>Back</button>
         </div>
     </div>
 {/if}

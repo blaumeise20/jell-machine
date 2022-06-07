@@ -7,25 +7,26 @@
     import ConnectOverlay from "./ui/ConnectOverlay.svelte";
     import HelpScreen from "./ui/help/HelpScreen.svelte";
     import SettingsScreen from "./ui/settings/SettingsScreen.svelte";
-    import { on } from "./ui/keys";
-    import { openLevel } from "@core/cells/grid";
-    import { menuOpen, mainMenu, showHelp, createLevel, settings, activeLayer } from "./ui/uiState";
+    import { Stack } from "@utils/stack";
+    import { onConnectionClose } from "@core/multiplayer/connection";
 
-    on("escape").when(() => !$mainMenu && $openLevel).down(() => $menuOpen = !$menuOpen);
-    on("escape").when(() => $activeLayer == "main").down(() => $mainMenu = false);
-    on("escape").when(() => $showHelp).down(() => $showHelp = false);
-    on("escape").when(() => $createLevel).down(() => $createLevel = false);
-    on("escape").when(() => $settings).down(() => $settings = false);
+    const layerList = [
+        [EditorMain, "editor"],
+        [MainScreen, "main"],
+        [CreateOverlay, "create"],
+        [ConnectOverlay, "connect"],
+        [HelpScreen, "help"],
+        [SettingsScreen, "settings"],
+    ];
+    let layers = new Stack<string>().next("main");
+
+    onConnectionClose[0] = () => layers = layers.back();
 </script>
 
-<EditorMain />
-
-<MainScreen />
-
-<CreateOverlay />
-
-<ConnectOverlay />
-
-<HelpScreen />
-
-<SettingsScreen />
+{#each layerList as [layer, id]}
+    <svelte:component
+        this={layer}
+        visible={layers.peek() == id}
+        bind:layers
+    />
+{/each}

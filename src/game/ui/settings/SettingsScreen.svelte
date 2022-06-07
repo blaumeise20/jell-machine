@@ -1,6 +1,12 @@
 <script lang="ts">
     import { config } from "@utils/config";
-    import { settings } from "../uiState";
+    import { Stack } from "@utils/stack";
+    import { on } from "../keys";
+
+    export let visible: boolean;
+    export let layers: Stack<string>;
+
+    on("escape").when(() => visible).down(() => layers = layers.back());
 
     let animations = $config.animation ? "on" : "off";
     $: if (animations == "on" || animations == "off") {
@@ -40,7 +46,7 @@
     }
 </style>
 
-{#if $settings}
+{#if visible}
     <div class="overlay_container">
         <div class="overlay">
             <p>
@@ -49,7 +55,7 @@
                 <b>Animations ("on"/"off"):</b> <input type="text" bind:value={animations}>
             </p>
             <div class="space"></div>
-            <button class="center" on:click={() => $settings = false}>Back</button>
+            <button class="center" on:click={() => layers = layers.back()}>Back</button>
         </div>
     </div>
 {/if}

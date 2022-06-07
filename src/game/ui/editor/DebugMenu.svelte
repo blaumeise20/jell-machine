@@ -5,11 +5,9 @@
     import { Pos } from "@core/coord/positions";
     import { config } from "@utils/config";
     import { on } from "../keys";
-    import { activeLayer, cursorPosition, screenPosition, selection } from "../uiState";
+    import { cursorPosition, screenPosition, selection } from "../uiState";
 
-    on("f3").when(() => $activeLayer == "game").down(() => {
-        $config.showDebug = !$config.showDebug;
-    });
+    on("f3").down(() => $config.showDebug = !$config.showDebug);
 
     let targetedCell: Cell | null = null;
     $: targetedCellPosition = Pos(Math.floor($cursorPosition.x), Math.floor($cursorPosition.y));

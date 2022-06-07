@@ -5,8 +5,15 @@
     import GameControls from "./GameControls.svelte";
     import { cursorPosition, screenPosition, selection, selectionContent } from "../uiState";
     import Menu from "./Menu.svelte";
+    import { on } from "../keys";
+    import { Stack } from "@utils/stack";
 
-    // $openLevel = CellGrid.loadFromString("V3;1;1;e;;")[1] as CellGrid;
+    export let visible: boolean;
+    export let layers: Stack<string>;
+
+    let menuOpen = false;
+
+    on("escape").when(() => visible && $openLevel).down(() => menuOpen = !menuOpen);
 </script>
 
 <style lang="scss">
@@ -18,14 +25,16 @@
     }
 </style>
 
-<div class="cell_controller">
-    {#if $openLevel}
-        {#key $openLevel}
-            <CellGridViewer grid={$openLevel} bind:selectionArea={$selection} bind:selection={$selectionContent} bind:mouseCell={$cursorPosition} bind:center={$screenPosition} />
-        {/key}
-    {/if}
-    <DebugMenu />
-    <GameControls />
-</div>
+{#if visible}
+    <div class="cell_controller">
+        {#if $openLevel}
+            {#key $openLevel}
+                <CellGridViewer grid={$openLevel} bind:selectionArea={$selection} bind:selection={$selectionContent} bind:mouseCell={$cursorPosition} bind:center={$screenPosition} />
+            {/key}
+        {/if}
+        <DebugMenu />
+        <GameControls bind:menuOpen />
+    </div>
 
-<Menu />
+    <Menu bind:open={menuOpen} bind:layers />
+{/if}

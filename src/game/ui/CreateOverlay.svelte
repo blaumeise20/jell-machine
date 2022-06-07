@@ -1,7 +1,13 @@
 <script lang="ts">
     import { CellGrid, openLevel } from "@core/cells/grid";
     import { disconnect } from "@core/multiplayer/connection";
-    import { createLevel, mainMenu } from "./uiState";
+    import { Stack } from "@utils/stack";
+    import { on } from "./keys";
+
+    export let visible: boolean;
+    export let layers: Stack<string>;
+
+    on("escape").when(() => visible).down(() => layers = layers.back());
 
     let width = 100;
     let height = 100;
@@ -46,7 +52,7 @@
     }
 </style>
 
-{#if $createLevel}
+{#if visible}
     <div class="overlay_container">
         <div class="overlay">
             <h2>Create Level</h2>
@@ -59,11 +65,10 @@
                 $openLevel = CellGrid.createEmpty(width, height);
                 width = 100;
                 height = 100;
-                $createLevel = false;
-                $mainMenu = false;
+                layers = layers.replaceTop("editor");
             }}>Create new level</button>
             <div class="space"></div>
-            <button class="center" on:click={() => $createLevel = false}>Back</button>
+            <button class="center" on:click={() => layers = layers.back()}>Back</button>
         </div>
     </div>
 {/if}

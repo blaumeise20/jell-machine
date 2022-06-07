@@ -3,7 +3,6 @@ import { CellGrid, grid, openLevel } from "@core/cells/grid";
 import { Pos } from "@core/coord/positions";
 import { Events } from "@core/events";
 import { Registry } from "@core/registry";
-import { mainMenu } from "../../ui/uiState";
 import { InputStream, OutputStream } from "./binaryIO";
 
 export let currentConnection: MultiplayerConnection | null = null;
@@ -15,6 +14,8 @@ export function connect(url: string) {
 export function disconnect() {
     currentConnection?.disconnect();
 }
+
+export const onConnectionClose: [() => void] = [() => {}];
 
 export class MultiplayerConnection {
     public readonly url: string;
@@ -62,8 +63,8 @@ export class MultiplayerConnection {
     private onClose(): void {
         console.log("Disconnected from server");
         openLevel.set(null);
-        mainMenu.set(true);
         this.isConnected = false;
+        onConnectionClose[0]();
     }
 
     private onGridReload(inputStream: InputStream): void {
@@ -132,7 +133,7 @@ export class MultiplayerConnection {
         Events.off("cell-placed", this.onGridPlace);
         Events.off("cell-deleted", this.onGridDelete);
         openLevel.set(null);
-        mainMenu.set(true);
+        onConnectionClose[0]();
     }
 }
 

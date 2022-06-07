@@ -1,9 +1,12 @@
 <script lang="ts">
     import { CellGrid, openLevel } from "@core/cells/grid";
     import { clip } from "@utils/misc";
-    import { createLevel, mainMenu, showHelp, settings, connectServer } from "./uiState";
     import logo from "../logo.png";
     import { disconnect } from "@core/multiplayer/connection";
+    import { Stack } from "@utils/stack";
+
+    export let visible: boolean;
+    export let layers: Stack<string>;
 
     // let showSpoiler = false;
     // let clipboardContent = "";
@@ -26,8 +29,8 @@
         const res = CellGrid.loadFromString(clipboardContent);
 
         if (res[0]) {
-            $mainMenu = false;
             disconnect();
+            layers = layers.next("editor");
             $openLevel = res[1];
         }
         else {
@@ -94,26 +97,27 @@
     }
 </style>
 
-<div class="overlay_container" style="display: {$mainMenu ? "block" : "none"}">
-    <div class="overlay">
-        <img src="{logo}" alt="Logo" />
-        <button class="big" on:click={importClipboard}>Import from clipboard</button>
-        <!-- {#if showSpoiler}
-            <div class="import_warning">SPOILER: be careful with the thing you have in your clipboard</div>
-        {/if} -->
-        <div class="space"></div>
-        <button class="big" on:click={() => $createLevel = true}>Create new level</button>
-        <div class="space"></div>
-        <button class="big" on:click={() => $connectServer = true}>Connect to server</button>
-        <div class="space"></div>
-        <button on:click={() => $settings = true}>Settings</button>
-        {#if $openLevel}
+{#if visible}
+    <div class="overlay_container">
+        <div class="overlay">
+            <img src={logo} alt="Logo" />
+            <button class="big" on:click={importClipboard}>Import from clipboard</button>
+            <!-- {#if showSpoiler}
+                <div class="import_warning">SPOILER: be careful with the thing you have in your clipboard</div>
+            {/if} -->
             <div class="space"></div>
-            <button class="center" on:click={() => $mainMenu = false}>Back</button>
-        {/if}
+            <button class="big" on:click={() => layers = layers.next("create")}>Create new level</button>
+            <div class="space"></div>
+            <button class="big" on:click={() => layers = layers.next("connect")}>Connect to server</button>
+            <div class="space"></div>
+            <button on:click={() => layers = layers.next("settings")}>Settings</button>
+            <!-- {#if $openLevel}
+                <div class="space"></div>
+                <button class="center" on:click={() => layers.back()}>Back</button>
+            {/if} -->
 
+        </div>
+        <button class="center help_button big" on:click={() => layers = layers.next("help")}>Help</button>
+        <h1 class="tips">{tip}</h1>
     </div>
-    <button class="center help_button big" on:click={() => $showHelp = true}>Help</button>
-    <h1 class="tips">{tip}</h1>
-
-</div>
+{/if}

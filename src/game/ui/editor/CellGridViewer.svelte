@@ -3,7 +3,7 @@
     import { CellGrid } from "@core/cells/grid";
     import { textures } from "@utils/texturePacks";
     import { onMount, onDestroy } from "svelte";
-    import { moving, showControls } from "../uiState";
+    import { showControls } from "../uiState";
     import { Tile } from "@core/tiles";
     import { keys, keys$, on } from "../keys";
     import { mouse } from "@utils/mouse";
@@ -28,6 +28,22 @@
     export const mouseCell = { x: 0, y: 0 };
     let zoom = 1;
     let mouseButton = -1;
+
+    const moving = {
+        up: false,
+        right: false,
+        down: false,
+        left: false,
+    };
+
+    addMoveKey("w", "up");
+    addMoveKey("d", "right");
+    addMoveKey("s", "down");
+    addMoveKey("a", "left");
+
+    function addMoveKey(k: string, p: keyof typeof moving) {
+        on(k).up(() => moving[p] = false).down(() => moving[p] = true);
+    }
 
     $: if (editorElement) {
         editorSize.width  = editorElement.offsetWidth;

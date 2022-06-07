@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
     import { writable, derived } from "svelte/store";
     import { keys, on } from "../keys";
-    import { mainMenu, menuOpen, selectionContent, showControls } from "../uiState";
+    import { selectionContent, showControls } from "../uiState";
     import { config } from "@utils/config";
     import { openLevel } from "@core/cells/grid";
     import { textures } from "@utils/texturePacks";
@@ -24,12 +24,15 @@
 </script>
 
 <script lang="ts">
+    export let menuOpen: boolean;
+
     let show = true;
-    on("F1").when(() => !$mainMenu).down(() => (show = !show, showControls.set(show), $menuOpen = false));
-    on("F2").when(() => !$mainMenu).down(() => $config.showBackgroundGrid = !$config.showBackgroundGrid);
-    on("q").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation--);
-    on("e").when(() => !$menuOpen && !$mainMenu).down(() => $actualRotation++);
-    on("t").when(() => !$menuOpen && !$mainMenu).down(() => {
+    on("F1").down(() => (show = !show, showControls.set(show), menuOpen = false));
+    on("F2").down(() => $config.showBackgroundGrid = !$config.showBackgroundGrid);
+    on("q").when(() => !menuOpen).down(() => $actualRotation--);
+    on("e").when(() => !menuOpen).down(() => $actualRotation++);
+
+    on("t").when(() => !menuOpen).down(() => {
         levelPlaying = false;
         playTimer.stop();
         $openLevel?.reset();
@@ -55,7 +58,7 @@
             levelPlaying = true;
         }
     }
-    on(" ").when(() => !$menuOpen && !$mainMenu).down(toggleLevel);
+    on(" ").when(() => !menuOpen).down(toggleLevel);
 
     on("tab").down(() => {
         keys.shift ? slotHandler.prev() : slotHandler.next();

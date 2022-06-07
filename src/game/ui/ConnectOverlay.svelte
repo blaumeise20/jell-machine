@@ -1,9 +1,13 @@
 <script lang="ts">
     import { CellGrid, openLevel } from "@core/cells/grid";
     import { connect, disconnect } from "@core/multiplayer/connection";
+    import { Stack } from "@utils/stack";
+    import { on } from "./keys";
 
-    // import { CellGrid, openLevel } from "@core/cells/grid";
-    import { connectServer, mainMenu } from "./uiState";
+    export let visible: boolean;
+    export let layers: Stack<string>;
+
+    on("escape").when(() => visible).down(() => layers = layers.back());
 
     let url = "";
     let urlElement = null as any as HTMLInputElement;
@@ -46,7 +50,7 @@
     }
 </style>
 
-{#if $connectServer}
+{#if visible}
     <div class="overlay_container">
         <div class="overlay">
             <h2>Connect to server</h2>
@@ -58,11 +62,10 @@
                 $openLevel = CellGrid.createEmpty(1, 1);
                 connect(url);
                 url = "";
-                $connectServer = false;
-                $mainMenu = false;
+                layers = layers.replaceTop("editor");
             }}>Connect</button>
             <div class="space"></div>
-            <button class="center" on:click={() => $connectServer = false}>Back</button>
+            <button class="center" on:click={() => layers = layers.back()}>Back</button>
         </div>
     </div>
 {/if}
