@@ -9,7 +9,7 @@ import { Size } from "@core/coord/size";
 import { Registry } from "@core/registry";
 import { Direction } from "@core/coord/direction";
 import { Menu } from "@core/ui/menu";
-import { block, button, text, UIText } from "@core/ui/build";
+import { block, text, UIText } from "@core/ui/build";
 import { get } from "svelte/store";
 import { CellType } from "@core/cells/cellType";
 import { Events } from "@core/events";
@@ -220,11 +220,6 @@ export function load() {
                 return "Extended: " + this.extended;
             }
 
-            override reset() {
-                super.reset();
-                this.extended = false;
-                this.actuallyExtended = false;
-            }
             override update() {
                 if (this.extended) {
                     // Get head position
@@ -316,11 +311,6 @@ export function load() {
                 return "Extended: " + this.extended;
             }
 
-            override reset() {
-                super.reset();
-                this.extended = false;
-                this.actuallyExtended = false;
-            }
             override update() {
                 if (this.extended) {
                     // Get head position
@@ -602,7 +592,7 @@ export function load() {
     let tickCount: UIText;
     const ui = block(
         tickCount = text("Tick Count: 0"),
-        button("Reset", { onClick: () => get(openLevel)!.reset() }),
+        // button("Reset", { onClick: () => get(openLevel)!.reset() }),
     );
     Events.on("tickend", () => tickCount.text = "Tick Count: " + get(openLevel)!.tickCount);
 

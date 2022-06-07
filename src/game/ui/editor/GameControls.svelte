@@ -3,7 +3,7 @@
     import { keys, on } from "../keys";
     import { selectionContent, showControls } from "../uiState";
     import { config } from "@utils/config";
-    import { openLevel } from "@core/cells/grid";
+    import { grid, initial, openLevel } from "@core/cells/grid";
     import { textures } from "@utils/texturePacks";
     import { Animator } from "@utils/animator";
     import { SlotHandler } from "@core/slot";
@@ -33,16 +33,25 @@
     on("e").when(() => !menuOpen).down(() => $actualRotation++);
 
     on("t").when(() => !menuOpen).down(() => {
+        if (!grid) return;
+
         levelPlaying = false;
         playTimer.stop();
-        $openLevel?.reset();
-        if (currentConnection?.isConnected) {
+
+        $openLevel = initial[0];
+
+        if (currentConnection && currentConnection.isConnected) {
             currentConnection.loadGrid();
         }
     });
 
     const playTimer = new Animator(() => {
-        $openLevel?.doStep(false);
+        if (!grid) return;
+
+        if (grid.initial) {
+            initial[0] = grid.clone();
+        }
+        grid.doStep(false);
     });
 
     $: playTimer.setInterval($config.tickSpeed);

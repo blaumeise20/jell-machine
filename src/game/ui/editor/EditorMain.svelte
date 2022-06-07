@@ -28,9 +28,7 @@
 {#if visible}
     <div class="cell_controller">
         {#if $openLevel}
-            {#key $openLevel}
-                <CellGridViewer grid={$openLevel} bind:selectionArea={$selection} bind:selection={$selectionContent} bind:mouseCell={$cursorPosition} bind:center={$screenPosition} />
-            {/key}
+            <CellGridViewer grid={$openLevel} bind:selectionArea={$selection} bind:selection={$selectionContent} bind:mouseCell={$cursorPosition} bind:center={$screenPosition} />
         {/if}
         <DebugMenu />
         <GameControls bind:menuOpen />

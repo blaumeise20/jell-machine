@@ -53,7 +53,7 @@
         gridOffset.bottom = editorElement.offsetHeight / 2 - center.y * CELL_SIZE;
     }
 
-    grid.reloadUI(() => grid = grid);
+    $: grid.reloadUI(() => grid = grid);
 
     //#region frames
 

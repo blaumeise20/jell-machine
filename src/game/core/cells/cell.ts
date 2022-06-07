@@ -17,12 +17,8 @@ export class Cell {
         return this.updatedIn == this.grid.tickCount;
     }
     id = cellid++;
-    readonly initialPosition: Position;
-    readonly initialDirection: Direction;
 
-    constructor(public pos: Position, readonly type: CellType, public direction: Direction, readonly grid: CellGrid, readonly generated: boolean) {
-        this.initialPosition = pos;
-        this.initialDirection = direction;
+    constructor(public pos: Position, readonly type: CellType, public direction: Direction, readonly grid: CellGrid) {
         grid.cellList.push(this);
     }
 
@@ -39,33 +35,11 @@ export class Cell {
     rm() {
         if (this.deleted) return;
         this.grid.cells.delete(this.pos);
-        if (this.generated || this.grid.initial) {
-            const i = this.grid.cellList.indexOf(this);
-            if (i >= 0) this.grid.cellList.splice(i, 1);
-        }
-        this.deleted = true;
         this.delete();
-    }
-
-    reset() {
-        if (this.generated) {
-            const i = this.grid.cellList.indexOf(this);
-            if (i >= 0) this.grid.cellList.splice(i, 1);
-            this.deleted = true;
-        }
-        else {
-            this.deleted = false;
-            this.grid.cells.set(this.initialPosition, this);
-            this.pos = this.initialPosition;
-            this.direction = this.initialDirection;
-        }
-
-        this.disabledIn = -1;
-        this.updatedIn = -1;
+        this.deleted = true;
     }
 
     setPosition(pos: Position) {
-        if (this.deleted) return;
         this.grid.cells.delete(this.pos);
         this.grid.cells.set(pos, this);
         this.pos = pos;

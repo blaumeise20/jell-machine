@@ -19,6 +19,7 @@ import { Events } from "@core/events";
 export const openLevel: Writable<CellGrid | null> = writable(null);
 export let grid: CellGrid | null = null;
 openLevel.subscribe(g => grid = g);
+export let initial: [CellGrid | null] = [null];
 
 openLevel.subscribe(o => (window as any).openLevel = o);
 
@@ -52,7 +53,7 @@ export class CellGrid {
     loadCell(pos: Position, type: CellType, direction: Direction) {
         if (this.isInfinite || this.size.contains(pos)) {
             this.cells.get(pos)?.rm();
-            const cell = type._newCell(this, pos, direction % 4, !this.initial)
+            const cell = type._newCell(this, pos, direction % 4)
             this.cells.set(pos, cell);
             cell.init();
             return cell;
@@ -74,23 +75,21 @@ export class CellGrid {
         this.reloadUI();
     }
 
-    reset() {
-        if (!this.initial) {
-            this.cells.clear();
-            for (let i = this.cellList.length; i--;) this.cellList[i].reset();
-            this.initial = true;
-
-            this.reloadUI();
-
-            this.tickCount = 0;
-            this.currentSubtick = 0;
-        }
-    }
-
     private _reloaders: any[] = [];
     reloadUI(fn?: any) {
         if (fn) this._reloaders.push(fn);
         else this._reloaders.forEach(r => r());
+    }
+
+    clone() {
+        const grid = CellGrid.createEmpty(this.size.width, this.size.height);
+        for (let x = 0; x < this.size.width; x++) {
+            for (let y = 0; y < this.size.height; y++) {
+                const cell = this.cells.get(Pos(x, y));
+                if (cell) grid.loadCell(Pos(x, y), cell.type, cell.direction);
+            }
+        }
+        return grid;
     }
 
     //#region grid actions

@@ -52,8 +52,8 @@ export class CellType {
             return this.options.textureName;
     }
 
-    _newCell(grid: CellGrid, pos: Position, dir: Direction, generated: boolean) {
-        return new this.behavior(pos, this, dir, grid, generated);
+    _newCell(grid: CellGrid, pos: Position, dir: Direction) {
+        return new this.behavior(pos, this, dir, grid);
     }
 
     static create(id: ItemIdentifier, options: CellTypeOptions) {
