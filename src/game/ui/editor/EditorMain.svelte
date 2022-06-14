@@ -3,7 +3,7 @@
     import CellGridViewer from "./CellGridViewer.svelte";
     import DebugMenu from "./DebugMenu.svelte";
     import GameControls from "./GameControls.svelte";
-    import { cursorPosition, screenPosition, selection, selectionContent } from "../uiState";
+    import { cursorPosition, screenPosition, selection, selectionContent, showControls } from "../uiState";
     import Menu from "./Menu.svelte";
     import { on } from "../keys";
     import { Stack } from "@utils/stack";
@@ -28,10 +28,20 @@
 {#if visible}
     <div class="cell_controller">
         {#if $openLevel}
-            <CellGridViewer grid={$openLevel} bind:selectionArea={$selection} bind:selection={$selectionContent} bind:mouseCell={$cursorPosition} bind:center={$screenPosition} />
+            <CellGridViewer
+                grid={$openLevel}
+                showPlacable={$showControls}
+                bind:selectionArea={$selection}
+                bind:selection={$selectionContent}
+                bind:mouseCell={$cursorPosition}
+                bind:center={$screenPosition}
+            />
+            <DebugMenu />
+            <GameControls
+                bind:menuOpen
+                bind:uiVisible={$showControls}
+                bind:grid={$openLevel} />
         {/if}
-        <DebugMenu />
-        <GameControls bind:menuOpen />
     </div>
 
     <Menu bind:open={menuOpen} bind:layers />

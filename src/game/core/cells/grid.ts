@@ -26,7 +26,7 @@ openLevel.subscribe(o => (window as any).openLevel = o);
 export enum LevelError {
     Unknown,
     UnknownFormat,
-    OutOfBounds
+    OutOfBounds,
 }
 export class CellGrid {
     isInfinite: boolean = false;

@@ -51,7 +51,7 @@
         <div class="overlay">
             <p>
                 <b>Tick Speed (ms):</b> <input type="number" bind:value={$config.tickSpeed}>
-                <b>Hotbar Size (px):</b> <input type="number" bind:value={$config.hotbarSize}>
+                <b>UI:</b> <input type="number" bind:value={$config.uiScale}>
                 <b>Animations ("on"/"off"):</b> <input type="text" bind:value={animations}>
             </p>
             <div class="space"></div>

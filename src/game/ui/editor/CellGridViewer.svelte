@@ -2,8 +2,7 @@
     import { Direction } from "@core/coord/direction";
     import { CellGrid } from "@core/cells/grid";
     import { textures } from "@utils/texturePacks";
-    import { onMount, onDestroy } from "svelte";
-    import { showControls } from "../uiState";
+    import { onMount } from "svelte";
     import { Tile } from "@core/tiles";
     import { keys, keys$, on } from "../keys";
     import { mouse } from "@utils/mouse";
@@ -16,16 +15,17 @@
     export let grid: CellGrid;
     if (grid.isInfinite) throw new Error("OH NO");
 
+    export let showPlacable: boolean;
+
     const CELL_SIZE = 64;
     const CELLS_PER_SECOND = 8;
     const ZOOM_SPEED = 150;
     const MAX_ZOOM = 4;
 
-    let editorElement: HTMLDivElement;
-    const editorSize = { width: 0, height: 0 };
     export const center = { x: grid.size.width / 2, y: grid.size.height / 2 }
-    const gridOffset = { left: 0, bottom: 0 };
     export const mouseCell = { x: 0, y: 0 };
+    const editorSize = { width: 0, height: 0 };
+    const gridOffset = { left: 0, bottom: 0 };
     let zoom = 1;
     let mouseButton = -1;
 
@@ -35,44 +35,45 @@
         down: false,
         left: false,
     };
-
     addMoveKey("w", "up");
     addMoveKey("d", "right");
     addMoveKey("s", "down");
     addMoveKey("a", "left");
-
     function addMoveKey(k: string, p: keyof typeof moving) {
         on(k).up(() => moving[p] = false).down(() => moving[p] = true);
     }
 
+    let editorElement: HTMLDivElement;
     $: if (editorElement) {
         editorSize.width  = editorElement.offsetWidth;
         editorSize.height = editorElement.offsetHeight;
-
         gridOffset.left   = editorSize.width  / 2 - center.x * CELL_SIZE;
-        gridOffset.bottom = editorElement.offsetHeight / 2 - center.y * CELL_SIZE;
+        gridOffset.bottom = editorSize.height / 2 - center.y * CELL_SIZE;
     }
 
     $: grid.reloadUI(() => grid = grid);
 
-    //#region frames
-
-    let living = false;
-    let previousTime = 0;
+    // frames
+    let living = true, previousTime = 0;
+    let frame: number;
+    onMount(() => {
+        previousTime = performance.now();
+        frame = requestAnimationFrame(updateFrame);
+        return () => (living = false, cancelAnimationFrame(frame));
+    });
     const updateFrame = (time: number) => {
-        if (!previousTime) previousTime = time;
+        const delta = time - previousTime;
+        previousTime = time;
+        if (living) frame = requestAnimationFrame(updateFrame);
 
         // moving
         let x = center.x;
         let y = center.y;
-
-        const offset = CELLS_PER_SECOND / zoom * ((time - previousTime) / 1000);
-
+        const offset = CELLS_PER_SECOND / zoom * (delta / 1000);
         if (moving.up) y += offset;
         if (moving.right) x += offset;
         if (moving.down) y -= offset;
         if (moving.left) x -= offset;
-        // moving end
 
         // placing
         const pixelDistX = mouse.x - editorSize.width / 2;
@@ -126,15 +127,7 @@
         mouseCell.x = cellX;
         mouseCell.y = cellY;
         if (cellChanged) grid = grid;
-        previousTime = time;
-        if (living) frame = requestAnimationFrame(updateFrame);
     }
-    let frame = requestAnimationFrame(updateFrame);
-
-    onMount(() => living = true);
-    onDestroy(() => (living = false, cancelAnimationFrame(frame)));
-
-    //#endregion frames
 
     //#region selection
     let selectionStart: Position | null = null;
@@ -342,7 +335,7 @@
     }
 </style>
 
-<div class="cell_editor" class:show_placable={$keys$.shift && $showControls} bind:this={editorElement} on:wheel={zoomEvent} on:mousedown={mousedownEvent} on:mouseup={mouseupEvent}>
+<div class="cell_editor" class:show_placable={$keys$.shift && showPlacable} bind:this={editorElement} on:wheel={zoomEvent} on:mousedown={mousedownEvent} on:mouseup={mouseupEvent}>
     <div class="container" style="
         bottom: {gridOffset.bottom}px;
         left: {gridOffset.left}px;
