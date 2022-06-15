@@ -94,7 +94,10 @@
                 selectionCurrent = clickedCell.c();
             }
             else if (placeCell) {
-                if (keys.shift) grid.tiles.set(clickedCell, Tile.Placable);
+                if (keys.shift) {
+                    grid.tiles.set(clickedCell, Tile.Placable);
+                    cellChanged = true;
+                }
                 else {
                     const originalCell = grid.cells.get(clickedCell);
                     if (!originalCell || originalCell.type != $selectedCell || originalCell.direction != $rotation) {
@@ -114,7 +117,6 @@
                 if (cell) {
                     cell.rm();
                     Events.emit("cell-deleted", clickedCell, cell);
-                    cellChanged = true;
                 }
             }
 
