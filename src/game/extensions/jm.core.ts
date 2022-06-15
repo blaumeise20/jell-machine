@@ -9,6 +9,7 @@ import { Direction } from "@core/coord/direction";
 import { BorderMode } from "@core/cells/border";
 import { CellType } from "@core/cells/cellType";
 import { Slot } from "@core/slot";
+import { makeNumberEncoder } from "@core/numbers";
 
 export function load() {
     const generator = CellType.create("jm.core.generator", {
@@ -229,7 +230,7 @@ export function load() {
 
     LevelCode.create("V3")
         .import((parts, grid) => {
-            grid.size = new Size(decodeBase74(parts[1]), decodeBase74(parts[2]));
+            grid.size = new Size(decodeV3Num(parts[1]), decodeV3Num(parts[2]));
 
             if (parts[1][0] == "0") grid.isInfinite = true;
 
@@ -262,8 +263,8 @@ export function load() {
                     // c(o(l)
 
                     if (cells[i] == ")") {
-                        offset = base74Decode[cells[++i]];
-                        repeatingLength = base74Decode[cells[++i]];
+                        offset = decodeV3Num(cells[++i]);
+                        repeatingLength = decodeV3Num(cells[++i]);
                     }
                     else {
                         // cells[i] == "("
@@ -271,17 +272,17 @@ export function load() {
                         i++;
                         let str = "";
                         for (; cells[i] != ")" && cells[i] != "("; i++) str += cells[i];
-                        offset = decodeBase74(str);
+                        offset = decodeV3Num(str);
 
                         if (cells[i] == ")") {
                             i++;
-                            repeatingLength = base74Decode[cells[i]];
+                            repeatingLength = decodeV3Num(cells[i]);
                         }
                         else {
                             i++;
                             const str = cells.substring(i, cells.indexOf(")", i));
                             i += str.length;
-                            repeatingLength = decodeBase74(str);
+                            repeatingLength = decodeV3Num(str);
                         }
                     }
 
@@ -292,8 +293,8 @@ export function load() {
                     }
                 }
                 else {
-                    if (!setCell(base74Decode[cells[i]], cellIndex)) return false;
-                    cellArray[cellIndex] = base74Decode[cells[i]];
+                    if (!setCell(decodeV3Num(cells[i]), cellIndex)) return false;
+                    cellArray[cellIndex] = decodeV3Num(cells[i]);
                     cellIndex++;
                 }
             }
@@ -306,16 +307,14 @@ export function load() {
         })
         .export(grid => {
             let str = "";
-            str += `V3;${encodeBase74(grid.size.width)};${encodeBase74(grid.size.height)};`;
+            str += `V3;${encodeV3Num(grid.size.width)};${encodeV3Num(grid.size.height)};`;
 
-            // TODO: add correct compression
+            // TODO: add correct compression?
 
-            const cellData = arr(grid.size.width * grid.size.height, 72);
-
-            for (let y = 0; y < grid.size.height; y++)
-                for (let x = 0; x < grid.size.width; x++)
-                    if (grid.tiles.get(Pos(x, y)) == Tile.Placable)
-                        cellData[x + (y * grid.size.width)] = 73;
+            const cellData = arr<number>(grid.size.width * grid.size.height, i => {
+                if (grid.tiles.get(Pos(i % grid.size.width, Math.floor(i / grid.size.width)))) return 73;
+                return 72;
+            });
 
             for (const cell of grid.cells.values()) {
                 const v3id = v3Cells.indexOf(cell.type);
@@ -329,12 +328,13 @@ export function load() {
                 if (i + 1 < cellData.length && cellData[i] == cellData[i + 1]) runLength++;
                 else {
                     if (runLength > 3) {
-                        if (encodeBase74(runLength - 1).length > 1)
-                            str += base74Key[cellData[i]] + "(0(" + encodeBase74(runLength - 1) + ")";
+                        let num = encodeV3Num(runLength - 1);
+                        if (num.length > 1)
+                            str += encodeV3Num(cellData[i]) + "(0(" + encodeV3Num(runLength - 1) + ")";
                         else
-                            str += base74Key[cellData[i]] + ")0" + encodeBase74(runLength - 1);
+                            str += encodeV3Num(cellData[i]) + ")0" + encodeV3Num(runLength - 1);
                     }
-                    else str += base74Key[cellData[i]].repeat(runLength);
+                    else str += encodeV3Num(cellData[i]).repeat(runLength);
                     runLength = 1;
                 }
             }
@@ -344,32 +344,12 @@ export function load() {
         });
 }
 
-const base74Key = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&+-.=?^{}";
-const base74Decode = {} as Record<string, number>;
-for (let i = 0; i < base74Key.length; i++) base74Decode[base74Key[i]] = i;
-const base = 74;
+const codeV3 = makeNumberEncoder("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&+-.=?^{}");
+const decodeV3Num = codeV3.decode;
+const encodeV3Num = codeV3.encode;
 
 function int(x: string) {
     const parsed = parseInt(x);
     if (Number.isNaN(parsed)) throw new Error("");
     return parsed;
-}
-
-function decodeBase74(str: string) {
-    let num = 0;
-    for (const key of str) {
-        num = num * base + (base74Decode[key])
-        if (isNaN(num)) throw new Error("Invalid input string");
-    };
-    return num;
-}
-
-function encodeBase74(num: number) {
-    if (num == 0) return "0";
-    const arr: number[] = [];
-    while (num != 0) {
-        arr.unshift(num % base);
-        num = Math.floor(num / base);
-    }
-    return arr.map(n => base74Key[n]).join("");
 }

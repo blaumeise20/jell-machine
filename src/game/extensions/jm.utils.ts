@@ -14,6 +14,7 @@ import { get } from "svelte/store";
 import { CellType } from "@core/cells/cellType";
 import { Events } from "@core/events";
 import { Slot } from "@core/slot";
+import { makeNumberEncoder } from "@core/numbers";
 
 export function load() {
     const orientator = CellType.create("jm.utils.orientator", {
@@ -664,37 +665,8 @@ function _canOpen(grid: CellGrid) {
 
         // top
         if (!grid.fillCell(new Size(vaultArea.width + 1, 1, vaultArea.bottom + vaultArea.height + canOpenerHeight + canOpenerHeight - 1, vaultArea.left), cell_wall, Direction.Down)) return;
-
 }
 
-const codeJ1 = makeConverter("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.-_+*#'!\"$%&/()=?[]|{}");
+const codeJ1 = makeNumberEncoder("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.-_+*#'!\"$%&/()=?[]|{}");
 const decodeJ1Num = codeJ1.decode;
 const encodeJ1Num = codeJ1.encode;
-
-function makeConverter(code: string) {
-    const base = code.length;
-
-    const decode = {} as Record<string, number>;
-    for (let i = 0; i < code.length; i++) decode[code[i]] = i;
-
-    return {
-        encode: (num: number) => {
-            if (num == 0) return code[0];
-
-            let str = "";
-            while (num > 0) {
-                str = code[num % base] + str;
-                num = Math.floor(num / base);
-            }
-            return str;
-        },
-        decode: (str: string) => {
-            let num = 0;
-            for (const key of str) {
-                num = num * base + (decode[key])
-                if (isNaN(num)) throw new Error("Invalid input string");
-            };
-            return num;
-        }
-    };
-}
