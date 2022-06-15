@@ -179,8 +179,7 @@ export function load() {
     Slot.add(mover);
     Slot.add(cwRotator, ccwRotator);
     Slot.add(push, slide, arrow);
-    Slot.add(enemy);
-    Slot.add(trash);
+    Slot.add(enemy, trash);
     Slot.add(wall, border);
 
     const v3Cells = [
