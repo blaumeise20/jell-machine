@@ -1,8 +1,15 @@
 import { readable, Readable, writable, Writable } from "svelte/store";
 import { onMount } from "svelte";
 
-const downs: Record<string, ((key: string) => any)[]> = {};
-const ups: Record<string, ((key: string) => any)[]> = {};
+type FnString = (key: string) => any;
+type EventListener = readonly [
+    when: FnString,
+    exec: FnString,
+    specificity: number,
+];
+type EventListeners = EventListener[];
+const downs: Record<string, EventListeners> = {};
+const ups: Record<string, EventListeners> = {};
 
 export const keys = {
     alt: false,
@@ -23,6 +30,13 @@ on("Control").observe(keys, "ctrl").observe$(keys$, "ctrl");
 on("Meta").observe(keys, "meta").observe$(keys$, "meta");
 on("Shift").observe(keys, "shift").observe$(keys$, "shift");
 
+export const modifiers = {
+    alt: () => keys.alt,
+    ctrl: () => keys.ctrl,
+    meta: () => keys.meta,
+    shift: () => keys.shift,
+}
+
 export function on(key: string) {
     key = key.toLowerCase();
     try {
@@ -32,33 +46,36 @@ export function on(key: string) {
             mounters.forEach(m => m());
             return () => unmounters.forEach(u => u());
         });
-        return makeObject(key, [], {
-            mount(fn: any) {
-                mounters.push(fn);
-            },
-            unmount(fn: any) {
-                unmounters.push(fn);
-            }
+        return makeObject(key, [], 0, {
+            mount(fn: any) { mounters.push(fn) },
+            unmount(fn: any) { unmounters.push(fn) },
         });
     }
     catch {
-        return makeObject(key, []);
+        return makeObject(key, [], 0);
     }
 }
 
-function makeObject(key: string, whens: ((key: string) => any)[], mounter?: { mount: any, unmount: any }): KeyListener {
+function makeObject(key: string, whens: FnString[], specificity: number, mounter?: { mount: any, unmount: any }): KeyListener {
     return {
-        when(fn: (key: string) => any) {
-            return makeObject(key, [...whens, fn], mounter);
+        when(fn: FnString) {
+            return makeObject(key, [...whens, fn], specificity, mounter);
+        },
+        and(fn: FnString) {
+            return makeObject(key, [...whens, fn], specificity + 1, mounter);
         },
 
-        down(down: (key: string) => any) {
-            const newDown = (key: string) => whens.every(w => w(key)) && down(key);
+        down(down: FnString) {
+            const newDown = [
+                (key: string) => whens.every(fn => fn(key)),
+                down,
+                specificity,
+            ] as const;
 
             if (mounter) {
                 mounter.mount(() => {
-                    if (downs[key]) downs[key].push(newDown);
-                    else downs[key] = [newDown];
+                    if (!downs[key]) downs[key] = [];
+                    downs[key].push(newDown);
                 });
                 mounter.unmount(() => {
                     const index = downs[key].indexOf(newDown);
@@ -66,19 +83,23 @@ function makeObject(key: string, whens: ((key: string) => any)[], mounter?: { mo
                 });
             }
             else {
-                if (downs[key]) downs[key].push(newDown);
-                else downs[key] = [newDown];
+                if (!downs[key]) downs[key] = [];
+                downs[key].push(newDown);
             }
             return this;
         },
 
-        up(up: (key: string) => any) {
-            const newUp = (key: string) => whens.every(w => w(key)) && up(key);
+        up(up: FnString) {
+            const newUp = [
+                (key: string) => whens.every(w => w(key)),
+                up,
+                specificity,
+            ] as const;
 
             if (mounter) {
                 mounter.mount(() => {
-                    if (ups[key]) ups[key].push(newUp);
-                    else ups[key] = [newUp];
+                    if (!ups[key]) ups[key] = [];
+                    ups[key].push(newUp);
                 });
                 mounter.unmount(() => {
                     const index = ups[key].indexOf(newUp);
@@ -86,8 +107,8 @@ function makeObject(key: string, whens: ((key: string) => any)[], mounter?: { mo
                 });
             }
             else {
-                if (ups[key]) ups[key].push(newUp);
-                else ups[key] = [newUp];
+                if (!ups[key]) ups[key] = [];
+                ups[key].push(newUp);
             }
 
             return this;
@@ -110,25 +131,15 @@ function makeObject(key: string, whens: ((key: string) => any)[], mounter?: { mo
 }
 
 export interface KeyListener {
-    when(fn: (key: string) => any): KeyListener;
+    when(fn: FnString): KeyListener;
+    and(fn: FnString): KeyListener;
 
-    down(down: (key: string) => any): this;
-    up(up: (key: string) => any): this;
+    down(down: FnString): this;
+    up(up: FnString): this;
 
     observe<K extends string>(object: { [U in K]: boolean}, key: K): this;
     observe(): Readable<boolean>;
     observe$<K extends string>(object: Writable<{ [U in K]: boolean}>, key: K): this;
-}
-
-export function onkey(key: string, down: () => any, up?: () => any) {
-    key = key.toLowerCase();
-    if (downs[key]) downs[key].push(down);
-    else downs[key] = [down];
-
-    if (up) {
-        if (ups[key]) ups[key].push(up);
-        else ups[key] = [up];
-    }
 }
 
 // export function observekey(key: string) {
@@ -136,9 +147,36 @@ export function onkey(key: string, down: () => any, up?: () => any) {
 // }
 
 window.addEventListener("keydown", e => {
-    downs[e.key.toLowerCase()]?.forEach(f => f(e.key));
+    callSorted(
+        downs[e.key.toLowerCase()] || [],
+        e.key,
+    );
 });
 
 window.addEventListener("keyup", e => {
-    ups[e.key.toLowerCase()]?.forEach(f => f(e.key));
+    callSorted(
+        ups[e.key.toLowerCase()] || [],
+        e.key,
+    );
 });
+
+function callSorted(fns: EventListeners, arg: string) {
+    // group
+    const grouped = fns
+        .filter(fn => fn[0](arg))
+        .reduce((acc, [_, fn, specificity]) => {
+            if (!acc[specificity]) acc[specificity] = [];
+            acc[specificity].push(fn);
+            return acc;
+        }, {} as Record<number, FnString[]>);
+
+    // find highest specificity
+    let specificity = 0;
+    for (const key in grouped) {
+        let s = parseInt(key);
+        if (s > specificity) specificity = s;
+    }
+
+    // call
+    for (const fn of grouped[specificity]) fn(arg);
+}

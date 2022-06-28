@@ -33,7 +33,7 @@
                 showPlacable={$showControls}
                 bind:selectionArea={$selection}
                 bind:selection={$selectionContent}
-                bind:mouseCell={$cursorPosition}
+                bind:mousePosition={$cursorPosition}
                 bind:center={$screenPosition}
             />
             <DebugMenu />

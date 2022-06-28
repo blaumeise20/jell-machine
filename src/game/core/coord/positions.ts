@@ -53,7 +53,7 @@ export class PosMap<T, X = undefined> {
  * Represents one coordinate point.
  */
 export class Position {
-    constructor(public x: number, public y: number) { }
+    constructor(public readonly x: number, public readonly y: number) { }
 
     /**
      * Clones the current position by the specified offset.
@@ -109,6 +109,14 @@ export class Position {
  * @returns A `Position` object.
  */
 export function Pos(x: number, y: number): Position { return new Position(x, y); }
+
+/**
+ * Turns an object with `x` and `y` properties into a `Position`.
+ * @param obj Object with `x` and `y` properties.
+ * @returns A `Position` object.
+ */
+export function toPos(obj: { x: number, y: number }): Position { return new Position(obj.x, obj.y); }
+
 export const Off = {
     [Direction.Right]: Pos( 1,  0),
     [Direction.Down ]: Pos( 0, -1),

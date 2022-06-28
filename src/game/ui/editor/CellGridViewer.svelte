@@ -4,9 +4,9 @@
     import { textures } from "@utils/texturePacks";
     import { onMount } from "svelte";
     import { Tile } from "@core/tiles";
-    import { keys, keys$, on } from "../keys";
+    import { keys, keys$, modifiers, on } from "../keys";
     import { mouse } from "@utils/mouse";
-    import { Pos, Position } from "@core/coord/positions";
+    import { Pos, toPos } from "@core/coord/positions";
     import { rotation, selectedCell } from "./GameControls.svelte";
     import { Size } from "@core/coord/size";
     import { config } from "@utils/config";
@@ -23,26 +23,37 @@
     const MAX_ZOOM = 4;
 
     export const center = { x: grid.size.width / 2, y: grid.size.height / 2 }
-    export const mouseCell = { x: 0, y: 0 };
+    export const mousePosition = { x: 0, y: 0 };
+    export const mouseAnchor = { x: NaN, y: NaN };
+    export const mouseCurrent = { x: 0, y: 0 };
     const editorSize = { width: 0, height: 0 };
     const gridOffset = { left: 0, bottom: 0 };
     let zoom = 1;
     let mouseButton = -1;
 
+    // camera: move keys
     const moving = {
         up: false,
         right: false,
         down: false,
         left: false,
     };
-    addMoveKey("w", "up");
-    addMoveKey("d", "right");
-    addMoveKey("s", "down");
-    addMoveKey("a", "left");
-    function addMoveKey(k: string, p: keyof typeof moving) {
-        on(k).up(() => moving[p] = false).down(() => moving[p] = true);
+    const moving2 = {
+        up: false,
+        right: false,
+        down: false,
+        left: false,
+    };
+    addMoveKey("w", "arrowup", "up");
+    addMoveKey("a", "arrowleft", "left");
+    addMoveKey("s", "arrowdown", "down");
+    addMoveKey("d", "arrowright", "right");
+    function addMoveKey(k: string, k2: string, p: keyof typeof moving) {
+        on(k).down(() => moving[p] = true).up(() => moving[p] = false);
+        on(k2).down(() => moving2[p] = true).up(() => moving2[p] = false);
     }
 
+    // camera: size
     let editorElement: HTMLDivElement;
     $: if (editorElement) {
         editorSize.width  = editorElement.offsetWidth;
@@ -53,7 +64,7 @@
 
     $: grid.reloadUI(() => grid = grid);
 
-    // frames
+    // camera: frames
     let living = true, previousTime = 0;
     let frame: number;
     onMount(() => {
@@ -66,16 +77,16 @@
         previousTime = time;
         if (living) frame = requestAnimationFrame(updateFrame);
 
-        // moving
+        // camera: move calculations
         let x = center.x;
         let y = center.y;
         const offset = CELLS_PER_SECOND / zoom * (delta / 1000);
-        if (moving.up) y += offset;
-        if (moving.right) x += offset;
-        if (moving.down) y -= offset;
-        if (moving.left) x -= offset;
+        if (moving.up || moving2.up) y += offset;
+        if (moving.right || moving2.right) x += offset;
+        if (moving.down || moving2.down) y -= offset;
+        if (moving.left || moving2.left) x -= offset;
 
-        // placing
+        // camera: placing calculations
         const pixelDistX = mouse.x - editorSize.width / 2;
         const pixelDistY = mouse.y - editorSize.height / 2;
         const cellDistX = pixelDistX / CELL_SIZE / zoom;
@@ -86,14 +97,10 @@
         const actualY = Math.floor(cellY);
         const clickedCell = Pos(actualX, actualY);
 
+        // camera: placing
         let cellChanged = false;
-        if (mouseButton == 0) {
-            if (selecting) {
-                if (!showSelection) selectionStart = clickedCell.c();
-                showSelection = true;
-                selectionCurrent = clickedCell.c();
-            }
-            else if (placeCell) {
+        if (placeCell) {
+            if (mouseButton == 0) {
                 if (keys.shift) {
                     grid.tiles.set(clickedCell, Tile.Placable);
                     cellChanged = true;
@@ -109,59 +116,67 @@
                     }
                 }
             }
-        }
-        else if (mouseButton == 2) {
-            if (keys.shift) grid.tiles.delete(clickedCell);
-            else {
-                const cell = grid.cells.get(clickedCell);
-                if (cell) {
-                    cell.rm();
-                    Events.emit("cell-deleted", clickedCell, cell);
+            else if (mouseButton == 2) {
+                if (keys.shift) grid.tiles.delete(clickedCell);
+                else {
+                    const cell = grid.cells.get(clickedCell);
+                    if (cell) {
+                        cell.rm();
+                        Events.emit("cell-deleted", clickedCell, cell);
+                    }
                 }
+
+                cellChanged = true;
             }
-
-            cellChanged = true;
         }
-        // placing end
 
+        // camera: set new coordinates
         center.x = x;
         center.y = y;
-        mouseCell.x = cellX;
-        mouseCell.y = cellY;
+        mousePosition.x = cellX;
+        mousePosition.y = cellY;
+        if (mouseButton != -1) {
+            mouseCurrent.x = actualX;
+            mouseCurrent.y = actualY;
+        }
         if (cellChanged) grid = grid;
     }
 
-    //#region selection
-    let selectionStart: Position | null = null;
-    let selectionCurrent: Position | null = null;
-    let selecting = false;
-    let showSelection = false;
+    // selection: calculations
+    let showSelectionBox = false;
     let placeCell = true;
-    $: selectionSize = Size.from(selectionStart, selectionCurrent)!;
+    $: selectionSize = Size.from(toPos(mouseAnchor), toPos(mouseCurrent))!;
 
     export let selectionArea: Size | null = null;
-    $: selectionArea = showSelection ? selectionSize : null;
-    $: grid.selectedArea = showSelection ? selectionSize : null;
+    $: selectionArea = showSelectionBox ? selectionSize : null;
+    $: grid.selectedArea = showSelectionBox ? selectionSize : null;
 
     export let selection: CellGrid | null = null;
     $: selectionPos = selection ? Pos(
-        Math.round(mouseCell.x - selection.size.width / 2),
-        Math.round(mouseCell.y - selection.size.height / 2)
+        Math.round(mousePosition.x - selection.size.width / 2),
+        Math.round(mousePosition.y - selection.size.height / 2)
     ) : Pos(0, 0);
     let lastSelection: CellGrid | null = selection;
     $: if (selection) lastSelection = selection;
 
-    on("x").down(() => {
-        if (showSelection) selection = grid.extract(selectionSize, true), showSelection = false;
+    // selection clipboard: cut/copy/paste
+    on("x").and(modifiers.meta).down(() => {
+        if (showSelectionBox) {
+            selection = grid.extract(selectionSize, true);
+            showSelectionBox = false;
+        }
     });
-    on("c").down(() => {
-        if (showSelection) selection = grid.extract(selectionSize), showSelection = false;
+    on("c").and(modifiers.meta).down(() => {
+        if (showSelectionBox) {
+            selection = grid.extract(selectionSize);
+            showSelectionBox = false;
+        }
     });
-
-    on("v").when(() => lastSelection && !selection).down(() => {
+    on("v").and(modifiers.meta).when(() => lastSelection && !selection).down(() => {
         selection = lastSelection;
     });
 
+    // selection clipboard: rotate
     on("q").when(() => selection).down(() => {
         selection = selection!.rotateCCW();
     });
@@ -176,65 +191,45 @@
         selection = selection!.flipHorizontal();
     });
 
-    on("arrowright").down(() => {
-        if (showSelection) {
-            grid.move(selectionSize, Direction.Right);
-            selectionStart = selectionStart!.mi(Direction.Right);
-            selectionCurrent = selectionCurrent!.mi(Direction.Right);
-        }
-    });
-    on("arrowdown").down(() => {
-        if (showSelection) {
-            grid.move(selectionSize, Direction.Down);
-            selectionStart = selectionStart!.mi(Direction.Down);
-            selectionCurrent = selectionCurrent!.mi(Direction.Down);
-        }
-    });
-    on("arrowleft").down(() => {
-        if (showSelection) {
-            grid.move(selectionSize, Direction.Left);
-            selectionStart = selectionStart!.mi(Direction.Left);
-            selectionCurrent = selectionCurrent!.mi(Direction.Left);
-        }
-    });
-    on("arrowup").down(() => {
-        if (showSelection) {
-            grid.move(selectionSize, Direction.Up);
-            selectionStart = selectionStart!.mi(Direction.Up);
-            selectionCurrent = selectionCurrent!.mi(Direction.Up);
-        }
-    });
+    // selection: move
+    for (const [key, dir] of [
+        ["arrowright", Direction.Right],
+        ["arrowdown", Direction.Down],
+        ["arrowleft", Direction.Left],
+        ["arrowup", Direction.Up],
+    ] as const) {
+        on(key).and(modifiers.alt).when(() => showSelectionBox).down(() => {
+            grid.move(selectionSize, dir);
+            selectionSize = selectionSize.move(dir);
+        });
+    }
 
+    // selection: fill
     on("g").down(() => {
-        if (keys.shift) {
-            grid.fillTile(selectionSize, Tile.Placable);
-        }
-        else {
-            grid.fillCell(selectionSize, $selectedCell, $rotation);
-        }
+        if (keys.shift) grid.fillTile(selectionSize, Tile.Placable);
+        else grid.fillCell(selectionSize, $selectedCell, $rotation);
     });
-    //#endregion
 
-
-    //#region events
-
+    // camera: zoom
     function zoomEvent(e: WheelEvent) {
         const d = e.deltaY;
         if (d == 0 || d == -0) return;
 
-        // zoom = e.deltaY;
-        if (Math.abs(d) != d) {
-            // negative
-            zoom = zoom * (1 + Math.abs(d) / ZOOM_SPEED);
-        }
-        else {
+        if (d > 0) {
             // positive
             zoom = zoom / (1 + Math.abs(d) / ZOOM_SPEED);
+        }
+        else {
+            // negative
+            zoom = zoom * (1 + Math.abs(d) / ZOOM_SPEED);
         }
         zoom = Math.min(zoom, MAX_ZOOM);
     }
 
+    // camera: placing/inserting
     function mousedownEvent(e: MouseEvent) {
+        if (mouseButton != -1) return;
+
         if (selection) {
             if (e.button != 2) {
                 for (const cell of selection.cellList) {
@@ -257,28 +252,16 @@
         }
         else {
             mouseButton = e.button;
-            if (mouseButton == 2 && showSelection) {
-                for (let x = 0; x < selectionSize.width; x++) {
-                    for (let y = 0; y < selectionSize.height; y++) {
-                        const cell = grid.cells.get(Pos(x + selectionSize.left, y + selectionSize.bottom));
-                        if (cell) {
-                            cell.rm();
-                            Events.emit("cell-deleted", cell.pos, cell);
-                        }
-                    }
-                }
-                grid.reloadUI();
-            }
-            selecting = keys.ctrl;
-            showSelection = false;
+            mouseAnchor.x = Math.floor(mousePosition.x);
+            mouseAnchor.y = Math.floor(mousePosition.y);
+            showSelectionBox = keys.ctrl;
+            if (showSelectionBox) placeCell = false;
         }
     }
     function mouseupEvent(_e: MouseEvent) {
         mouseButton = -1;
-        selecting = false;
-        placeCell = !showSelection;
+        placeCell = !showSelectionBox;
     }
-    //#endregion
 </script>
 
 <style lang="scss">
@@ -345,12 +328,15 @@
         transform-origin: {editorSize.width / 2 - gridOffset.left}px {-(editorSize.height / 2 - gridOffset.bottom)}px;
         --transition-duration: {$config.tickSpeed}ms;
     " class:animate={$config.animation}>
+        <!-- grid -->
         <div class="background" style="
             width: {grid.size.width * CELL_SIZE}px;
             height: {grid.size.height * CELL_SIZE}px;
             background-image: url({$textures.cells.bg.url});
             display: {$config.showBackgroundGrid ? "block" : "none"};
         "></div>
+
+        <!-- cells -->
         <svg class="cell_container" width={grid.size.width * CELL_SIZE} height={grid.size.height * CELL_SIZE}>
             {#each [...grid.tiles.entries()] as [pos, _]}
                 <image
@@ -371,6 +357,8 @@
                 />
             {/each}
         </svg>
+
+        <!-- selection clipboard -->
         {#if selection}
             <svg class="cell_container" style="opacity: .7; bottom: {Math.round(selectionPos.y) * CELL_SIZE}px; left: {Math.round(selectionPos.x) * CELL_SIZE}px;" width={selection.size.width * CELL_SIZE} height={selection.size.height * CELL_SIZE}>
                 <!-- {#each [...selection.tiles.entries()] as [pos, tile]}
@@ -393,7 +381,8 @@
             </svg>
         {/if}
 
-        {#if showSelection}
+        <!-- selection -->
+        {#if showSelectionBox}
             <div class="selection_box" style="
                 bottom: {CELL_SIZE * selectionSize.bottom}px;
                 left: {CELL_SIZE * selectionSize.left}px;
