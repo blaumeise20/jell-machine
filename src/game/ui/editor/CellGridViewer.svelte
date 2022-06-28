@@ -149,47 +149,35 @@
 
     export let selectionArea: Size | null = null;
     $: selectionArea = showSelectionBox ? selectionSize : null;
-    $: grid.selectedArea = showSelectionBox ? selectionSize : null;
+    $: grid.selectedArea = selectionArea;
 
-    export let selection: CellGrid | null = null;
-    $: selectionPos = selection ? Pos(
-        Math.round(mousePosition.x - selection.size.width / 2),
-        Math.round(mousePosition.y - selection.size.height / 2)
+    export let pasteboard: CellGrid | null = null;
+    $: selectionPos = pasteboard ? Pos(
+        Math.round(mousePosition.x - pasteboard.size.width / 2),
+        Math.round(mousePosition.y - pasteboard.size.height / 2)
     ) : Pos(0, 0);
-    let lastSelection: CellGrid | null = selection;
-    $: if (selection) lastSelection = selection;
+    let clipboard: CellGrid | null = null;
 
     // selection clipboard: cut/copy/paste
-    on("x").and(modifiers.meta).down(() => {
-        if (showSelectionBox) {
-            selection = grid.extract(selectionSize, true);
-            showSelectionBox = false;
-        }
+    on("x").and(modifiers.meta).when(() => showSelectionBox).down(() => {
+        clipboard = grid.extract(selectionSize, true);
+        showSelectionBox = false;
+        placeCell = true;
     });
     on("c").and(modifiers.meta).down(() => {
-        if (showSelectionBox) {
-            selection = grid.extract(selectionSize);
-            showSelectionBox = false;
-        }
+        clipboard = grid.extract(selectionSize);
+        showSelectionBox = false;
+        placeCell = true;
     });
-    on("v").and(modifiers.meta).when(() => lastSelection && !selection).down(() => {
-        selection = lastSelection;
-    });
-
-    // selection clipboard: rotate
-    on("q").when(() => selection).down(() => {
-        selection = selection!.rotateCCW();
-    });
-    on("e").when(() => selection).down(() => {
-        selection = selection!.rotateCW();
+    on("v").and(modifiers.meta).when(() => clipboard && !pasteboard).down(() => {
+        pasteboard = clipboard;
     });
 
-    on("r").when(() => selection).down(() => {
-        selection = selection!.flipVertical();
-    });
-    on("f").when(() => selection).down(() => {
-        selection = selection!.flipHorizontal();
-    });
+    // selection pasteboard: rotate/flip
+    on("q").when(() => pasteboard).down(() => pasteboard = pasteboard!.rotateCCW());
+    on("e").when(() => pasteboard).down(() => pasteboard = pasteboard!.rotateCW());
+    on("r").when(() => pasteboard).down(() => pasteboard = pasteboard!.flipVertical());
+    on("f").when(() => pasteboard).down(() => pasteboard = pasteboard!.flipHorizontal());
 
     // selection: move
     for (const [key, dir] of [
@@ -230,9 +218,9 @@
     function mousedownEvent(e: MouseEvent) {
         if (mouseButton != -1) return;
 
-        if (selection) {
+        if (pasteboard) {
             if (e.button != 2) {
-                for (const cell of selection.cellList) {
+                for (const cell of pasteboard.cellList) {
                     const newPos = Pos(cell.pos.x + selectionPos.x, cell.pos.y + selectionPos.y);
                     const cellAt = grid.cells.get(newPos);
                     if (cellAt && keys.ctrl) {
@@ -247,7 +235,7 @@
                 }
                 grid.reloadUI();
             }
-            selection = null;
+            pasteboard = null;
             placeCell = false;
         }
         else {
@@ -359,8 +347,8 @@
         </svg>
 
         <!-- selection clipboard -->
-        {#if selection}
-            <svg class="cell_container" style="opacity: .7; bottom: {Math.round(selectionPos.y) * CELL_SIZE}px; left: {Math.round(selectionPos.x) * CELL_SIZE}px;" width={selection.size.width * CELL_SIZE} height={selection.size.height * CELL_SIZE}>
+        {#if pasteboard}
+            <svg class="cell_container" style="opacity: .7; bottom: {Math.round(selectionPos.y) * CELL_SIZE}px; left: {Math.round(selectionPos.x) * CELL_SIZE}px;" width={pasteboard.size.width * CELL_SIZE} height={pasteboard.size.height * CELL_SIZE}>
                 <!-- {#each [...selection.tiles.entries()] as [pos, tile]}
                     <image
                         class="cell placable placable_bg"
@@ -369,11 +357,11 @@
                         href={$currentPack.textures.placable.url}
                     />
                 {/each} -->
-                {#each [...selection.cells.values()] as cell}
+                {#each [...pasteboard.cells.values()] as cell}
                     <image
                         class="cell"
                         x={CELL_SIZE * cell.pos.x}
-                        y={CELL_SIZE * (selection.size.height - cell.pos.y - 1)}
+                        y={CELL_SIZE * (pasteboard.size.height - cell.pos.y - 1)}
                         href={$textures.cells[cell.type.getTex(cell)].url}
                         transform="rotate({cell.direction * 90})"
                     />

@@ -32,7 +32,7 @@
                 grid={$openLevel}
                 showPlacable={$showControls}
                 bind:selectionArea={$selection}
-                bind:selection={$selectionContent}
+                bind:pasteboard={$selectionContent}
                 bind:mousePosition={$cursorPosition}
                 bind:center={$screenPosition}
             />
