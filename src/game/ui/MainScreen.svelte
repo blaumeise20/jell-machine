@@ -43,9 +43,10 @@
         "Jell Machine was inspired by Pyll Machine",
         "This project is fully free and open source",
         "Try to use keyboard shortcuts as much as you can",
-        "Jell Machine has terrible performance lol"
+        "Jell Machine has terrible performance lol",
     ];
-    const tip = tips[Math.floor(Math.random() * tips.length)];
+    let tip: string;
+    $: if (visible) tip = tips[Math.floor(Math.random() * tips.length)];
 
 </script>
 
