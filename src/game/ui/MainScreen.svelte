@@ -4,6 +4,7 @@
     import logo from "../logo.png";
     import { disconnect } from "@core/multiplayer/connection";
     import { Stack } from "@utils/stack";
+    import StatusOverlay from "./StatusOverlay.svelte";
 
     export let visible: boolean;
     export let layers: Stack<string>;
@@ -24,6 +25,8 @@
 
     // loadFromClipboard();
 
+    let error = "";
+
     async function importClipboard() {
         const clipboardContent = await clip();
         const res = CellGrid.loadFromString(clipboardContent);
@@ -34,7 +37,7 @@
             $openLevel = res[1];
         }
         else {
-            alert("oh an error occured make sure to copy a valid string");
+            error = "Your clipboard doesn't contain a valid level.";
             console.error(res);
         }
     }
@@ -122,3 +125,9 @@
         <h1 class="tips">{tip}</h1>
     </div>
 {/if}
+
+<StatusOverlay visible={error != ""}>
+    {error}
+    <div class="space" />
+    <button class="center" on:click={() => error = ""}>Back</button>
+</StatusOverlay>
