@@ -4,7 +4,7 @@
     import logo from "../logo.png";
     import { disconnect } from "@core/multiplayer/connection";
     import { Stack } from "@utils/stack";
-    import StatusOverlay from "./StatusOverlay.svelte";
+    import Overlay from "./Overlay.svelte";
 
     export let visible: boolean;
     export let layers: Stack<string>;
@@ -119,8 +119,8 @@
     </div>
 {/if}
 
-<StatusOverlay visible={error != ""}>
+<Overlay visible={error != ""}>
     {error}
     <div class="space"></div>
     <button class="center" on:click={() => error = ""}>Back</button>
-</StatusOverlay>
+</Overlay>

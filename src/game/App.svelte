@@ -3,8 +3,8 @@
     import "@utils/texturePacks";
     import EditorMain from "./ui/editor/EditorMain.svelte";
     import MainScreen from "./ui/MainScreen.svelte";
-    import CreateOverlay from "./ui/CreateOverlay.svelte";
-    import ConnectOverlay from "./ui/ConnectOverlay.svelte";
+    import CreateScreen from "./ui/CreateScreen.svelte";
+    import ConnectScreen from "./ui/ConnectScreen.svelte";
     import HelpScreen from "./ui/help/HelpScreen.svelte";
     import SettingsScreen from "./ui/settings/SettingsScreen.svelte";
     import { Stack } from "@utils/stack";
@@ -13,8 +13,8 @@
     const layerList = [
         [EditorMain, "editor"],
         [MainScreen, "main"],
-        [CreateOverlay, "create"],
-        [ConnectOverlay, "connect"],
+        [CreateScreen, "create"],
+        [ConnectScreen, "connect"],
         [HelpScreen, "help"],
         [SettingsScreen, "settings"],
     ];
