@@ -41,7 +41,6 @@
             console.error(res);
         }
     }
-
     const tips = [
         "Jell Machine was inspired by Pyll Machine",
         "This project is fully free and open source",
@@ -50,7 +49,6 @@
     ];
     let tip: string;
     $: if (visible) tip = tips[Math.floor(Math.random() * tips.length)];
-
 </script>
 
 <style lang="scss">
@@ -115,11 +113,6 @@
             <button class="big" on:click={() => layers = layers.next("connect")}>Connect to server</button>
             <div class="space"></div>
             <button on:click={() => layers = layers.next("settings")}>Settings</button>
-            <!-- {#if $openLevel}
-                <div class="space"></div>
-                <button class="center" on:click={() => layers.back()}>Back</button>
-            {/if} -->
-
         </div>
         <button class="center help_button big" on:click={() => layers = layers.next("help")}>Help</button>
         <h1 class="tips">{tip}</h1>

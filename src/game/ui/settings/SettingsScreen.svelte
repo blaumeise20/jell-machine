@@ -49,11 +49,9 @@
 {#if visible}
     <div class="overlay_container">
         <div class="overlay">
-            <p>
-                <b>Tick Speed (ms):</b> <input type="number" bind:value={$config.tickSpeed}>
-                <b>UI:</b> <input type="number" bind:value={$config.uiScale}>
-                <b>Animations ("on"/"off"):</b> <input type="text" bind:value={animations}>
-            </p>
+            <p><b>Tick Speed (ms):</b> <input type="number" bind:value={$config.tickSpeed}></p>
+            <p><b>UI:</b> <input type="number" bind:value={$config.uiScale}></p>
+            <p><b>Animations ("on"/"off"):</b> <input type="text" bind:value={animations}></p>
             <div class="space"></div>
             <button class="center" on:click={() => layers = layers.back()}>Back</button>
         </div>
