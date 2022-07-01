@@ -60,9 +60,11 @@
 
 
 body, html {
+    color: #fff;
+    font: 400 17px/20px "Roboto", sans-serif;
+    height: 100vh;
     margin: 0;
     width: 100%;
-    height: 100vh;
 }
 button {
     appearance: none;
