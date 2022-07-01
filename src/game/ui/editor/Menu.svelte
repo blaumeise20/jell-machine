@@ -9,11 +9,30 @@
 
     export let open: boolean;
     export let layers: Stack<string>;
+    export let showSettings: boolean;
 
     const copiedText = "Copied!";
-    $: copyText = $selection ? "Copy selected area" : "Copy to Clipboard";
+    let copyText = "";
+    selection.subscribe(s => {
+        copyText = s ? "Copy selected area" : "Copy to Clipboard"
+    });
     let copyButtonLabel = "Copy to Clipboard";
     let copyTimeout: any = null;
+
+    function copy(type: string) {
+        if ($openLevel) {
+            let string = $selection ?
+                $openLevel.extract($selection).toString(type)
+                : $openLevel.toString(type);
+            if (string) clip(string);
+
+            copyButtonLabel = copiedText;
+            copyTimeout && clearTimeout(copyTimeout);
+            copyTimeout = setTimeout(() => {
+                copyButtonLabel = copyText;
+            }, 1000);
+        }
+    }
 </script>
 
 <style lang="scss">
@@ -99,34 +118,9 @@
                 open = false;
                 layers = layers.next("main");
             }}>Go to main screen</button>
-            <button on:click={() => {
-                if ($openLevel) {
-                    let string = $selection ?
-                        $openLevel.extract($selection).toString("V3")
-                        : $openLevel.toString("V3");
-                    if (string) clip(string);
-
-                    copyButtonLabel = copiedText;
-                    copyTimeout && clearTimeout(copyTimeout);
-                    copyTimeout = setTimeout(() => {
-                        copyButtonLabel = copyText;
-                    }, 1000);
-                }
-            }}>{copyButtonLabel} V3</button>
-            <button on:click={() => {
-                if ($openLevel) {
-                    let string = $selection ?
-                        $openLevel.extract($selection).toString("J1")
-                        : $openLevel.toString("J1");
-                    if (string) clip(string);
-
-                    copyButtonLabel = copiedText;
-                    copyTimeout && clearTimeout(copyTimeout);
-                    copyTimeout = setTimeout(() => {
-                        copyButtonLabel = copyText;
-                    }, 1000);
-                }
-            }}>{copyButtonLabel} J1</button>
+            <button on:click={() => showSettings = true}>Settings</button>
+            <button on:click={() => copy("V3")}>{copyButtonLabel} V3</button>
+            <button on:click={() => copy("J1")}>{copyButtonLabel} J1</button>
         </div>
     </div>
 {/if}

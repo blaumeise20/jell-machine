@@ -7,13 +7,17 @@
     import Menu from "./Menu.svelte";
     import { on } from "../keys";
     import { Stack } from "@utils/stack";
+    import Overlay from "../Overlay.svelte";
+    import Settings from "../settings/Settings.svelte";
 
     export let visible: boolean;
     export let layers: Stack<string>;
 
     let menuOpen = false;
+    let showSettings = false;
 
-    on("escape").when(() => visible && $openLevel).down(() => menuOpen = !menuOpen);
+    on("escape").when(() => visible && $openLevel && !showSettings).down(() => menuOpen = !menuOpen);
+    on("escape").when(() => visible && showSettings).down(() => showSettings = false);
 </script>
 
 <style lang="scss">
@@ -44,5 +48,15 @@
         {/if}
     </div>
 
-    <Menu bind:open={menuOpen} bind:layers />
+    <Menu
+        bind:open={menuOpen}
+        bind:layers
+        bind:showSettings
+    />
+
+    <Overlay visible={showSettings}>
+        <Settings />
+        <div class="space"></div>
+        <button class="center" on:click={() => showSettings = false}>Back</button>
+    </Overlay>
 {/if}

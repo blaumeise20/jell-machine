@@ -1,17 +1,12 @@
 <script lang="ts">
-    import { config } from "@utils/config";
     import { Stack } from "@utils/stack";
     import { on } from "../keys";
+    import Settings from "./Settings.svelte";
 
     export let visible: boolean;
     export let layers: Stack<string>;
 
     on("escape").when(() => visible).down(() => layers = layers.back());
-
-    let animations = $config.animation ? "on" : "off";
-    $: if (animations == "on" || animations == "off") {
-        $config.animation = animations == "on";
-    }
 </script>
 
 <style lang="scss">
@@ -36,22 +31,12 @@
         transform: translateY(-50%);
         width: 30%;
     }
-
-    p {
-        margin: 0 0 5px 0;
-    }
-
-    input {
-        margin-left: 10px;
-    }
 </style>
 
 {#if visible}
     <div class="overlay_container">
         <div class="overlay">
-            <p><b>Tick Speed (ms):</b> <input type="number" bind:value={$config.tickSpeed}></p>
-            <p><b>UI:</b> <input type="number" bind:value={$config.uiScale}></p>
-            <p><b>Animations ("on"/"off"):</b> <input type="text" bind:value={animations}></p>
+            <Settings />
             <div class="space"></div>
             <button class="center" on:click={() => layers = layers.back()}>Back</button>
         </div>
