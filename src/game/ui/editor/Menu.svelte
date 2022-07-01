@@ -78,8 +78,8 @@
             <button on:click={() => $openLevel && ($openLevel.borderMode = BorderMode.Delete)}>Delete</button>
             {#each Menu.uiComponents as component, i}
                 {#if i}
-                    <div class="space" />
-                    <div class="space" />
+                    <div class="space"></div>
+                    <div class="space"></div>
                 {/if}
                 <UiElementViewer root={component} />
             {/each}

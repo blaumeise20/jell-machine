@@ -121,6 +121,6 @@
 
 <StatusOverlay visible={error != ""}>
     {error}
-    <div class="space" />
+    <div class="space"></div>
     <button class="center" on:click={() => error = ""}>Back</button>
 </StatusOverlay>
