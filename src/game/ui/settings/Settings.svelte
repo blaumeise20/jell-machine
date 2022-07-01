@@ -1,10 +1,5 @@
 <script lang="ts">
     import { config } from "@utils/config";
-
-    let animations = $config.animation ? "on" : "off";
-    $: if (animations == "on" || animations == "off") {
-        $config.animation = animations == "on";
-    }
 </script>
 
 <style lang="scss">
@@ -19,4 +14,4 @@
 
 <p><b>Tick Speed (ms):</b> <input type="number" bind:value={$config.tickSpeed}></p>
 <p><b>UI:</b> <input type="number" bind:value={$config.uiScale}></p>
-<p><b>Animations ("on"/"off"):</b> <input type="text" bind:value={animations}></p>
+<p><b>Animations:</b> <input type="checkbox" bind:checked={$config.animation}></p>

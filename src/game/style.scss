@@ -121,4 +121,35 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
+input[type="checkbox"] {
+    appearance: none;
+    background-color: #303030;
+    border: none;
+    color: #fff;
+    display: inline-block;
+    height: 20px;
+    outline: none;
+    position: relative;
+    margin: 0;
+    width: 20px;
+    vertical-align: middle;
+}
+input[type="checkbox"]:checked::after {
+    border: 2px solid #fff;
+    border-right: none;
+    border-top: none;
+    content: "";
+    display: block;
+    height: 6px;
+    left: 2px;
+    position: absolute;
+    top: 3px;
+    width: 15px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+}
+
 @import "./style_ui.scss";
