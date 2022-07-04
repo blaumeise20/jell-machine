@@ -10,7 +10,7 @@
     export let rotation: number;
 
     const HOTBAR_SIZE = 50;
-    const currentSlots = slotHandler.slots;
+    const hotbarItems = slotHandler.slots;
 
     let showStructures = false;
 
@@ -39,8 +39,8 @@
 <style lang="scss">
     .hotbar {
         backdrop-filter: blur(10px);
-        background-color: rgba(64, 64, 64, 0.8);
-        border-top: 2px solid #585858;
+        background-color: rgba(54, 54, 54, 0.8);
+        border-top: 2px solid #404040;
         bottom: 0;
         display: flex;
 
@@ -49,27 +49,52 @@
         z-index: 60;
     }
 
-    $selection_size: var(--hotbar-size);
+    $item_size: var(--hotbar-item-size);
+    $item_space: calc($item_size / 4.5);
 
-    .cells {
+    .hotbar_items {
         flex: 1;
         display: flex;
-        padding: calc($selection_size / 4) 0 calc($selection_size / 4) 0;
-    }
-    .cell_selection {
-        background-repeat: no-repeat;
-        background-size: contain;
-        display: block;
-        image-rendering: pixelated;
-        position: relative;
-        opacity: .4;
-        margin-left: calc($selection_size / 4);
-        transition: transform .15s, opacity .1s;
-        width: $selection_size;
-        height: $selection_size;
-    }
-    .selected {
-        opacity: 1;
+        padding: $item_space 0;
+
+        .item_container {
+            margin-left: $item_space;
+            position: relative;
+        }
+
+        .item {
+            background-repeat: no-repeat;
+            background-size: contain;
+            display: block;
+            image-rendering: pixelated;
+            position: relative;
+            transition: transform .15s, opacity .1s;
+            width: $item_size;
+            height: $item_size;
+
+            &:not(.selected) {
+                opacity: .4;
+            }
+        }
+        .submenu {
+            bottom: calc(100% + $item_space + 10px);
+            display: block;
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 0);
+
+            .subitem {
+                background-repeat: no-repeat;
+                background-size: contain;
+                display: block;
+                image-rendering: pixelated;
+                position: relative;
+                margin-top: 7px;
+                transition: transform .15s, opacity .1s;
+                width: calc($item_size / 1.5);
+                height: calc($item_size / 1.5);
+            }
+        }
     }
 
     .structures {
@@ -81,9 +106,9 @@
         background-size: contain;
         background-position: center center;
         cursor: pointer;
-        height: $selection_size;
+        height: $item_size;
         margin: 30px;
-        width: $selection_size;
+        width: $item_size;
     }
 
     .structure_overlay {
@@ -98,18 +123,39 @@
     }
 </style>
 
-<div class="hotbar" style="--hotbar-size: {$config.uiScale * HOTBAR_SIZE}px;">
-    <div class="cells">
-        {#each $currentSlots as c, i}
-            <div class="cell_selection" class:selected={c.isActive} style="
-                background-image: url({$textures.cells[c.currentItem.options.textureName].url});
-                transform: rotate({rotation * 90}deg);
-            " on:click={() => {
-                if (c.isActive)
-                    slotHandler.loopSlot();
-                else
-                    slotHandler.to(i);
-            }}></div>
+<div class="hotbar" style="--hotbar-item-size: {$config.uiScale * HOTBAR_SIZE}px;">
+    <div class="hotbar_items">
+        {#each $hotbarItems as slot, index}
+            <div class="item_container">
+                <div
+                    class="item"
+                    class:selected={slot.isActive}
+                    style="
+                        background-image: url({$textures.cells[slot.currentItem.options.textureName].url});
+                        transform: rotate({rotation * 90}deg);
+                    "
+                    on:click={() => {
+                        slotHandler.to(index);
+                        slotHandler.menu(false);
+                    }}
+                    on:contextmenu={() => {
+                        slotHandler.to(index);
+                        slotHandler.menu(true);
+                    }}
+                ></div>
+                <div class="submenu" style="display: {slot.openMenu ? "block" : "none"}">
+                    {#each slot.slot.items as cell, index}
+                        <div
+                            class="subitem"
+                            style="
+                                background-image: url({$textures.cells[cell.options.textureName].url});
+                                transform: rotate({rotation * 90}deg);
+                            "
+                            on:click={() => slotHandler.toCell(index)}
+                        ></div>
+                    {/each}
+                </div>
+            </div>
         {/each}
     </div>
     <div class="current_cell">

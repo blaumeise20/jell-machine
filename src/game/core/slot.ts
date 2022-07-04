@@ -5,6 +5,7 @@ import { Registry } from "./registry";
 export class Slot {
     items: CellType[];
     index: number = 0;
+    menu = false;
 
     get currentItem() {
         return this.items[this.index];
@@ -45,13 +46,13 @@ export class SlotHandler {
     }
 
     public getSlotData() {
-        return this.containedSlots.map((slot, index) => {
-            return {
-                index: index,
-                currentItem: slot.currentItem,
-                isActive: index == this.currentSlot,
-            };
-        });
+        return this.containedSlots.map((slot, index) => ({
+            index,
+            currentItem: slot.currentItem,
+            isActive: index == this.currentSlot,
+            slot,
+            openMenu: slot.menu,
+        }));
     }
 
     public next() {
@@ -69,8 +70,14 @@ export class SlotHandler {
         this._reload();
     }
 
-    public loopSlot() {
-        this.containedSlots[this.currentSlot].next();
+    public toCell(index: number) {
+        this.containedSlots[this.currentSlot].index = index;
+        this._reload();
+    }
+
+    public menu(open: boolean) {
+        this.containedSlots.forEach(slot => slot.menu = false);
+        this.containedSlots[this.currentSlot].menu = open;
         this._reload();
     }
 
@@ -84,4 +91,6 @@ export type SlotData = {
     index: number,
     currentItem: CellType,
     isActive: boolean,
+    slot: Slot,
+    openMenu: boolean,
 };
