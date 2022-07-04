@@ -3,8 +3,8 @@
     import { on } from "../keys";
     import { selectionContent } from "../uiState";
     import { config } from "@utils/config";
-    import { CellGrid, initial, openLevel } from "@core/cells/grid";
     import { textures } from "@utils/texturePacks";
+    import { CellGrid, initial } from "@core/cells/grid";
     import { Animator } from "@utils/animator";
     import { SlotHandler } from "@core/slot";
     import { Direction } from "@core/coord/direction";
@@ -47,7 +47,10 @@
     // TODO: update
     // on("tab").down(() => keys.shift ? slotHandler.prev() : slotHandler.next());
     // on("<").down(() => slotHandler.loopSlot());
-    on("g").when(() => !levelPlaying).down(() => $openLevel?.doStep(false));
+    on("g").when(() => !levelPlaying).down(() => {
+        if (grid.initial) initial[0] = grid.clone();
+        grid.doStep(false);
+    });
 
     const playTimer = new Animator(() => {
         if (grid.initial) initial[0] = grid.clone();
