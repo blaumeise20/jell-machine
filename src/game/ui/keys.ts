@@ -173,10 +173,14 @@ function callSorted(fns: EventListeners, arg: string) {
     // find highest specificity
     let specificity = 0;
     for (const key in grouped) {
-        let s = parseInt(key);
-        if (s > specificity) specificity = s;
+        if (grouped.hasOwnProperty(key)) {
+            let s = parseInt(key);
+            if (s > specificity) specificity = s;
+        }
     }
 
     // call
-    for (const fn of grouped[specificity]) fn(arg);
+    if (specificity in grouped) {
+        for (const fn of grouped[specificity]) fn(arg);
+    }
 }
