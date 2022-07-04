@@ -44,7 +44,8 @@
             <GameControls
                 bind:menuOpen
                 bind:uiVisible={$showControls}
-                bind:grid={$openLevel} />
+                bind:grid={$openLevel}
+            />
         {/if}
     </div>
 

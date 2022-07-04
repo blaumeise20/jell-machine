@@ -122,11 +122,12 @@ export function load() {
 
     const jell = CellType.create("jm.utils.jell", {
         behavior: class JellCell extends Cell {
-            private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
-            private get isGen() { return this.grid.tickCount == this._generatedIn; }
+            // private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
+            // private get isGen() { return this.grid.tickCount == this._generatedIn; }
 
             override update() {
-                if (this.isGen) return;
+                // if (this.isGen) return;
+                // TODO: fix
 
                 const rightCell = this.grid.cells.get(this.pos.mi(Direction.Right));
                 const downCell = this.grid.cells.get(this.pos.mi(Direction.Down));
@@ -399,11 +400,12 @@ export function load() {
         // Duplicates itself to a random direction.
 
         behavior: class NukeCell extends Cell {
-            private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
-            private get isGen() { return this.grid.tickCount == this._generatedIn; }
+            // private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
+            // private get isGen() { return this.grid.tickCount == this._generatedIn; }
 
             override update() {
-                if (this.isGen) return;
+                // if (this.isGen) return;
+                // TODO: fix
 
                 const dirs = [Direction.Right, Direction.Down, Direction.Left, Direction.Up];
 
