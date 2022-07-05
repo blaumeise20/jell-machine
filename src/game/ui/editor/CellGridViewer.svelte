@@ -159,17 +159,17 @@
     let clipboard: CellGrid | null = null;
 
     // selection clipboard: cut/copy/paste
-    on("x").and(modifiers.meta).when(() => showSelectionBox).down(() => {
+    on("x").and(modifiers.cmdOrCtrl).when(() => showSelectionBox).down(() => {
         clipboard = grid.extract(selectionSize, true);
         showSelectionBox = false;
         placeCell = true;
     });
-    on("c").and(modifiers.meta).down(() => {
+    on("c").and(modifiers.cmdOrCtrl).down(() => {
         clipboard = grid.extract(selectionSize);
         showSelectionBox = false;
         placeCell = true;
     });
-    on("v").and(modifiers.meta).when(() => clipboard && !pasteboard).down(() => {
+    on("v").and(modifiers.cmdOrCtrl).when(() => clipboard && !pasteboard).down(() => {
         pasteboard = clipboard;
     });
 

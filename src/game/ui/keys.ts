@@ -35,6 +35,7 @@ export const modifiers = {
     ctrl: () => keys.ctrl,
     meta: () => keys.meta,
     shift: () => keys.shift,
+    cmdOrCtrl: () => keys.ctrl || keys.meta,
 }
 
 export function on(key: string) {
