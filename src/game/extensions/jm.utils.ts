@@ -110,6 +110,9 @@ export function load() {
     const note = CellType.create("jm.utils.note", {
         textureName: "note",
         behavior: class NoteCell extends Cell {
+            override debugText() {
+                return "Note: " + noteNames[this.pos.y % noteNames.length];
+            }
             override push() {
                 noteTicks.add(noteNames[this.pos.y % noteNames.length] as keyof typeof notes);
                 return null;
