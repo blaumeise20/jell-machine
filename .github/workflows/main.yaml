@@ -5,32 +5,30 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
       - uses: actions/checkout@v2
 
       - name: Install packages
         run: npm install
-          
+
       - name: Build project for Windows
         run: npm run build:electron:windows
-        
+
       - name: Upload Windows build
         uses: actions/upload-artifact@v2.2.4
         with:
           name: Windows
           path: dist/Jell Machine-win32-x64
           if-no-files-found: error
-          
+
       - name: Build project for Linux
         run: npm run build:electron:linux
-          
+
       - name: Upload Linux build
         uses: actions/upload-artifact@v2.2.4
         with:
@@ -39,16 +37,15 @@ jobs:
           if-no-files-found: error
   build-mac:
     runs-on: macos-latest
-
     steps:
       - uses: actions/checkout@v2
 
       - name: Install packages
         run: npm install
-          
+
       - name: Build project for Mac
         run: npm run build:electron:mac
-        
+
       - name: Upload Mac build
         uses: actions/upload-artifact@v2.2.4
         with:
