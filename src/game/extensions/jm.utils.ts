@@ -114,7 +114,7 @@ export function load() {
                 return "Note: " + noteNames[this.pos.y % noteNames.length];
             }
             override push() {
-                noteTicks.add(noteNames[this.pos.y % noteNames.length] as keyof typeof notes);
+                if (!this.disabled) noteTicks.add(noteNames[this.pos.y % noteNames.length] as keyof typeof notes);
                 return null;
             }
         },
