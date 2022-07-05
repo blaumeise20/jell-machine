@@ -12,23 +12,18 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Install packages
         run: npm install
-
       - name: Build project for Windows
         run: npm run build:electron:windows
-
       - name: Upload Windows build
         uses: actions/upload-artifact@v2.2.4
         with:
           name: Windows
           path: dist/Jell Machine-win32-x64
           if-no-files-found: error
-
       - name: Build project for Linux
         run: npm run build:electron:linux
-
       - name: Upload Linux build
         uses: actions/upload-artifact@v2.2.4
         with:
@@ -39,16 +34,16 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Install packages
         run: npm install
-
       - name: Build project for Mac
-        run: npm run build:electron:mac
-
+        run: |
+          npm run build:electron:mac
+          chmod a+x "dist/Jell Machine-darwin-x64/Jell Machine.app/Contents/MacOS/Jell Machine"
+          tar -cvf dist/MacOS.tar "dist/Jell Machine-darwin-x64/Jell Machine.app"
       - name: Upload Mac build
         uses: actions/upload-artifact@v2.2.4
         with:
           name: MacOS
-          path: dist/Jell Machine-darwin-x64
+          path: dist/MacOS.tar
           if-no-files-found: error
