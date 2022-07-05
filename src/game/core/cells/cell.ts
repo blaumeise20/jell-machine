@@ -18,10 +18,7 @@ export class Cell {
     }
     id = cellid++;
 
-    constructor(public pos: Position, readonly type: CellType, public direction: Direction, readonly grid: CellGrid) {
-        grid.cellList.push(this);
-    }
-
+    constructor(public pos: Position, readonly type: CellType, public direction: Direction, readonly grid: CellGrid) {}
 
     public get options(): CellData {
         return [this.type, this.direction];

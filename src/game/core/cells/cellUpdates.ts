@@ -18,7 +18,7 @@ export function doStep(grid: CellGrid, _subtick: boolean) {
                 for (const dir of directionalUpdateOrder) {
                     // linked list
                     let cells: ListNode<Cell> = null;
-                    for (const cell of grid.cellList) {
+                    for (const cell of grid.cells.values()) {
                         if (cell.type == updateType[0] && cell.direction == dir) {
                             const cellPosition = order[dir](cell.pos);
 
@@ -49,7 +49,7 @@ export function doStep(grid: CellGrid, _subtick: boolean) {
 
                 break;
             case UpdateType.Random:
-                for (const cell of grid.cellList)
+                for (const cell of grid.cells.values())
                     if (cell.type == updateType[0] && !cell.deleted && !cell.disabled && !cell.updated) {
                         cell.update();
                         cell.updatedIn = grid.tickCount;

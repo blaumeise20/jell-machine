@@ -35,7 +35,6 @@ export class CellGrid {
     description: string = "";
     readonly tiles = new PosMap<Tile, Tile>(Tile.None);
     readonly cells = new PosMap<Cell, null>(null);
-    readonly cellList: Cell[] = [];
     initial = true;
     tickCount = 0;
     currentSubtick = 0;
@@ -110,14 +109,14 @@ export class CellGrid {
     }
 
     insert(selection: CellGrid, selectionPos: Position, smartMerge: boolean) {
-        for (const cell of selection.cellList) {
-            const newPos = Pos(cell.pos.x + selectionPos.x, cell.pos.y + selectionPos.y);
+        for (const [pos, cell] of selection.cells.entries()) {
+            const newPos = Pos(pos.x + selectionPos.x, pos.y + selectionPos.y);
             const cellAt = this.cells.get(newPos);
             if (cellAt && smartMerge) {
                 const newData = cellAt.type.merge(cellAt, cell);
                 this.loadCell(newPos, newData[0], newData[1]);
             }
-            else this.loadCell(cell.pos.mi(selectionPos), cell.type, cell.direction);
+            else this.loadCell(pos.mi(selectionPos), cell.type, cell.direction);
         }
         this.reloadUI();
     }
