@@ -238,14 +238,14 @@ export function load() {
             }
 
             override update() {
+                // Get head position
+                const pos = this.getCellTo(this.direction);
+                if (!pos) return;
+
+                // Get cell
+                const cell = this.grid.cells.get(pos[0]);
+
                 if (this.extended) {
-                    // Get head position
-                    const pos = this.getCellTo(this.direction);
-                    if (!pos) return;
-
-                    // Get cell
-                    const cell = this.grid.cells.get(pos[0]);
-
                     if (cell) {
                         // If cell is piston head, we don't have anything to do.
                         // There are two cases:
@@ -262,16 +262,13 @@ export function load() {
                     this.grid.loadCell(pos[0], pistonHead, pos[1]);
                 }
                 else {
-
-                    const pos = this.getCellTo(this.direction);
-                    if (!pos) return;
-
-                    const cell = this.grid.cells.get(pos[0]);
-
+                    // If cell is piston head, we can remove the head.
                     if (cell && cell.type == pistonHead && cell.direction == pos[1]) {
                         cell.rm();
-                        this.actuallyExtended = false;
                     }
+
+                    // Visually retract the piston.
+                    this.actuallyExtended = false;
                 }
             }
 
@@ -329,14 +326,14 @@ export function load() {
             }
 
             override update() {
+                // Get head position
+                const pos = this.getCellTo(this.direction);
+                if (!pos) return;
+
+                // Get cell
+                const cell = this.grid.cells.get(pos[0]);
+
                 if (this.extended) {
-                    // Get head position
-                    const pos = this.getCellTo(this.direction);
-                    if (!pos) return;
-
-                    // Get cell
-                    const cell = this.grid.cells.get(pos[0]);
-
                     if (cell) {
                         // If cell is piston head, we don't have anything to do.
                         // There are two cases:
@@ -353,19 +350,17 @@ export function load() {
                     this.grid.loadCell(pos[0], stickyPistonHead, pos[1]);
                 }
                 else {
-                    const pos = this.getCellTo(this.direction);
-                    if (!pos) return;
-
-                    const cell = this.grid.cells.get(pos[0]);
-
+                    // If cell is piston head, we can remove the head and pull back the cell.
                     if (cell && cell.type == stickyPistonHead && cell.direction == pos[1]) {
                         const front = cell.getCellTo(cell.direction);
                         cell.rm();
-                        if (front)
+                        if (front) {
                             this.grid.cells.get(front[0])?.push((front[1] + 2) % 4, 1);
-
-                        this.actuallyExtended = false;
+                        }
                     }
+
+                    // Visually retract the piston.
+                    this.actuallyExtended = false;
                 }
             }
 
