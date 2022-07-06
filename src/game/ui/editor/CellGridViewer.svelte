@@ -220,7 +220,7 @@
 
         if (pasteboard) {
             if (e.button != 2) {
-                for (const cell of pasteboard.cellList) {
+                for (const cell of pasteboard.cells.values()) {
                     const newPos = Pos(cell.pos.x + selectionPos.x, cell.pos.y + selectionPos.y);
                     const cellAt = grid.cells.get(newPos);
                     if (cellAt && keys.ctrl) {
