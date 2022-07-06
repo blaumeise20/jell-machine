@@ -34,7 +34,7 @@
         {#if $openLevel}
             <CellGridViewer
                 grid={$openLevel}
-                showPlacable={$showControls}
+                showPlacable={false}
                 bind:selectionArea={$selection}
                 bind:pasteboard={$selectionContent}
                 bind:mousePosition={$cursorPosition}
