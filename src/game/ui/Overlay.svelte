@@ -4,7 +4,7 @@
 
 <style lang="scss">
     .popup_backdrop {
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.3);
         bottom: 0;
         left: 0;
         position: fixed;
@@ -13,7 +13,8 @@
         z-index: 1000;
     }
     .popup_overlay {
-        background-color: #363636;
+        backdrop-filter: blur(10px);
+        background-color: rgba(54, 54, 54, 0.925);
         left: 50%;
         padding: 20px;
         position: fixed;

@@ -37,7 +37,7 @@
 
 <style lang="scss">
     .sidebar_backdrop {
-        background-color: rgba(0, 0, 0, .2);
+        background-color: rgba(0, 0, 0, .3);
         width: 100%;
         top: 0;
         left: 0;
@@ -47,11 +47,12 @@
     }
 
     .sidebar {
+        backdrop-filter: blur(10px);
+        background-color: rgba(54, 54, 54, 0.95);
         border-left: 2px solid #404040;
-        background-color: #363636;
         display: flex;
-        height: 100%;
         flex-direction: column;
+        height: 100%;
         position: fixed;
         right: 0;
         top: 0;
