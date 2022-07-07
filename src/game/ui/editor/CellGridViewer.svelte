@@ -193,10 +193,10 @@
     }
 
     // selection: fill
-    on("g").down(() => {
-        if (keys.shift) grid.fillTile(selectionSize, Tile.Placable);
-        else grid.fillCell(selectionSize, $selectedCell, $rotation);
-    });
+    // on("g").down(() => {
+    //     if (keys.shift) grid.fillTile(selectionSize, Tile.Placable);
+    //     else grid.fillCell(selectionSize, $selectedCell, $rotation);
+    // });
 
     // camera: zoom
     function zoomEvent(e: WheelEvent) {
