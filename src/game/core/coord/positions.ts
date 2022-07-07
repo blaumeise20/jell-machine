@@ -3,10 +3,10 @@ import { Direction } from "./direction";
 /**
  * A `Map` for indexing with `Position`s.
  */
-export class PosMap<T, X = undefined> {
-    private store: Record<string, T> = {};
+export class PosMap<T> {
+    private store: Record<string, T> = Object.create(null);
 
-    constructor(private getDefault?: X) {}
+    constructor() {}
 
     clear(): void {
         this.store = {};
@@ -14,23 +14,20 @@ export class PosMap<T, X = undefined> {
     delete(key: Position): boolean {
         return delete this.store[`${key.x},${key.y}`];
     }
-    forEach(callbackfn: (value: T, key: Position, map: PosMap<T, X>) => void, thisArg?: any): void {
+    forEach(callbackfn: (value: T, key: Position, map: PosMap<T>) => void, thisArg?: any): void {
         for (const [key, value] of Object.entries(this.store)) {
             callbackfn.call(thisArg, value, Pos(...(JSON.parse(`[${key}]`) as [number, number])), this);
         }
     }
-    get(key: Position): T | X {
+    get(key: Position): T {
         const val = this.store[`${key.x},${key.y}`];
-        // @ts-ignore
-        if (val === undefined) return this.getDefault;
         return val;
     }
     has(key: Position): boolean {
         return this.store[`${key.x},${key.y}`] !== undefined;
     }
-    set(key: Position, value: T | X): this {
-        if (value === this.getDefault) delete this.store[`${key.x},${key.y}`];
-        else this.store[`${key.x},${key.y}`] = value as any;
+    set(key: Position, value: T): this {
+        this.store[`${key.x},${key.y}`] = value;
         return this;
     }
 
@@ -73,14 +70,6 @@ export class Position {
         else {
             return new Position(this.x + offsetX.x, this.y + offsetX.y);
         }
-    }
-
-    /**
-     * Clones the current point.
-     * @returns New position.
-     */
-    public c() {
-        return new Position(this.x, this.y);
     }
 
     /**

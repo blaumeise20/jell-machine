@@ -33,8 +33,8 @@ export class CellGrid {
     size!: Size;
     name: string = "";
     description: string = "";
-    readonly tiles = new PosMap<Tile, Tile>(Tile.None);
-    readonly cells = new PosMap<Cell, null>(null);
+    readonly tiles = new PosMap<Tile>();
+    readonly cells = new PosMap<Cell>();
     initial = true;
     tickCount = 0;
     currentSubtick = 0;

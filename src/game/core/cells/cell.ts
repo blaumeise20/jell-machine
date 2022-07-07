@@ -83,7 +83,7 @@ export class Cell {
         const [pos, pushDir] = target;
 
         const tc = this.grid.cells.get(pos);
-        if (tc == null) {
+        if (!tc) {
             this.setPosition(pos);
             if (dir != pushDir) this.direction = (this.direction + (pushDir - dir) + 4) % 4;
             return true;
