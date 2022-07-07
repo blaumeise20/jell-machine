@@ -62,6 +62,24 @@ export function doStep(grid: CellGrid, _subtick: boolean) {
                     // }
 
                     // VERSION 3
+                    // const cells: Cell[] = [];
+                    // let i = 0;
+                    // for (const cell of grid.cells.values()) {
+                    //     if (cell.type == updateType[0] && cell.direction == dir) {
+                    //         cells[i++] = cell;
+                    //     }
+                    // }
+                    // cells.length = i;
+                    // sortBy(cells, order[dir]);
+                    // for (let i = 0; i < cells.length; i++) {
+                    //     const cell = cells[i];
+                    //     if (!cell.deleted && !cell.disabled && !cell.updated) {
+                    //         cell.update();
+                    //         cell.updatedIn = grid.tickCount;
+                    //     }
+                    // }
+
+                    // VERSION 4
                     const cells: Cell[] = [];
                     let i = 0;
                     for (const cell of grid.cells.values()) {
@@ -70,7 +88,22 @@ export function doStep(grid: CellGrid, _subtick: boolean) {
                         }
                     }
                     cells.length = i;
-                    sortBy(cells, order[dir]);
+
+                    switch (dir) {
+                        case Direction.Right:
+                            cells.sort((a, b) => b.pos.x - a.pos.x);
+                            break;
+                        case Direction.Down:
+                            cells.sort((a, b) => a.pos.y - b.pos.y);
+                            break;
+                        case Direction.Left:
+                            cells.sort((a, b) => a.pos.x - b.pos.x);
+                            break;
+                        case Direction.Up:
+                            cells.sort((a, b) => b.pos.y - a.pos.y);
+                            break;
+                    }
+
                     for (let i = 0; i < cells.length; i++) {
                         const cell = cells[i];
                         if (!cell.deleted && !cell.disabled && !cell.updated) {
@@ -121,6 +154,6 @@ export type ListNode<T> = {
 } | null;
 
 
-function sortBy<T>(array: T[], mapper: (item: T) => number) {
-    array.sort((a, b) => mapper(a) - mapper(b));
-}
+// function sortBy<T>(array: T[], mapper: (item: T) => number) {
+//     array.sort((a, b) => mapper(a) - mapper(b));
+// }
