@@ -5,6 +5,7 @@ import { Direction } from "./direction";
  */
 export class PosMap<T> {
     private store: Record<string, T> = Object.create(null);
+    __object = this.store;
 
     constructor() {}
 
@@ -31,9 +32,12 @@ export class PosMap<T> {
         return this;
     }
 
-    *values(): IterableIterator<T> {
-        for (const value of Object.values(this.store))
-            yield value;
+    values(): T[] {
+        const result = [];
+        for (const key in this.store) {
+            result.push(this.store[key]);
+        }
+        return result;
     }
 
     *entries(): IterableIterator<[Position, T]> {

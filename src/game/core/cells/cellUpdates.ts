@@ -82,7 +82,8 @@ export function doStep(grid: CellGrid, _subtick: boolean) {
                     // VERSION 4
                     const cells: Cell[] = [];
                     let i = 0;
-                    for (const cell of grid.cells.values()) {
+                    for (const key in grid.cells.__object) {
+                        const cell = grid.cells.__object[key];
                         if (cell.type == updateType[0] && cell.direction == dir) {
                             cells[i++] = cell;
                         }
