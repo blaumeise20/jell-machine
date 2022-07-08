@@ -18,7 +18,10 @@ import { makeNumberEncoder } from "@core/numbers";
 import { gridProvider } from "../ui/uiState";
 
 export function load() {
-    const orientator = CellType.create("jm.utils.orientator", {
+    const orientator = CellType.create({
+        id: "jm.utils.orientator",
+        name: "Orientator",
+        description: "Rotates all four touching cells in the direction it is looking.",
         behavior: class OrientatorCell extends Cell {
             override update() {
                 this.grid.cells.get(this.pos.mi(Direction.Right))?.setRotation(this.direction);
@@ -35,7 +38,10 @@ export function load() {
         updateOrder: 2.5,
     });
 
-    const disabler = CellType.create("jm.utils.disabler", {
+    const disabler = CellType.create({
+        id: "jm.utils.disabler",
+        name: "Disabler",
+        description: "Prevents the four touching cells from executing it's action.",
         behavior: class DisablerCell extends Cell {
             override update() {
                 this.grid.cells.get(this.pos.mi(Direction.Right))?.disable();
@@ -108,8 +114,10 @@ export function load() {
     };
     const noteTicks = new Set<keyof typeof notes>();
 
-    const note = CellType.create("jm.utils.note", {
-        textureName: "note",
+    const note = CellType.create({
+        id: "jm.utils.note",
+        name: "Note Cell",
+        description: "Deletes it's inputs but plays a note when doing so.\nPitch is based on the Y-axis.",
         behavior: class NoteCell extends Cell {
             override debugText() {
                 return "Note: " + noteNames[this.pos.y % noteNames.length];
@@ -119,6 +127,7 @@ export function load() {
                 return null;
             }
         },
+        textureName: "note",
         flip: d => d
     });
 
@@ -136,13 +145,16 @@ export function load() {
 
     //#endregion
 
-    const jell = CellType.create("jm.utils.jell", {
+    const jell = CellType.create({
+        id: "jm.utils.jell",
+        name: "Jell Cell",
+        description: "Useless. Turns all touching cells into Jell cells.",
         behavior: class JellCell extends Cell {
-            // private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
-            // private get isGen() { return this.grid.tickCount == this._generatedIn; }
+            private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
+            private get isGen() { return this.grid.tickCount == this._generatedIn; }
 
             override update() {
-                // if (this.isGen) return;
+                if (this.isGen) return;
                 // TODO: fix
 
                 const rightCell = this.grid.cells.get(this.pos.mi(Direction.Right));
@@ -161,7 +173,10 @@ export function load() {
         updateOrder: -127,
     });
 
-    const random = CellType.create("jm.utils.random", {
+    const random = CellType.create({
+        id: "jm.utils.random",
+        name: "Random Rotator",
+        description: "Randomly rotates the cell infront of it.",
         behavior: class RandomCell extends Cell {
             override update() {
                 const pos = this.getCellTo((Direction.Right + this.direction) % 4);
@@ -193,7 +208,10 @@ export function load() {
         }
     }
 
-    const portal = CellType.create("jm.utils.portal", {
+    const portal = CellType.create({
+        id: "jm.utils.portal",
+        name: "Portal",
+        description: "~bDo not use.~R\nTeleports incomming cells to the other portal linked to it. You need to place two portals for it to work.\nAny amount of portal pairs may exist on the grid. (Exporting/resetting is broken)",
         behavior: PortalCell,
         textureName: "portal",
         textureOverride: c => (c as any).connectedCell ? "portal" : "portalOff",
@@ -226,7 +244,10 @@ export function load() {
     });
     //#endregion
 
-    const piston = CellType.create("jm.utils.piston", {
+    const piston = CellType.create({
+        id: "jm.utils.piston",
+        name: "Piston",
+        description: "Pushes cells in the direction it is facing if enabled. Can be enabled/disabled by pushing from behind. Acts like a trash on that side.\nCan't be moved/rotated while extended.",
         // Extends and retracts if a cell comes in from behind.
         // If extended it is immovable.
 
@@ -300,7 +321,10 @@ export function load() {
         updateOrder: 5,
     });
 
-    const pistonHead = CellType.create("jm.utils.piston_head", {
+    const pistonHead = CellType.create({
+        id: "jm.utils.piston_head",
+        name: "Piston Head",
+        description: "Placeholder cell for where the piston extends.\nCan't be moved/rotated.",
         // Used for sticky pistons,
         // not placable.
 
@@ -315,7 +339,10 @@ export function load() {
         textureName: "pistonHead",
     });
 
-    const stickyPiston = CellType.create("jm.utils.sticky_piston", {
+    const stickyPiston = CellType.create({
+        id: "jm.utils.sticky_piston",
+        name: "Sticky Piston",
+        description: "Pushes cells in the direction it is facing if enabled. Otherwise pulls the cell one cell away. Can be enabled/disabled by pushing from behind. Acts like a trash on that side.\nCan't be moved/rotated while extended.",
         // Sticky piston is like normal piston, but pulls the cell when retracting.
 
         behavior: class StickyPistonCell extends Cell {
@@ -392,7 +419,10 @@ export function load() {
         updateOrder: 5,
     });
 
-    const stickyPistonHead = CellType.create("jm.utils.sticky_piston_head", {
+    const stickyPistonHead = CellType.create({
+        id: "jm.utils.sticky_piston_head",
+        name: "Sticky Piston Head",
+        description: "Placeholder cell for where the sticky piston extends.\nCan't be moved/rotated.",
         // Used for sticky pistons,
         // not placable.
 
@@ -407,15 +437,18 @@ export function load() {
         textureName: "pistonStickyHead",
     });
 
-    const nuke = CellType.create("jm.utils.nuke", {
+    const nuke = CellType.create({
+        id: "jm.utils.nuke",
+        name: "Nuke",
+        description: "Duplicates itself in a random direction.",
         // Duplicates itself to a random direction.
 
         behavior: class NukeCell extends Cell {
-            // private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
-            // private get isGen() { return this.grid.tickCount == this._generatedIn; }
+            private _generatedIn = this.grid.initial ? -1 : this.grid.tickCount;
+            private get isGen() { return this.grid.tickCount == this._generatedIn; }
 
             override update() {
-                // if (this.isGen) return;
+                if (this.isGen) return;
                 // TODO: fix
 
                 const dirs = [Direction.Right, Direction.Down, Direction.Left, Direction.Up];

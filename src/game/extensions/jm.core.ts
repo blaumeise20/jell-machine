@@ -12,7 +12,10 @@ import { Slot } from "@core/slot";
 import { makeNumberEncoder } from "@core/numbers";
 
 export function load() {
-    const generator = CellType.create("jm.core.generator", {
+    const generator = CellType.create({
+        id: "jm.core.generator",
+        name: "Generator",
+        description: "Generates the cell behind to the front.",
         behavior: class GeneratorCell extends Cell {
             override update() {
                 const source = this.getCellTo((this.direction + 2) % 4);
@@ -37,7 +40,10 @@ export function load() {
         updateType: UpdateType.Directional,
     });
 
-    const mover = CellType.create("jm.core.mover", {
+    const mover = CellType.create({
+        id: "jm.core.mover",
+        name: "Mover",
+        description: "Moves foward one cell and pushes all cells in the way.",
         behavior: class MoverCell extends Cell {
             override update() {
                 super.push(this.direction, 1);
@@ -56,7 +62,10 @@ export function load() {
         updateType: UpdateType.Directional,
     });
 
-    const cwRotator = CellType.create("jm.core.cw_rotator", {
+    const cwRotator = CellType.create({
+        id: "jm.core.cw_rotator",
+        name: "Clockwise Rotator",
+        description: "Rotates all four touching cells clockwise.",
         behavior: class RotatorCell extends Cell {
             override update() {
                 const rotation = this.type.data.rotation;
@@ -77,7 +86,10 @@ export function load() {
         updateOrder: 2,
         updateType: UpdateType.Random,
     });
-    const ccwRotator = CellType.create("jm.core.ccw_rotator", {
+    const ccwRotator = CellType.create({
+        id: "jm.core.ccw_rotator",
+        name: "Counterclockwise Rotator",
+        description: "Rotates all four touching cells counterclockwise.",
         behavior: cwRotator.behavior,
         textureName: "ccwRotator",
         data: { rotation: -1 },
@@ -86,13 +98,19 @@ export function load() {
         updateType: UpdateType.Random,
     });
 
-    const push = CellType.create("jm.core.push", {
+    const push = CellType.create({
+        id: "jm.core.push",
+        name: "Push",
+        description: "A simple cell that does nothing. Can be pushed in all directions.",
         behavior: Cell,
         textureName: "push",
         flip: d => d,
     });
 
-    const slide = CellType.create("jm.core.slide", {
+    const slide = CellType.create({
+        id: "jm.core.slide",
+        name: "Slide",
+        description: "A cell that can only be pushed in two directions.",
         behavior: class SlideCell extends Cell {
             override push(dir: Direction, bias: number) {
                 if (this.direction % 2 == dir % 2 || this.disabled) return super.push(dir, bias);
@@ -103,7 +121,10 @@ export function load() {
         flip: d => d,
     });
 
-    const arrow = CellType.create("jm.core.arrow", {
+    const arrow = CellType.create({
+        id: "jm.core.arrow",
+        name: "Arrow",
+        description: "A cell that can only be pushed in one direction.",
         behavior: class ArrowCell extends Cell {
             override push(dir: Direction, bias: number) {
                 if (this.direction == dir || this.disabled) return super.push(dir, bias);
@@ -113,7 +134,10 @@ export function load() {
         textureName: "arrow",
     });
 
-    const enemy = CellType.create("jm.core.enemy", {
+    const enemy = CellType.create({
+        id: "jm.core.enemy",
+        name: "Enemy",
+        description: "When pushed, destroys the pushing cell and dies itself. Used in levels and vaults.",
         behavior: class EnemyCell extends Cell {
             override push(dir: Direction, bias: number) {
                 // TODO: fix bug where enemies don't break when disabled before
@@ -126,7 +150,10 @@ export function load() {
         flip: d => d,
     });
 
-    const trash = CellType.create("jm.core.trash", {
+    const trash = CellType.create({
+        id: "jm.core.trash",
+        name: "Trash",
+        description: "Deletes all incomming cells. Does not die itself.",
         behavior: class TrashCell extends Cell {
             override push(dir: Direction, bias: number) {
                 if (this.disabled) return super.push(dir, bias);
@@ -137,7 +164,10 @@ export function load() {
         flip: d => d,
     });
 
-    const wall = CellType.create("jm.core.wall", {
+    const wall = CellType.create({
+        id: "jm.core.wall",
+        name: "Wall",
+        description: "Can't be pushed and rotated",
         behavior: class WallCell extends Cell {
             override push() {
                 return false;
@@ -151,7 +181,10 @@ export function load() {
         flip: d => d,
     });
 
-    const border = CellType.create("_", {
+    const border = CellType.create({
+        id: "_",
+        name: "Border",
+        description: "Behaves like it is the border of the grid. Can't be pushed and rotated.",
         behavior: class BorderCell extends Cell {
             override getPos(dir: Direction) {
                 if (this.grid.borderMode == BorderMode.Wrap) return this.getCellTo(dir);
@@ -169,7 +202,10 @@ export function load() {
         flip: d => d,
         merge: d => d,
     });
-    CellType.create("?", {
+    CellType.create({
+        id: "?",
+        name: "Unknown",
+        description: "Unknown cell type. Used when importing codes that contain cells that don't exist in this version of Jell Machine",
         behavior: Cell,
         textureName: "unknown",
         flip: d => d,

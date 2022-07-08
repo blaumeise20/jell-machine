@@ -6,11 +6,12 @@ import type { Cell, CellData } from "./cell";
 import type { UpdateType } from "./cellUpdates";
 import { Registry } from "@core/registry";
 
-
 export class CellType {
-    id!: ItemIdentifier;
+    id: ItemIdentifier;
 
-    private constructor(public options: Readonly<CellTypeOptions>) { }
+    private constructor(public options: Readonly<CellTypeOptions>) {
+        this.id = options.id;
+    }
 
     public get data() {
         return this.options.data;
@@ -56,9 +57,8 @@ export class CellType {
         return new this.behavior(pos, this, dir, grid);
     }
 
-    static create(id: ItemIdentifier, options: CellTypeOptions) {
+    static create(options: CellTypeOptions) {
         const t = new CellType(options);
-        t.id = id;
         Registry.registerCell(t);
         return t;
     }
@@ -91,6 +91,9 @@ export class CellType {
 }
 
 export interface CellTypeOptions {
+    id: string;
+    name: string;
+    description?: string;
     behavior: typeof Cell;
     textureName: string;
     textureOverride?(cell: Cell): string;

@@ -22,7 +22,7 @@
     .debug {
         font: 400 14px/17px "Menlo", monospace;
         color: #fff;
-        position: absolute;
+        position: fixed;
         top: 10px;
         left: 10px;
         z-index: 100;

@@ -153,3 +153,23 @@ input[type="checkbox"]:checked::after {
 }
 
 @import "./style_ui.scss";
+
+
+// boxes (blurry background)
+.box {
+    backdrop-filter: saturate(180%) blur(10px);
+    background-color: rgba(54, 54, 54, 0.95);
+    border: 2px solid #404040;
+
+    &.box-medium {
+        background-color: rgba(54, 54, 54, 0.925);
+    }
+    &.box-soft {
+        background-color: rgba(54, 54, 54, 0.8);
+    }
+
+    &.box-top { border-width: 2px 0 0 0; }
+    &.box-bottom { border-width: 0 0 2px 0; }
+    &.box-left { border-width: 0 0 0 2px; }
+    &.box-right { border-width: 0 2px 0 0; }
+}

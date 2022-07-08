@@ -1,7 +1,9 @@
 <script lang="ts">
+    import { CellType } from "@core/cells/cellType";
     import { SlotHandler } from "@core/slot";
     import { block, button, text, UITextSize } from "@core/ui/build";
     import { config } from "@utils/config";
+    import FormattedText from "@utils/FormattedText.svelte";
     import { structures } from "@utils/structures";
     import { textures } from "@utils/texturePacks";
     import UiElementViewer from "../UIElementViewer.svelte";
@@ -34,16 +36,26 @@
             },
         }),
     );
+
+    let cellInfo: { cell: CellType, top: number, left: number } | null = null;
+
+    function setCellInfo(element: any, cell: CellType) {
+        const box = element.getBoundingClientRect();
+        const top = box.top;
+        const left = box.left + box.width + 10;
+
+        cellInfo = {
+            cell,
+            top,
+            left,
+        };
+    }
 </script>
 
 <style lang="scss">
     .hotbar {
-        backdrop-filter: blur(10px);
-        background-color: rgba(54, 54, 54, 0.8);
-        border-top: 2px solid #404040;
         bottom: 0;
         display: flex;
-
         position: fixed;
         width: 100%;
         z-index: 60;
@@ -51,6 +63,8 @@
 
     $item_size: var(--hotbar-item-size);
     $item_space: calc($item_size / 4.5);
+
+    // items
 
     .hotbar_items {
         flex: 1;
@@ -97,6 +111,8 @@
         }
     }
 
+    // structures
+
     .structures {
         position: relative;
     }
@@ -112,8 +128,6 @@
     }
 
     .structure_overlay {
-        border: 1px solid #404040;
-        background-color: #363636;
         bottom: 100%;
         color: #fff;
         padding: 10px;
@@ -121,9 +135,31 @@
         right: 30px;
         z-index: 10;
     }
+
+    // cell information
+
+    .cell_info {
+        padding: 10px;
+        position: fixed;
+        z-index: 63;
+
+        h3 {
+            font: 400 22px/25px "Roboto", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        p {
+            font: 400 17px/20px "Roboto", sans-serif;
+            margin: 10px 0 0 0;
+        }
+        p.small {
+            font: 400 15px/17px "Roboto", sans-serif;
+            margin: 5px 0 0 0;
+        }
+    }
 </style>
 
-<div class="hotbar" style="--hotbar-item-size: {$config.uiScale * HOTBAR_SIZE}px;">
+<div class="hotbar box box-soft box-top" style="--hotbar-item-size: {$config.uiScale * HOTBAR_SIZE}px;">
     <div class="hotbar_items">
         {#each $hotbarItems as slot, index}
             <div class="item_container">
@@ -142,6 +178,8 @@
                         slotHandler.to(index);
                         slotHandler.menu(true);
                     }}
+                    on:mouseenter={e => setCellInfo(e.target, slot.currentItem)}
+                    on:mouseleave={() => cellInfo = null}
                 ></div>
                 <div class="submenu" style="display: {slot.openMenu ? "block" : "none"}">
                     {#each slot.slot.items as cell, index}
@@ -152,6 +190,8 @@
                                 transform: rotate({rotation * 90}deg);
                             "
                             on:click={() => slotHandler.toCell(index)}
+                            on:mouseenter={e => setCellInfo(e.target, cell)}
+                            on:mouseleave={() => cellInfo = null}
                         ></div>
                     {/each}
                 </div>
@@ -167,8 +207,20 @@
             background-image: url({$textures.ui["structures"].url});
         " on:click={() => showStructures = !showStructures}></div>
 
-        <div class="structure_overlay" style="display: {showStructures ? "block" : "none"}">
+        <div class="structure_overlay box" style="display: {showStructures ? "block" : "none"}">
             <UiElementViewer root={structuresUI} />
         </div>
     </div>
 </div>
+
+{#if cellInfo}
+    <div class="cell_info box box-medium" style:top="{cellInfo.top}px" style:left="{cellInfo.left}px">
+        <h3><FormattedText text={cellInfo.cell.options.name} /></h3>
+        {#if $config.showDebug}
+            <p class="small">ID: {cellInfo.cell.id}</p>
+        {/if}
+        {#if cellInfo.cell.options.description}
+            <p><FormattedText text={cellInfo.cell.options.description} /></p>
+        {/if}
+    </div>
+{/if}

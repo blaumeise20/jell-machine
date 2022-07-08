@@ -8,7 +8,10 @@ import arr from "create-arr";
 const PORT = 8080;
 
 export function load() {
-    const networkMover = CellType.create("jm.network.network_mover", {
+    const networkMover = CellType.create({
+        id: "jm.network.network_mover",
+        name: "Network Mover",
+        description: "too hard to explain :skull:",
         behavior: class NetworkCell extends Cell {
             private doAction(action: Action) {
                 switch (action.type) {
