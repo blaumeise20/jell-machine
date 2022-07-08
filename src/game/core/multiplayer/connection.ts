@@ -23,7 +23,6 @@ export class MultiplayerConnection {
         this.socket.onopen = this.socket_onOpen.bind(this);
         this.socket.onmessage = this.socket_onMessage.bind(this);
         this.socket.onclose = this.socket_onClose.bind(this);
-
     }
 
     public onConnected() {}
@@ -131,5 +130,3 @@ function changeProtocol(url: string): string {
     }
     return "ws://" + url.slice(match?.[0].length ?? 0);
 }
-
-// new MultiplayerConnection("localhost:3001");

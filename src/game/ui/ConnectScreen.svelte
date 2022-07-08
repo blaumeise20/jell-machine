@@ -66,7 +66,6 @@
                     () => layers = layers,
                     s => state = s,
                 );
-                // connect(url);
                 url = "";
             }}>Connect</button>
             <div class="space"></div>
