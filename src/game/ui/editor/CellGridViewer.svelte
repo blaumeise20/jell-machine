@@ -13,6 +13,7 @@
     import { Events } from "@core/events";
     import { GridProvider } from "../gridProvider/GridProvider";
     import { Cell } from "@core/cells/cell";
+import { clipboard } from "../uiState";
 
     export let grid: CellGrid;
     export let gridProvider: GridProvider;
@@ -159,21 +160,20 @@
         Math.round(mousePosition.x - pasteboard.size.width / 2),
         Math.round(mousePosition.y - pasteboard.size.height / 2)
     ) : Pos(0, 0);
-    let clipboard: CellGrid | null = null;
 
     // selection clipboard: cut/copy/paste
     on("x").and(modifiers.cmdOrCtrl).when(() => showSelectionBox).down(() => {
-        clipboard = grid.extract(selectionSize, true); grid = grid; // TODO: multiplayer
+        $clipboard = grid.extract(selectionSize, true); grid = grid; // TODO: multiplayer
         showSelectionBox = false;
         placeCell = true;
     });
     on("c").and(modifiers.cmdOrCtrl).down(() => {
-        clipboard = grid.extract(selectionSize); grid = grid; // TODO: multiplayer
+        $clipboard = grid.extract(selectionSize); grid = grid; // TODO: multiplayer
         showSelectionBox = false;
         placeCell = true;
     });
     on("v").and(modifiers.cmdOrCtrl).when(() => clipboard && !pasteboard).down(() => {
-        pasteboard = clipboard;
+        pasteboard = $clipboard;
     });
 
     // selection pasteboard: rotate/flip
