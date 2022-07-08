@@ -24,7 +24,7 @@ function write(config: Config) {
 
 class ConfigManager {
     static instance: ConfigManager;
-    static default = { texturePack: false as string | false, tickSpeed: 200, uiScale: 1, animation: false, showDebug: false, showBackgroundGrid: true };
+    static default = { texturePack: false as string | false, tickSpeed: 200, uiScale: 1, animation: true, showDebug: false, showBackgroundGrid: true };
 
     constructor() { return ConfigManager.instance ?? (this.init(), ConfigManager.instance = this) }
 
