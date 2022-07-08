@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { CellGrid, openLevel } from "@core/cells/grid";
-    import { disconnect } from "@core/multiplayer/connection";
+    import { CellGrid } from "@core/cells/grid";
     import { Stack } from "@utils/stack";
+    import { LevelGridProvider } from "./gridProvider/LevelGridProvider";
     import { on } from "./keys";
+    import { gridProvider } from "./uiState";
 
     export let visible: boolean;
     export let layers: Stack<string>;
@@ -61,8 +62,7 @@
             <input type="number" class="big" placeholder="Height" bind:value={height} bind:this={heightElement} on:focus={_ => heightElement.select()} />
             <div class="space"></div>
             <button class="big" on:click={() => {
-                disconnect();
-                $openLevel = CellGrid.createEmpty(width, height);
+                $gridProvider = new LevelGridProvider(CellGrid.createEmpty(width, height));
                 width = 100;
                 height = 100;
                 layers = layers.replaceTop("editor");

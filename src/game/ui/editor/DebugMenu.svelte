@@ -1,17 +1,21 @@
 <script lang="ts">
     import { Cell } from "@core/cells/cell";
-    import { openLevel } from "@core/cells/grid";
     import { Direction } from "@core/coord/direction";
     import { Pos } from "@core/coord/positions";
     import { config } from "@utils/config";
+    import { GridProvider } from "../gridProvider/GridProvider";
     import { on } from "../keys";
     import { cursorPosition, screenPosition, selection } from "../uiState";
+
+    export let gridProvider: GridProvider;
 
     on("f3").down(() => $config.showDebug = !$config.showDebug);
 
     let targetedCell: Cell | null = null;
     $: targetedCellPosition = Pos(Math.floor($cursorPosition.x), Math.floor($cursorPosition.y));
-    $: if (!targetedCell?.pos.equals(targetedCellPosition)) targetedCell = $openLevel ? $openLevel.cells.get(targetedCellPosition) : null;
+    $: if (!targetedCell?.pos.equals(targetedCellPosition)) {
+        targetedCell = gridProvider.grid.cells.get(targetedCellPosition);
+    }
 </script>
 
 <style lang="scss">

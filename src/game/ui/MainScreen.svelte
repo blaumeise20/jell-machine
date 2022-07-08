@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { CellGrid, openLevel } from "@core/cells/grid";
+    import { CellGrid } from "@core/cells/grid";
     import { clip } from "@utils/misc";
     import logo from "../logo.png";
-    import { disconnect } from "@core/multiplayer/connection";
     import { Stack } from "@utils/stack";
     import Overlay from "./Overlay.svelte";
+    import { LevelGridProvider } from "./gridProvider/LevelGridProvider";
+    import { gridProvider } from "./uiState";
 
     export let visible: boolean;
     export let layers: Stack<string>;
@@ -32,9 +33,9 @@
         const res = CellGrid.loadFromString(clipboardContent);
 
         if (res[0]) {
-            disconnect();
             layers = layers.next("editor");
-            $openLevel = res[1];
+
+            $gridProvider = new LevelGridProvider(res[1]);
         }
         else {
             error = "Your clipboard doesn't contain a valid level.";

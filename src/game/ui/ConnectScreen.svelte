@@ -1,17 +1,20 @@
 <script lang="ts">
-    import { CellGrid, openLevel } from "@core/cells/grid";
-    import { connect, disconnect } from "@core/multiplayer/connection";
     import { Stack } from "@utils/stack";
+    import { MultiplayerGridProvider } from "./gridProvider/MultiplayerGridProvider";
     import { on } from "./keys";
+    import Overlay from "./Overlay.svelte";
+    import { gridProvider } from "./uiState";
 
     export let visible: boolean;
     export let layers: Stack<string>;
 
-    on("escape").when(() => visible).down(() => layers = layers.back());
+    on("escape").when(() => visible && !state).down(() => layers = layers.back());
 
     let url = "";
     let urlElement = null as any as HTMLInputElement;
     $: if (urlElement) urlElement.focus();
+
+    let state: string | false = false;
 </script>
 
 <style lang="scss">
@@ -58,14 +61,20 @@
             <input type="url" class="big" placeholder="Location" bind:value={url} bind:this={urlElement} />
             <div class="space"></div>
             <button class="big" on:click={() => {
-                disconnect();
-                $openLevel = CellGrid.createEmpty(1, 1);
-                connect(url);
+                $gridProvider = new MultiplayerGridProvider(
+                    url,
+                    () => layers = layers,
+                    s => state = s,
+                );
+                // connect(url);
                 url = "";
-                layers = layers.replaceTop("editor");
             }}>Connect</button>
             <div class="space"></div>
             <button class="center" on:click={() => layers = layers.back()}>Back</button>
         </div>
     </div>
 {/if}
+
+<Overlay visible={state != false}>
+    {state}
+</Overlay>

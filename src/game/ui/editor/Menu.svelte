@@ -1,15 +1,16 @@
 <script lang="ts">
     import { clip } from "@utils/misc";
-    import { openLevel } from "@core/cells/grid";
     import { selection } from "../uiState";
     import { Menu } from "@core/ui/menu";
     import UiElementViewer from "../UIElementViewer.svelte";
     import { BorderMode } from "@core/cells/border";
     import { Stack } from "@utils/stack";
+    import { GridProvider } from "../gridProvider/GridProvider";
 
     export let open: boolean;
     export let layers: Stack<string>;
     export let showSettings: boolean;
+    export let gridProvider: GridProvider;
 
     const copiedText = "Copied!";
     let copyText = "";
@@ -20,18 +21,16 @@
     let copyTimeout: any = null;
 
     function copy(type: string) {
-        if ($openLevel) {
-            let string = $selection ?
-                $openLevel.extract($selection).toString(type)
-                : $openLevel.toString(type);
-            if (string) clip(string);
+        let string = $selection ?
+            gridProvider.grid.extract($selection).toString(type)
+            : gridProvider.grid.toString(type);
+        if (string) clip(string);
 
-            copyButtonLabel = copiedText;
-            copyTimeout && clearTimeout(copyTimeout);
-            copyTimeout = setTimeout(() => {
-                copyButtonLabel = copyText;
-            }, 1000);
-        }
+        copyButtonLabel = copiedText;
+        copyTimeout && clearTimeout(copyTimeout);
+        copyTimeout = setTimeout(() => {
+            copyButtonLabel = copyText;
+        }, 1000);
     }
 </script>
 
@@ -93,9 +92,9 @@
     <div class="sidebar">
         <div class="actions">
             Border mode:
-            <button on:click={() => $openLevel && ($openLevel.borderMode = BorderMode.Default)}>Default</button>
-            <button on:click={() => $openLevel && ($openLevel.borderMode = BorderMode.Wrap)}>Wrap</button>
-            <button on:click={() => $openLevel && ($openLevel.borderMode = BorderMode.Delete)}>Delete</button>
+            <button on:click={() => gridProvider.grid.borderMode = BorderMode.Default}>Default</button>
+            <button on:click={() => gridProvider.grid.borderMode = BorderMode.Wrap}>Wrap</button>
+            <button on:click={() => gridProvider.grid.borderMode = BorderMode.Delete}>Delete</button>
             {#each Menu.uiComponents as component, i}
                 {#if i}
                     <div class="space"></div>
@@ -117,7 +116,8 @@
         <div class="action_buttons">
             <button on:click={() => {
                 open = false;
-                layers = layers.next("main");
+                layers = layers.back();
+                gridProvider.destroy();
             }}>Go to main screen</button>
             <button on:click={() => showSettings = true}>Settings</button>
             <button on:click={() => copy("V3")}>{copyButtonLabel} V3</button>

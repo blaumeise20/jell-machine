@@ -6,13 +6,16 @@
     import { Tile } from "@core/tiles";
     import { keys, keys$, modifiers, on } from "../keys";
     import { mouse } from "@utils/mouse";
-    import { Pos, toPos } from "@core/coord/positions";
+    import { Off, Pos, toPos } from "@core/coord/positions";
     import { rotation, selectedCell } from "./GameControls.svelte";
     import { Size } from "@core/coord/size";
     import { config } from "@utils/config";
     import { Events } from "@core/events";
+    import { GridProvider } from "../gridProvider/GridProvider";
+    import { Cell } from "@core/cells/cell";
 
     export let grid: CellGrid;
+    export let gridProvider: GridProvider;
     if (grid.isInfinite) throw new Error("OH NO");
 
     export let showPlacable: boolean;
@@ -62,8 +65,6 @@
         gridOffset.bottom = editorSize.height / 2 - center.y * CELL_SIZE;
     }
 
-    $: grid.reloadUI(() => grid = grid);
-
     // camera: frames
     let living = true, previousTime = 0;
     let frame: number;
@@ -111,6 +112,7 @@
                         if (grid.isInfinite || grid.size.contains(clickedCell)) {
                             const cell = grid.loadCell(clickedCell, $selectedCell, $rotation)!;
                             Events.emit("cell-placed", clickedCell, cell);
+                            gridProvider.cellPlaced(clickedCell, cell as Cell);
                             cellChanged = true;
                         }
                     }
@@ -123,6 +125,7 @@
                     if (cell) {
                         cell.rm();
                         Events.emit("cell-deleted", clickedCell, cell);
+                        gridProvider.cellPlaced(clickedCell, null);
                     }
                 }
 
@@ -160,12 +163,12 @@
 
     // selection clipboard: cut/copy/paste
     on("x").and(modifiers.cmdOrCtrl).when(() => showSelectionBox).down(() => {
-        clipboard = grid.extract(selectionSize, true);
+        clipboard = grid.extract(selectionSize, true); grid = grid; // TODO: multiplayer
         showSelectionBox = false;
         placeCell = true;
     });
     on("c").and(modifiers.cmdOrCtrl).down(() => {
-        clipboard = grid.extract(selectionSize);
+        clipboard = grid.extract(selectionSize); grid = grid; // TODO: multiplayer
         showSelectionBox = false;
         placeCell = true;
     });
@@ -187,8 +190,13 @@
         ["arrowup", Direction.Up],
     ] as const) {
         on(key).and(modifiers.alt).when(() => showSelectionBox).down(() => {
-            grid.move(selectionSize, dir);
-            selectionSize = selectionSize.move(dir);
+            grid.move(selectionSize, dir); // TODO: multiplayer
+            const offset = Off[dir];
+            mouseAnchor.x += offset.x;
+            mouseAnchor.y += offset.y;
+            mouseCurrent.x += offset.x;
+            mouseCurrent.y += offset.y;
+            grid = grid;
         });
     }
 
@@ -223,17 +231,20 @@
                 for (const cell of pasteboard.cells.values()) {
                     const newPos = Pos(cell.pos.x + selectionPos.x, cell.pos.y + selectionPos.y);
                     const cellAt = grid.cells.get(newPos);
+                    let newCell: Cell | false;
                     if (cellAt && keys.ctrl) {
                         const newData = cellAt.type.merge(cellAt, cell);
-                        const newCell = grid.loadCell(newPos, newData[0], newData[1]);
-                        if (newCell) Events.emit("cell-placed", newPos, newCell);
+                        newCell = grid.loadCell(newPos, newData[0], newData[1]);
                     }
                     else {
-                        const newCell = grid.loadCell(cell.pos.mi(selectionPos), cell.type, cell.direction);
-                        if (newCell) Events.emit("cell-placed", cell.pos, newCell);
+                        newCell = grid.loadCell(cell.pos.mi(selectionPos), cell.type, cell.direction);
+                    }
+                    if (newCell) {
+                        Events.emit("cell-placed", cell.pos, newCell);
+                        gridProvider.cellPlaced(newPos, newCell);
                     }
                 }
-                grid.reloadUI();
+                grid = grid;
             }
             pasteboard = null;
             placeCell = false;

@@ -2,13 +2,12 @@
     import { writable, derived } from "svelte/store";
     import { on } from "../keys";
     import { config } from "@utils/config";
-    import { CellGrid, initial } from "@core/cells/grid";
     import { Animator } from "@utils/animator";
     import { SlotHandler } from "@core/slot";
     import { Direction } from "@core/coord/direction";
     import { Registry } from "@core/registry";
-    import { currentConnection } from "@core/multiplayer/connection";
     import Hotbar from "./Hotbar.svelte";
+    import { GridProvider } from "../gridProvider/GridProvider";
 
     let slotHandler = new SlotHandler(Registry.getSlots());
 
@@ -21,7 +20,7 @@
     export let menuOpen: boolean;
     export let uiVisible: boolean;
 
-    export let grid: CellGrid;
+    export let gridProvider: GridProvider;
 
     on("F1").down(() => uiVisible = !uiVisible);
     on("F2").down(() => $config.showBackgroundGrid = !$config.showBackgroundGrid);
@@ -30,26 +29,14 @@
     on("t").when(() => !menuOpen).down(() => {
         levelPlaying = false;
         playTimer.stop();
-
-        if (initial[0] && !grid.initial)
-            grid = initial[0];
-
-        if (currentConnection && currentConnection.isConnected)
-            currentConnection.loadGrid();
+        gridProvider.reset();
     });
     // TODO: update
     // on("tab").down(() => keys.shift ? slotHandler.prev() : slotHandler.next());
     // on("<").down(() => slotHandler.loopSlot());
-    on("g").when(() => !levelPlaying).down(() => {
-        if (grid.initial) initial[0] = grid.clone();
-        grid.doStep(false);
-    });
+    on("g").when(() => !levelPlaying).down(() => gridProvider.doStep());
 
-    const playTimer = new Animator(() => {
-        if (grid.initial) initial[0] = grid.clone();
-        grid.doStep(false);
-    });
-
+    const playTimer = new Animator(() => gridProvider.doStep());
     $: playTimer.setInterval($config.tickSpeed);
 
     let levelPlaying = false;

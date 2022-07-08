@@ -1,4 +1,3 @@
-import { writable, Writable } from "svelte/store";
 import { Size } from "../coord/size";
 import { Off, Pos, Position, PosMap } from "../coord/positions";
 import { Tile } from "../tiles";
@@ -15,13 +14,6 @@ import { doStep } from "./cellUpdates";
 import { Registry } from "../registry";
 import { BorderMode } from "./border";
 import { Events } from "@core/events";
-
-export const openLevel: Writable<CellGrid | null> = writable(null);
-export let grid: CellGrid | null = null;
-openLevel.subscribe(g => grid = g);
-export let initial: [CellGrid | null] = [null];
-
-openLevel.subscribe(o => (window as any).openLevel = o);
 
 export enum LevelError {
     Unknown,
@@ -71,13 +63,6 @@ export class CellGrid {
 
         this.tickCount++;
         Events.emit("tickend");
-        this.reloadUI();
-    }
-
-    private _reloaders: any[] = [];
-    reloadUI(fn?: any) {
-        if (fn) this._reloaders.push(fn);
-        else this._reloaders.forEach(r => r());
     }
 
     clone() {
@@ -104,7 +89,6 @@ export class CellGrid {
                 }
             }
         }
-        if (del) this.reloadUI();
         return grid;
     }
 
@@ -118,7 +102,6 @@ export class CellGrid {
             }
             else this.loadCell(pos.mi(selectionPos), cell.type, cell.direction);
         }
-        this.reloadUI();
     }
 
     clear(area: Size) {
@@ -128,7 +111,6 @@ export class CellGrid {
                 if (cell) cell.rm();
             }
         }
-        this.reloadUI();
     }
 
     move(area: Size, where: Direction) {
@@ -167,7 +149,6 @@ export class CellGrid {
                 break;
         }
 
-        this.reloadUI();
     }
 
     rotateCW() {
@@ -244,7 +225,6 @@ export class CellGrid {
                 }
             }
         }
-        this.reloadUI();
         return successful;
     }
 
@@ -254,7 +234,6 @@ export class CellGrid {
                 this.tiles.set(Pos(x + area.left, y + area.bottom), tile);
             }
         }
-        this.reloadUI();
     }
     //#endregion
 

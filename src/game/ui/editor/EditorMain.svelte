@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { openLevel } from "@core/cells/grid";
     import CellGridViewer from "./CellGridViewer.svelte";
     import DebugMenu from "./DebugMenu.svelte";
     import GameControls from "./GameControls.svelte";
@@ -9,15 +8,19 @@
     import { Stack } from "@utils/stack";
     import Overlay from "../Overlay.svelte";
     import Settings from "../settings/Settings.svelte";
+    import { GridProvider } from "../gridProvider/GridProvider";
 
-    export let visible: boolean;
     export let layers: Stack<string>;
+    export let gridProvider: GridProvider;
 
     let menuOpen = false;
     let showSettings = false;
 
-    on("escape").when(() => visible && $openLevel && !showSettings).down(() => menuOpen = !menuOpen);
-    on("escape").when(() => visible && showSettings).down(() => showSettings = false);
+    let grid = gridProvider.grid;
+    gridProvider.gridChanged = () => grid = gridProvider.grid;
+
+    on("escape").when(() => !showSettings).down(() => menuOpen = !menuOpen);
+    on("escape").when(() => showSettings).down(() => showSettings = false);
 </script>
 
 <style lang="scss">
@@ -29,35 +32,33 @@
     }
 </style>
 
-{#if visible}
-    <div class="cell_controller">
-        {#if $openLevel}
-            <CellGridViewer
-                grid={$openLevel}
-                showPlacable={false}
-                bind:selectionArea={$selection}
-                bind:pasteboard={$selectionContent}
-                bind:mousePosition={$cursorPosition}
-                bind:center={$screenPosition}
-            />
-            <DebugMenu />
-            <GameControls
-                bind:menuOpen
-                bind:uiVisible={$showControls}
-                bind:grid={$openLevel}
-            />
-        {/if}
-    </div>
-
-    <Menu
-        bind:open={menuOpen}
-        bind:layers
-        bind:showSettings
+<div class="cell_controller">
+    <CellGridViewer
+        {grid}
+        showPlacable={false}
+        bind:gridProvider
+        bind:selectionArea={$selection}
+        bind:pasteboard={$selectionContent}
+        bind:mousePosition={$cursorPosition}
+        bind:center={$screenPosition}
     />
+    <DebugMenu bind:gridProvider />
+    <GameControls
+        bind:menuOpen
+        bind:uiVisible={$showControls}
+        bind:gridProvider
+    />
+</div>
 
-    <Overlay visible={showSettings}>
-        <Settings />
-        <div class="space"></div>
-        <button class="center" on:click={() => showSettings = false}>Back</button>
-    </Overlay>
-{/if}
+<Menu
+    bind:open={menuOpen}
+    bind:layers
+    bind:showSettings
+    bind:gridProvider
+/>
+
+<Overlay visible={showSettings}>
+    <Settings />
+    <div class="space"></div>
+    <button class="center" on:click={() => showSettings = false}>Back</button>
+</Overlay>

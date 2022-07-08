@@ -1,6 +1,6 @@
 import { Cell } from "@core/cells/cell";
 import { UpdateType } from "@core/cells/cellUpdates";
-import { CellGrid, openLevel } from "@core/cells/grid";
+import { CellGrid } from "@core/cells/grid";
 import { LevelCode } from "@core/levelCode";
 import { Tile } from "@core/tiles";
 import { $config } from "@utils/config";
@@ -15,6 +15,7 @@ import { CellType } from "@core/cells/cellType";
 import { Events } from "@core/events";
 import { Slot } from "@core/slot";
 import { makeNumberEncoder } from "@core/numbers";
+import { gridProvider } from "../ui/uiState";
 
 export function load() {
     const orientator = CellType.create("jm.utils.orientator", {
@@ -607,7 +608,7 @@ export function load() {
         tickCount = text("Tick Count: 0"),
         // button("Reset", { onClick: () => get(openLevel)!.reset() }),
     );
-    Events.on("tickend", () => tickCount.text = "Tick Count: " + get(openLevel)!.tickCount);
+    Events.on("tickend", () => tickCount.text = "Tick Count: " + get(gridProvider)!.grid.tickCount);
 
     Menu.addUI(ui);
 }
