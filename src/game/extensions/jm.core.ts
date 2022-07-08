@@ -43,7 +43,7 @@ export function load() {
     const mover = CellType.create({
         id: "jm.core.mover",
         name: "Mover",
-        description: "Moves foward one cell and pushes all cells in the way.",
+        description: "Moves forward one cell and pushes all cells in the way.",
         behavior: class MoverCell extends Cell {
             override update() {
                 super.push(this.direction, 1);
@@ -153,7 +153,7 @@ export function load() {
     const trash = CellType.create({
         id: "jm.core.trash",
         name: "Trash",
-        description: "Deletes all incomming cells. Does not die itself.",
+        description: "Deletes all incoming cells. Does not die itself.",
         behavior: class TrashCell extends Cell {
             override push(dir: Direction, bias: number) {
                 if (this.disabled) return super.push(dir, bias);
@@ -167,7 +167,7 @@ export function load() {
     const wall = CellType.create({
         id: "jm.core.wall",
         name: "Wall",
-        description: "Can't be pushed and rotated",
+        description: "Can't be pushed nor rotated",
         behavior: class WallCell extends Cell {
             override push() {
                 return false;
@@ -184,7 +184,7 @@ export function load() {
     const border = CellType.create({
         id: "_",
         name: "Border",
-        description: "Behaves like it is the border of the grid. Can't be pushed and rotated.",
+        description: "Behaves like the border of the grid. Can't be pushed nor rotated.",
         behavior: class BorderCell extends Cell {
             override getPos(dir: Direction) {
                 if (this.grid.borderMode == BorderMode.Wrap) return this.getCellTo(dir);
