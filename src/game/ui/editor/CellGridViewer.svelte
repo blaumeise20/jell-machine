@@ -14,6 +14,7 @@
     import { GridProvider } from "../gridProvider/GridProvider";
     import { Cell } from "@core/cells/cell";
     import { clipboard } from "../uiState";
+    import { CellChange } from "@core/cells/cellChange";
 
     export let grid: CellGrid;
     export let gridProvider: GridProvider;
@@ -26,7 +27,7 @@
     const ZOOM_SPEED = 150;
     const MAX_ZOOM = 4;
 
-    export const center = { x: grid.size.width / 2, y: grid.size.height / 2 }
+    export const center = { x: grid.size.width / 2, y: grid.size.height / 2 };
     export const mousePosition = { x: 0, y: 0 };
     export const mouseAnchor = { x: NaN, y: NaN };
     export const mouseCurrent = { x: 0, y: 0 };
@@ -34,6 +35,7 @@
     const gridOffset = { left: 0, bottom: 0 };
     let zoom = 1;
     let mouseButton = -1;
+    let undoItem = new CellChange();
 
     // camera: move keys
     const moving = {
@@ -56,6 +58,12 @@
         on(k).down(() => moving[p] = true).up(() => moving[p] = false);
         on(k2).down(() => moving2[p] = true).up(() => moving2[p] = false);
     }
+
+    // camera: undo
+    on("z").and(modifiers.cmdOrCtrl).down(() => {
+        gridProvider.undo();
+    });
+
 
     // camera: size
     let editorElement: HTMLDivElement;
@@ -114,6 +122,7 @@
                             const cell = grid.loadCell(clickedCell, $selectedCell, $rotation)!;
                             Events.emit("cell-placed", clickedCell, cell);
                             gridProvider.cellPlaced(clickedCell, cell as Cell);
+                            undoItem.addCell(clickedCell, originalCell);
                             cellChanged = true;
                         }
                     }
@@ -127,6 +136,7 @@
                         cell.rm();
                         Events.emit("cell-deleted", clickedCell, cell);
                         gridProvider.cellPlaced(clickedCell, null);
+                        undoItem.addCell(clickedCell, cell);
                     }
                 }
 
@@ -260,6 +270,8 @@
     function mouseupEvent(_e: MouseEvent) {
         mouseButton = -1;
         placeCell = !showSelectionBox;
+        gridProvider.addUndoItem(undoItem);
+        undoItem = new CellChange();
     }
 </script>
 
