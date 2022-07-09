@@ -13,7 +13,7 @@
     import { Events } from "@core/events";
     import { GridProvider } from "../gridProvider/GridProvider";
     import { Cell } from "@core/cells/cell";
-import { clipboard } from "../uiState";
+    import { clipboard } from "../uiState";
 
     export let grid: CellGrid;
     export let gridProvider: GridProvider;
