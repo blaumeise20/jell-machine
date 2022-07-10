@@ -18,10 +18,9 @@ It includes all features of Mystic Mod, but many other suggestions from the Myst
 * New cells like Redirector
 * Box filling
 * Generation counter
-* Step backwards
-* Very important: loading from and saving into files
-* Infinite grid
-* Open multiple levels at once
+<!-- * Very important: loading from and saving into files -->
+<!-- * Infinite grid -->
+<!-- * Open multiple levels at once -->
 * Multiplayer support
 * Modding support (yes you can mod a mod)
 
