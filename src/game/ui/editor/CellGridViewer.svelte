@@ -116,6 +116,7 @@
                     cellChanged = true;
                 }
                 else {
+                    // TODO
                     const originalCell = grid.cells.get(clickedCell);
                     if (!originalCell || originalCell.type != $selectedCell || originalCell.direction != $rotation) {
                         if (grid.isInfinite || grid.size.contains(clickedCell)) {
@@ -131,6 +132,7 @@
             else if (mouseButton == 2) {
                 if (keys.shift) grid.tiles.delete(clickedCell);
                 else {
+                    // TODO
                     const cell = grid.cells.get(clickedCell);
                     if (cell) {
                         cell.rm();
@@ -173,12 +175,13 @@
 
     // selection clipboard: cut/copy/paste
     on("x").and(modifiers.cmdOrCtrl).when(() => showSelectionBox).down(() => {
-        $clipboard = grid.extract(selectionSize, true); grid = grid; // TODO: multiplayer
+        $clipboard = grid.cloneArea(selectionSize, true);
+        gridProvider.clearArea(selectionSize);
         showSelectionBox = false;
         placeCell = true;
     });
     on("c").and(modifiers.cmdOrCtrl).down(() => {
-        $clipboard = grid.extract(selectionSize); grid = grid; // TODO: multiplayer
+        $clipboard = grid.cloneArea(selectionSize);
         showSelectionBox = false;
         placeCell = true;
     });
@@ -200,7 +203,7 @@
         ["arrowup", Direction.Up],
     ] as const) {
         on(key).and(modifiers.alt).when(() => showSelectionBox).down(() => {
-            grid.move(selectionSize, dir); // TODO: multiplayer
+            gridProvider.moveArea(selectionSize, dir); // TODO: multiplayer
             const offset = Off[dir];
             mouseAnchor.x += offset.x;
             mouseAnchor.y += offset.y;
@@ -238,6 +241,7 @@
 
         if (pasteboard) {
             if (e.button != 2) {
+                // TODO
                 for (const cell of pasteboard.cells.values()) {
                     const newPos = Pos(cell.pos.x + selectionPos.x, cell.pos.y + selectionPos.y);
                     const cellAt = grid.cells.get(newPos);

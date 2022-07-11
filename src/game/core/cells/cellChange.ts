@@ -15,7 +15,7 @@ export class CellChange {
         }
     }
 
-    public undoOn(grid: CellGrid) {
+    public undoOn(grid: CellGrid, callback: (pos: Position, cell: Cell | null) => void) {
         for (const [pos, cell] of this.cells.entries()) {
             if (cell) {
                 grid.loadCell(pos, cell.type, cell.direction);
@@ -23,6 +23,7 @@ export class CellChange {
             else {
                 grid.cells.get(pos)!.rm();
             }
+            callback(pos, cell);
         }
     }
 }

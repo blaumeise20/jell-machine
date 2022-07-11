@@ -77,7 +77,7 @@ export class CellGrid {
     }
 
     //#region grid actions
-    extract(area: Size, del = false) {
+    cloneArea(area: Size, del = false) {
         const grid = new CellGrid();
         grid.size = new Size(area.width, area.height);
         for (let x = 0; x < area.width; x++) {
@@ -92,6 +92,7 @@ export class CellGrid {
         return grid;
     }
 
+    // UNUSED
     insert(selection: CellGrid, selectionPos: Position, smartMerge: boolean) {
         for (const [pos, cell] of selection.cells.entries()) {
             const newPos = Pos(pos.x + selectionPos.x, pos.y + selectionPos.y);
@@ -104,6 +105,7 @@ export class CellGrid {
         }
     }
 
+    // UNUSED
     clear(area: Size) {
         for (let x = 0; x < area.width; x++) {
             for (let y = 0; y < area.height; y++) {
@@ -113,6 +115,7 @@ export class CellGrid {
         }
     }
 
+    // UNUSED
     move(area: Size, where: Direction) {
         const offset = Off[where];
 
@@ -128,23 +131,15 @@ export class CellGrid {
 
         switch (where) {
             case Direction.Right:
-                for (let x = area.left + area.width - 1; x >= area.left; x--)
-                    for (let y = area.bottom + area.height - 1; y >= area.bottom; y--)
-                        moveCell(x, y);
-                break;
-            case Direction.Down:
-                for (let x = area.left; x < area.left + area.width; x++)
-                    for (let y = area.bottom; y < area.bottom + area.height; y++)
-                        moveCell(x, y);
-                break;
-            case Direction.Left:
-                for (let x = area.left; x < area.left + area.width; x++)
-                    for (let y = area.bottom; y < area.bottom + area.height; y++)
-                        moveCell(x, y);
-                break;
             case Direction.Up:
                 for (let x = area.left + area.width - 1; x >= area.left; x--)
                     for (let y = area.bottom + area.height - 1; y >= area.bottom; y--)
+                        moveCell(x, y);
+                break;
+            case Direction.Left:
+            case Direction.Down:
+                for (let x = area.left; x < area.left + area.width; x++)
+                    for (let y = area.bottom; y < area.bottom + area.height; y++)
                         moveCell(x, y);
                 break;
         }

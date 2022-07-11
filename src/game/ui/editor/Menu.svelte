@@ -22,7 +22,7 @@
 
     function copy(type: string) {
         let string = $selection ?
-            gridProvider.grid.extract($selection).toString(type)
+            gridProvider.grid.cloneArea($selection).toString(type)
             : gridProvider.grid.toString(type);
         if (string) clip(string);
 
