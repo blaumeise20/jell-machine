@@ -12,18 +12,23 @@
         ["Right click", "delete cell"],
         ["Shift+click", "edit placables"],
         ["WASD", "move camera"],
+        ["Arrow keys", "move camera"],
         ["Scroll", "zoom"],
         ["Q or E", "rotate cell"],
-        ["ctrl+drag", "select area"],
-        ["C", "copy selected area"],
-        ["X", "cut selected area"],
-        ["arrow keys", "move selected area"],
-        ["Right click while selecting", "delete selection"],
-        ["Q and E while selecting", "rotate selection"],
-        ["R and F while selecting", "flip selection"],
+        ["Ctrl+drag", "select area"],
+        ["Cmd/Ctrl+C", "copy selected area"],
+        ["Cmd/Ctrl+X", "cut selected area"],
+        ["Cmd/Ctrl+V", "paste"],
+        ["Alt+Arrow keys", "move selected area"],
+        ["Q and E while pasting", "rotate selection"],
+        ["R and F while pasting", "flip selection"],
         ["ESC", "open menu"],
         ["F1", "toggle UI around cells"],
-        ["space", "toggle simulation"],
+        ["F2", "toggle grid"],
+        ["F3", "toggle debug menu"],
+        ["Space", "toggle simulation"],
+        ["G", "Step one tick"],
+        ["T", "Reset"],
     ];
 </script>
 
@@ -58,7 +63,7 @@
 {#if visible}
     <div class="overlay_container">
         <div class="overlay">
-            {#each actions as [ trigger, what ]}
+            {#each actions as [trigger, what]}
                 <p><b>{trigger}:</b> {what}</p>
             {/each}
             <div class="space"></div>
