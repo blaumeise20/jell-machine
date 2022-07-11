@@ -77,7 +77,9 @@ export class SlotHandler {
 
     public menu(open: boolean) {
         this.containedSlots.forEach(slot => slot.menu = false);
-        this.containedSlots[this.currentSlot].menu = open;
+        if (this.containedSlots[this.currentSlot].items.length > 1) {
+            this.containedSlots[this.currentSlot].menu = open;
+        }
         this._reload();
     }
 

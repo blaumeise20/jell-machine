@@ -6,6 +6,7 @@
     import FormattedText from "@utils/FormattedText.svelte";
     import { structures } from "@utils/structures";
     import { textures } from "@utils/texturePacks";
+    import { afterUpdate } from "svelte";
     import UiElementViewer from "../UIElementViewer.svelte";
 
     export let slotHandler: SlotHandler;
@@ -38,7 +39,9 @@
     );
 
     let cellInfo: { cell: CellType, top: number, left: number } | null = null;
-
+    let currentHovered: HTMLElement | null = null;
+    let cellInfoChanged = false;
+    let cellInfoBox: HTMLElement;
     function setCellInfo(element: any, cell: CellType) {
         const box = element.getBoundingClientRect();
         const top = box.top;
@@ -49,7 +52,22 @@
             top,
             left,
         };
+        currentHovered = element;
+        cellInfoChanged = true;
     }
+
+    // make sure the info box doesn't go off the screen
+    afterUpdate(() => {
+        if (cellInfoChanged) {
+            cellInfoChanged = false;
+
+            const cellBox = currentHovered!.getBoundingClientRect();
+            const infoBox = cellInfoBox.getBoundingClientRect();
+            if (infoBox.bottom > window.innerHeight - 10) {
+                cellInfo!.top = cellBox.bottom - infoBox.height;
+            }
+        }
+    });
 </script>
 
 <style lang="scss">
@@ -107,6 +125,10 @@
                 transition: transform .15s, opacity .1s;
                 width: calc($item_size / 1.5);
                 height: calc($item_size / 1.5);
+
+                &:not(.selected) {
+                    opacity: .4;
+                }
             }
         }
     }
@@ -141,6 +163,7 @@
     .cell_info {
         padding: 10px;
         position: fixed;
+        max-width: 400px;
         z-index: 63;
 
         h3 {
@@ -171,12 +194,13 @@
                         transform: rotate({rotation * 90}deg);
                     "
                     on:click={() => {
-                        slotHandler.to(index);
-                        slotHandler.menu(false);
-                    }}
-                    on:contextmenu={() => {
-                        slotHandler.to(index);
-                        slotHandler.menu(true);
+                        if (slotHandler.currentSlot == index) {
+                            slotHandler.menu(!slotHandler.containedSlots[slotHandler.currentSlot].menu);
+                        }
+                        else {
+                            slotHandler.to(index);
+                            slotHandler.menu(true);
+                        }
                     }}
                     on:mouseenter={e => setCellInfo(e.target, slot.currentItem)}
                     on:mouseleave={() => cellInfo = null}
@@ -185,6 +209,7 @@
                     {#each slot.slot.items as cell, index}
                         <div
                             class="subitem"
+                            class:selected={slot.slot.currentItem == cell}
                             style="
                                 background-image: url({$textures.cells[cell.options.textureName].url});
                                 transform: rotate({rotation * 90}deg);
@@ -214,7 +239,7 @@
 </div>
 
 {#if cellInfo}
-    <div class="cell_info box box-medium" style:top="{cellInfo.top}px" style:left="{cellInfo.left}px">
+    <div class="cell_info box box-medium" style:top="{cellInfo.top}px" style:left="{cellInfo.left}px" bind:this={cellInfoBox}>
         <h3><FormattedText text={cellInfo.cell.options.name} /></h3>
         {#if $config.showDebug}
             <p class="small">ID: {cellInfo.cell.id}</p>
