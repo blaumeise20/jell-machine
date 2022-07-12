@@ -4,16 +4,24 @@ import { CellGrid } from "@core/cells/grid";
 import { Direction } from "@core/coord/direction";
 import { Off, Pos, Position } from "@core/coord/positions";
 import { Size } from "@core/coord/size";
+import { $config } from "@utils/config";
 
 export const MAX_UNDO_STACK_SIZE = 30;
 
 export abstract class GridProvider {
     public grid: CellGrid;
     public undoStack: CellChange[];
+    public prevUpdateTime: number = 0;
 
     constructor(grid: CellGrid) {
         this.grid = grid;
         this.undoStack = [];
+    }
+
+    public getAnimationPercent() {
+        return $config.animation
+            ? Math.min(1, (performance.now() - this.prevUpdateTime) / $config.tickSpeed)
+            : 1;
     }
 
     public gridChanged() {}

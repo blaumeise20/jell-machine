@@ -18,7 +18,13 @@ export class Cell {
     }
     id = cellid++;
 
-    constructor(public pos: Position, readonly type: CellType, public direction: Direction, readonly grid: CellGrid) {}
+    public oldPosition: Position;
+    public rotationOffset: Direction;
+
+    constructor(public pos: Position, readonly type: CellType, public direction: Direction, readonly grid: CellGrid) {
+        this.oldPosition = pos;
+        this.rotationOffset = 0;
+    }
 
     public get options(): CellData {
         return [this.type, this.direction];
@@ -104,9 +110,11 @@ export class Cell {
 
     rotate(amount: number) {
         this.direction = ((this.direction + amount) % 4 + 4) % 4;
+        this.rotationOffset += amount;
     }
 
     setRotation(amount: number) {
+        this.rotationOffset = (amount - this.direction) % 4;
         this.direction = amount % 4;
     }
 

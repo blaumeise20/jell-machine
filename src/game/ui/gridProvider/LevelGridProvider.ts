@@ -13,6 +13,7 @@ export class LevelGridProvider extends GridProvider {
             this.initial = this.grid.clone();
         }
         this.grid.doStep(false);
+        this.prevUpdateTime = performance.now();
         this.gridChanged();
     }
 

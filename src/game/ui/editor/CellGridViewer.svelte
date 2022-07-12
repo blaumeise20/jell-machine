@@ -1,31 +1,29 @@
 <script lang="ts">
     import { Direction } from "@core/coord/direction";
     import { CellGrid } from "@core/cells/grid";
-    import { textures } from "@utils/texturePacks";
     import { onMount } from "svelte";
     import { Tile } from "@core/tiles";
-    import { keys, keys$, modifiers, on } from "../keys";
+    import { keys, modifiers, on } from "../keys";
     import { mouse } from "@utils/mouse";
     import { Off, Pos, toPos } from "@core/coord/positions";
     import { rotation, selectedCell } from "./GameControls.svelte";
     import { Size } from "@core/coord/size";
-    import { config } from "@utils/config";
     import { Events } from "@core/events";
     import { GridProvider } from "../gridProvider/GridProvider";
     import { Cell } from "@core/cells/cell";
     import { clipboard } from "../uiState";
     import { CellChange } from "@core/cells/cellChange";
+    import { renderGrid } from "./render";
 
     export let grid: CellGrid;
     export let gridProvider: GridProvider;
     if (grid.isInfinite) throw new Error("OH NO");
 
-    export let showPlacable: boolean;
-
     const CELL_SIZE = 64;
     const CELLS_PER_SECOND = 8;
     const ZOOM_SPEED = 150;
     const MAX_ZOOM = 4;
+    const DISPLAY_RATIO = window.devicePixelRatio;
 
     export const center = { x: grid.size.width / 2, y: grid.size.height / 2 };
     export const mousePosition = { x: 0, y: 0 };
@@ -64,7 +62,6 @@
         gridProvider.undo();
     });
 
-
     // camera: size
     let editorElement: HTMLDivElement;
     $: if (editorElement) {
@@ -77,6 +74,12 @@
     // camera: frames
     let living = true, previousTime = 0;
     let frame: number;
+    let canvas: HTMLCanvasElement;
+    let ctx: CanvasRenderingContext2D;
+    $: if (canvas) {
+        ctx = canvas.getContext("2d")!;
+        ctx.imageSmoothingQuality = "high";
+    }
     onMount(() => {
         previousTime = performance.now();
         frame = requestAnimationFrame(updateFrame);
@@ -106,14 +109,16 @@
         const actualX = Math.floor(cellX);
         const actualY = Math.floor(cellY);
         const clickedCell = Pos(actualX, actualY);
+        if (mouseButton != -1) {
+            mouseCurrent.x = actualX;
+            mouseCurrent.y = actualY;
+        }
 
         // camera: placing
-        let cellChanged = false;
         if (placeCell) {
             if (mouseButton == 0) {
                 if (keys.shift) {
                     grid.tiles.set(clickedCell, Tile.Placable);
-                    cellChanged = true;
                 }
                 else {
                     // TODO
@@ -124,7 +129,6 @@
                             Events.emit("cell-placed", clickedCell, cell);
                             gridProvider.cellPlaced(clickedCell, cell as Cell);
                             undoItem.addCell(clickedCell, originalCell);
-                            cellChanged = true;
                         }
                     }
                 }
@@ -142,20 +146,27 @@
                     }
                 }
 
-                cellChanged = true;
             }
         }
+
+        // rendering
+        renderGrid(
+            ctx,
+            grid,
+            zoom,
+            CELL_SIZE * zoom * DISPLAY_RATIO,
+            center,
+            showSelectionBox ? Size.from(toPos(mouseAnchor), toPos(mouseCurrent)) : null,
+            pasteboard,
+            selectionPos,
+            gridProvider.getAnimationPercent(),
+        );
 
         // camera: set new coordinates
         center.x = x;
         center.y = y;
         mousePosition.x = cellX;
         mousePosition.y = cellY;
-        if (mouseButton != -1) {
-            mouseCurrent.x = actualX;
-            mouseCurrent.y = actualY;
-        }
-        if (cellChanged) grid = grid;
     }
 
     // selection: calculations
@@ -209,7 +220,6 @@
             mouseAnchor.y += offset.y;
             mouseCurrent.x += offset.x;
             mouseCurrent.y += offset.y;
-            grid = grid;
         });
     }
 
@@ -258,7 +268,6 @@
                         gridProvider.cellPlaced(newPos, newCell);
                     }
                 }
-                grid = grid;
             }
             pasteboard = null;
             placeCell = false;
@@ -280,132 +289,23 @@
 </script>
 
 <style lang="scss">
-    $CELL_SIZE: 64px;
-
     .cell_editor {
         flex: 1;
         overflow: hidden;
         position: relative;
         z-index: 50;
-    }
-    .container {
-        height: 0;
-        position: absolute;
-        width: 0;
 
-        &.animate .cell.animate {
-            transition-duration: var(--transition-duration);
-            transition-timing-function: linear;
-            transition-property: transform, x, y;
+        canvas {
+            width: 100%;
+            height: 100%;
         }
-    }
-
-    .background {
-        background-color: #2A2A2A;
-        background-size: $CELL_SIZE $CELL_SIZE;
-        background-repeat: repeat;
-        bottom: 0;
-        image-rendering: pixelated;
-        position: absolute;
-    }
-
-    .cell_container {
-        bottom: 0;
-        left: 0;
-        position: absolute;
-        shape-rendering: optimizeSpeed;
-    }
-    .cell {
-        height: $CELL_SIZE;
-        width: $CELL_SIZE;
-        transform-box: fill-box;
-        transform-origin: center center;
-        image-rendering: pixelated;
-    }
-
-    .show_placable .cell:not(.placable) {
-        opacity: .5;
-    }
-
-    .selection_box {
-        background-color: rgba(255,255,255, .2);
-        border-style: solid;
-        border-color: #fff;
-        position: absolute;
     }
 </style>
 
-<div class="cell_editor" class:show_placable={$keys$.shift && showPlacable} bind:this={editorElement} on:wheel={zoomEvent} on:mousedown={mousedownEvent} on:mouseup={mouseupEvent}>
-    <div class="container" style="
-        bottom: {gridOffset.bottom}px;
-        left: {gridOffset.left}px;
-        transform: scale({zoom});
-        transform-origin: {editorSize.width / 2 - gridOffset.left}px {-(editorSize.height / 2 - gridOffset.bottom)}px;
-        --transition-duration: {$config.tickSpeed}ms;
-    " class:animate={$config.animation}>
-        <!-- grid -->
-        <div class="background" style="
-            width: {grid.size.width * CELL_SIZE}px;
-            height: {grid.size.height * CELL_SIZE}px;
-            background-image: url({$textures.cells.bg.url});
-            display: {$config.showBackgroundGrid ? "block" : "none"};
-        "></div>
-
-        <!-- cells -->
-        <svg class="cell_container" width={grid.size.width * CELL_SIZE} height={grid.size.height * CELL_SIZE}>
-            {#each [...grid.tiles.entries()] as [pos, _]}
-                <image
-                    class="cell placable placable_bg"
-                    x={CELL_SIZE * pos.x}
-                    y={CELL_SIZE * (grid.size.height - pos.y - 1)}
-                    href={$textures.cells.placable.url}
-                />
-            {/each}
-            {#each [...grid.cells.values()] as cell (cell.id)}
-                <image
-                    class="cell animate"
-                    class:placable={grid.tiles.get(cell.pos) == Tile.Placable}
-                    x={CELL_SIZE * cell.pos.x}
-                    y={CELL_SIZE * (grid.size.height - cell.pos.y - 1)}
-                    href={$textures.cells[cell.type.getTex(cell)].url}
-                    transform="rotate({cell.direction * 90})"
-                />
-            {/each}
-        </svg>
-
-        <!-- selection clipboard -->
-        {#if pasteboard}
-            <svg class="cell_container" style="opacity: .7; bottom: {Math.round(selectionPos.y) * CELL_SIZE}px; left: {Math.round(selectionPos.x) * CELL_SIZE}px;" width={pasteboard.size.width * CELL_SIZE} height={pasteboard.size.height * CELL_SIZE}>
-                <!-- {#each [...selection.tiles.entries()] as [pos, tile]}
-                    <image
-                        class="cell placable placable_bg"
-                        x={CELL_SIZE * pos.x}
-                        y={CELL_SIZE * (selection.size.height - pos.y - 1)}
-                        href={$currentPack.textures.placable.url}
-                    />
-                {/each} -->
-                {#each [...pasteboard.cells.values()] as cell}
-                    <image
-                        class="cell"
-                        x={CELL_SIZE * cell.pos.x}
-                        y={CELL_SIZE * (pasteboard.size.height - cell.pos.y - 1)}
-                        href={$textures.cells[cell.type.getTex(cell)].url}
-                        transform="rotate({cell.direction * 90})"
-                    />
-                {/each}
-            </svg>
-        {/if}
-
-        <!-- selection -->
-        {#if showSelectionBox}
-            <div class="selection_box" style="
-                bottom: {CELL_SIZE * selectionSize.bottom}px;
-                left: {CELL_SIZE * selectionSize.left}px;
-                width: {CELL_SIZE * selectionSize.width}px;
-                height: {CELL_SIZE * selectionSize.height}px;
-
-                border-width: {CELL_SIZE / 16 * Math.max(.5, Math.min(1 / zoom, 3))}px;
-            "></div>
-        {/if}
-    </div>
+<div class="cell_editor" bind:this={editorElement} on:wheel={zoomEvent} on:mousedown={mousedownEvent} on:mouseup={mouseupEvent}>
+    <canvas
+        bind:this={canvas}
+        width={editorSize.width * DISPLAY_RATIO}
+        height={editorSize.height * DISPLAY_RATIO}
+    ></canvas>
 </div>

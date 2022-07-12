@@ -114,7 +114,9 @@ class Textures {
                         { type: "image/png" }
                     );
                     const url = URL.createObjectURL(blob);
-                    cells[k] = { blob, url };
+                    createImageBitmap(blob).then(bitmap => {
+                        cells[k] = { blob, url, bitmap };
+                    });
 
                     return true;
                 })
@@ -174,8 +176,12 @@ export interface TexturePack {
 export interface Texture {
     blob: Blob;
     url: string;
+    bitmap: ImageBitmap;
 }
 
 Textures.instance = new Textures();
 
 export const textures = Textures.instance.currentPack;
+
+export let currentTextures: TexturePack;
+textures.subscribe(t => currentTextures = t);

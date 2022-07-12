@@ -32,7 +32,8 @@ export function load() {
                 const targetCell = this.grid.cells.get(targetPos);
                 if (targetCell) if (!targetCell.push(targetDir, 1)) return;
 
-                this.grid.loadCell(targetPos, sourceCell.type, sourceCell.direction + targetDir - this.direction);
+                const cell = this.grid.loadCell(targetPos, sourceCell.type, sourceCell.direction + targetDir - this.direction);
+                if (cell) cell.oldPosition = this.pos;
             }
         },
         textureName: "generator",

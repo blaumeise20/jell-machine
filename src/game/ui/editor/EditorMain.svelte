@@ -35,7 +35,6 @@
 <div class="cell_controller">
     <CellGridViewer
         {grid}
-        showPlacable={false}
         bind:gridProvider
         bind:selectionArea={$selection}
         bind:pasteboard={$selectionContent}

@@ -21,8 +21,10 @@ export class PosMap<T> {
         }
     }
     get(key: Position): T {
-        const val = this.store[`${key.x},${key.y}`];
-        return val;
+        return this.store[`${key.x},${key.y}`];
+    }
+    getXY(x: number, y: number) {
+        return this.store[`${x},${y}`];
     }
     has(key: Position): boolean {
         return this.store[`${key.x},${key.y}`] !== undefined;

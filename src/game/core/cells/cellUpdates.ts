@@ -10,6 +10,12 @@ export function doStep(grid: CellGrid, _subtick: boolean) {
         updateOrder.push(...Extension.getUpdateOrder());
     }
 
+    for (const k in grid.cells.__object) {
+        const cell = grid.cells.__object[k];
+        cell.oldPosition = cell.pos;
+        cell.rotationOffset = 0;
+    }
+
     console.time("update");
     for (const updateType of updateOrder) {
         switch (updateType[1]) {
