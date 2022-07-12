@@ -8,6 +8,7 @@
     import { cursorPosition, screenPosition, selection } from "../uiState";
 
     export let gridProvider: GridProvider;
+    export let visible: boolean;
     const initial = gridProvider.isInitial;
 
     on("f3").down(() => $config.showDebug = !$config.showDebug);
@@ -40,27 +41,29 @@
     }
 </style>
 
-<div class="debug" style="display: {$config.showDebug ? "block" : "none"}">
-    <div data-label="General">
-        Level size: {gridProvider.grid.size.width}&times;{gridProvider.grid.size.height}<br />
-        Initial: <span style:color={$initial ? null : "#f44"}>{$initial}</span>
-    </div>
-    <div data-label="Screen position">
-        Cursor: {$cursorPosition.x.toFixed(3)} {$cursorPosition.y.toFixed(3)}<br />
-        Screen center: {$screenPosition.x.toFixed(3)} {$screenPosition.y.toFixed(3)}
-    </div>
-    {#if $selection}
-        <div data-label="Selected Area">
-            Width: {$selection.width}<br />
-            Height: {$selection.height}<br />
+{#if $config.showDebug && visible}
+    <div class="debug">
+        <div data-label="General">
+            Level size: {gridProvider.grid.size.width}&times;{gridProvider.grid.size.height}<br />
+            Initial: <span style:color={$initial ? null : "#f44"}>{$initial}</span>
         </div>
-    {/if}
-    {#if targetedCell}
-        <div data-label="Targeted Cell">
-            Position: {targetedCell.pos.x} {targetedCell.pos.y}<br />
-            Type: {targetedCell.type.id}<br />
-            Direction: {Direction[targetedCell.direction]}<br />
-            {targetedCell.debugText()}
+        <div data-label="Screen position">
+            Cursor: {$cursorPosition.x.toFixed(3)} {$cursorPosition.y.toFixed(3)}<br />
+            Screen center: {$screenPosition.x.toFixed(3)} {$screenPosition.y.toFixed(3)}
         </div>
-    {/if}
-</div>
+        {#if $selection}
+            <div data-label="Selected Area">
+                Width: {$selection.width}<br />
+                Height: {$selection.height}<br />
+            </div>
+        {/if}
+        {#if targetedCell}
+            <div data-label="Targeted Cell">
+                Position: {targetedCell.pos.x} {targetedCell.pos.y}<br />
+                Type: {targetedCell.type.id}<br />
+                Direction: {Direction[targetedCell.direction]}<br />
+                {targetedCell.debugText()}
+            </div>
+        {/if}
+    </div>
+{/if}

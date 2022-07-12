@@ -18,11 +18,11 @@
 
 <script lang="ts">
     export let menuOpen: boolean;
-    export let uiVisible: boolean;
+    export let visible: boolean;
 
     export let gridProvider: GridProvider;
 
-    on("F1").down(() => uiVisible = !uiVisible);
+    on("F1").down(() => visible = !visible);
     on("F2").down(() => $config.showBackgroundGrid = !$config.showBackgroundGrid);
     on("q").when(() => !menuOpen).down(() => $actualRotation--);
     on("e").when(() => !menuOpen).down(() => $actualRotation++);
@@ -48,6 +48,6 @@
 
 </script>
 
-{#if uiVisible}
+{#if visible}
     <Hotbar slotHandler={slotHandler} rotation={$actualRotation} />
 {/if}

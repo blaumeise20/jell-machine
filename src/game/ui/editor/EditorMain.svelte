@@ -41,10 +41,13 @@
         bind:mousePosition={$cursorPosition}
         bind:center={$screenPosition}
     />
-    <DebugMenu bind:gridProvider />
+    <DebugMenu
+        bind:gridProvider
+        bind:visible={$showControls}
+    />
     <GameControls
         bind:menuOpen
-        bind:uiVisible={$showControls}
+        bind:visible={$showControls}
         bind:gridProvider
     />
 </div>
