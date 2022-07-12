@@ -52,6 +52,7 @@ export class MultiplayerGridProvider extends GridProvider {
         this.grid.doStep(false);
         this.prevUpdateTime = performance.now();
         this.gridChanged();
+        this.isInitial.set(false);
     }
 
     public reset(): void {
@@ -61,6 +62,7 @@ export class MultiplayerGridProvider extends GridProvider {
             this.initial = null;
             this.gridChanged();
             this.connection.loadGrid();
+            this.isInitial.set(true);
         }
     }
 

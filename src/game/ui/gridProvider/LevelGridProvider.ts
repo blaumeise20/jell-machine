@@ -15,6 +15,7 @@ export class LevelGridProvider extends GridProvider {
         this.grid.doStep(false);
         this.prevUpdateTime = performance.now();
         this.gridChanged();
+        this.isInitial.set(false);
     }
 
     reset() {
@@ -22,6 +23,7 @@ export class LevelGridProvider extends GridProvider {
             this.grid = this.initial;
             this.initial = null;
             this.gridChanged();
+            this.isInitial.set(true);
         }
     }
 }

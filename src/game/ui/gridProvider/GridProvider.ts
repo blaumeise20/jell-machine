@@ -5,6 +5,7 @@ import { Direction } from "@core/coord/direction";
 import { Off, Pos, Position } from "@core/coord/positions";
 import { Size } from "@core/coord/size";
 import { $config } from "@utils/config";
+import { writable } from "svelte/store";
 
 export const MAX_UNDO_STACK_SIZE = 30;
 
@@ -12,6 +13,7 @@ export abstract class GridProvider {
     public grid: CellGrid;
     public undoStack: CellChange[];
     public prevUpdateTime: number = 0;
+    public isInitial = writable(true);
 
     constructor(grid: CellGrid) {
         this.grid = grid;
