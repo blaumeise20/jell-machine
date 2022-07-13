@@ -17,6 +17,10 @@ export class CellType {
         return this.options.data;
     }
 
+    public get rawId() {
+        return this.options.__rawId ?? this.id;
+    }
+
     public get behavior() {
         return this.options.behavior;
     }
@@ -92,6 +96,7 @@ export class CellType {
 
 export interface CellTypeOptions {
     id: string;
+    __rawId?: number;
     name: string;
     description?: string;
     behavior: typeof Cell;

@@ -133,6 +133,7 @@ module.exports = {
             "electron",
             "path",
             "fs",
+            "zlib",
         ]),
     ],
     resolve: {

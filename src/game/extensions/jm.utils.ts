@@ -16,10 +16,12 @@ import { Events } from "@core/events";
 import { Slot } from "@core/slot";
 import { makeNumberEncoder } from "@core/numbers";
 import { gridProvider } from "../ui/uiState";
+import { deflateRawSync, inflateRawSync } from "zlib";
 
 export function load() {
     const orientator = CellType.create({
         id: "jm.utils.orientator",
+        __rawId: 10,
         name: "Orientator",
         description: "Rotates all four touching cells in the direction it is looking.",
         behavior: class OrientatorCell extends Cell {
@@ -40,6 +42,7 @@ export function load() {
 
     const disabler = CellType.create({
         id: "jm.utils.disabler",
+        __rawId: 11,
         name: "Disabler",
         description: "Prevents the four touching cells from executing it's action.",
         behavior: class DisablerCell extends Cell {
@@ -331,6 +334,7 @@ export function load() {
 
     const piston = CellType.create({
         id: "jm.utils.piston",
+        __rawId: 12,
         name: "Piston",
         description: "Pushes cells in the direction it is facing if enabled. Can be enabled/disabled by pushing from behind. Acts like a trash on that side.\nCan't be moved/rotated while extended.",
         // Extends and retracts if a cell comes in from behind.
@@ -426,6 +430,7 @@ export function load() {
 
     const stickyPiston = CellType.create({
         id: "jm.utils.sticky_piston",
+        __rawId: 13,
         name: "Sticky Piston",
         description: "Pushes cells in the direction it is facing if enabled. Otherwise pulls the cell one cell away. Can be enabled/disabled by pushing from behind. Acts like a trash on that side.\nCan't be moved/rotated while extended.",
         // Sticky piston is like normal piston, but pulls the cell when retracting.
@@ -575,149 +580,158 @@ export function load() {
 
     LevelCode.create("J1")
         .import((parts, grid) => {
-            grid.size = new Size(decodeJ1Num(parts[1]), decodeJ1Num(parts[2]));
+            if (parts.length == 4) {
+                grid.size = new Size(decode64Num(parts[1]), decode64Num(parts[2]));
 
-            const cellMap = parts[3].split(",");
-            const data = parts[4];
-            let ix = 0;
+                const cellData = inflateRawSync(Buffer.from(parts[3], "base64"));
+                let x = 0;
+                let y = grid.size.height - 1; // TODO: reverse grid coordinates
+                for (let i = 0; i < cellData.length;) {
+                    if (y < 0) {
+                        return false;
+                    }
+                    const char = cellData[i++];
+                    if (char == 0x45) { // E
+                        // Do nothing.
+                    }
+                    else if (char == 0x43 || char == 0x63) { // C or c
+                        let type: CellType = undefined!;
+                        if (char == 0x43) { // C
+                            const id = cellData[i++];
+                            type = Registry.getCells().find(c => c.rawId == id)!;
+                        }
+                        else { // c
+                            const ix = cellData.indexOf(0x01, i); // end of string
+                            const id = cellData.slice(i, ix);
+                            type = Registry.getCell(id.toString("ascii"))!;
+                            i = ix + 1;
+                        }
 
-            function loadCell(value: number, placable: boolean, count: number) {
-                value = value - 1;
+                        if (!type) type = Registry.getCell("?")!;
 
-                const direction = value % 4;
-                const cellIx = (value-direction) / 4;
+                        const dir = cellData[i++] - 0x41;
+                        grid.loadCell(Pos(x, y), type, dir);
+                    }
 
-                let cellId = cellMap[cellIx];
-                if (!cellId) throw new Error();
-                if (cellId[0] == ".") {
-                    if (cellId[1] == ".")
-                        cellId = "jm.utils" + cellId.substr(1);
-                    else
-                        cellId = "jm.core" + cellId;
-                }
-                let cell = Registry.getCell(cellId);
-                if (!cell) cell = Registry.getCell("?")!;
+                    if (cellData[i] == 0x50) { // P
+                        grid.tiles.set(Pos(x, y), Tile.Placable);
+                    }
 
-                while (count--) {
-                    const pos = Pos(ix % grid.size.width, Math.floor(ix / grid.size.width));
-
-                    if (placable) grid.tiles.set(pos, Tile.Placable);
-                    if (value >= 0) grid.loadCell(pos, cell, direction);
-
-                    ix++;
+                    x++;
+                    if (x >= grid.size.width) {
+                        x = 0;
+                        y--;
+                    }
                 }
             }
+            else {
+                // Old J1 support
+                grid.size = new Size(decodeJ1Num(parts[1]), decodeJ1Num(parts[2]));
 
-            for (let i = 0; i < data.length;) {
-                let placable = false;
-                let count = 1;
+                const cellMap = parts[3].split(",");
+                const data = parts[4];
+                let ix = 0;
 
-                if (data[i] == ":") {
-                    i++; placable = true;
+                function loadCell(value: number, placable: boolean, count: number) {
+                    value = value - 1;
+
+                    const direction = value % 4;
+                    const cellIx = (value-direction) / 4;
+
+                    let cellId = cellMap[cellIx];
+                    if (!cellId) throw new Error();
+                    if (cellId[0] == ".") {
+                        if (cellId[1] == ".")
+                            cellId = "jm.utils" + cellId.substr(1);
+                        else
+                            cellId = "jm.core" + cellId;
+                    }
+                    let cell = Registry.getCell(cellId);
+                    if (!cell) cell = Registry.getCell("?")!;
+
+                    while (count--) {
+                        const pos = Pos(ix % grid.size.width, Math.floor(ix / grid.size.width));
+
+                        if (placable) grid.tiles.set(pos, Tile.Placable);
+                        if (value >= 0) grid.loadCell(pos, cell, direction);
+
+                        ix++;
+                    }
                 }
 
-                const value = decodeJ1Num(data[i++]);
+                for (let i = 0; i < data.length;) {
+                    let placable = false;
+                    let count = 1;
 
-                if (data[i] == ">") {
-                    i++;
-                    count = decodeJ1Num(data[i++]) + 4;
+                    if (data[i] == ":") {
+                        i++; placable = true;
+                    }
+
+                    const value = decodeJ1Num(data[i++]);
+
+                    if (data[i] == ">") {
+                        i++;
+                        count = decodeJ1Num(data[i++]) + 4;
+                    }
+                    else if (data[i] == "<") {
+                        i++;
+                        let ct = "";
+
+                        while (data[i] != ">") ct += data[i++];
+                        i++;
+
+                        count = decodeJ1Num(ct) + 4;
+                    }
+
+                    loadCell(value, placable, count);
                 }
-                else if (data[i] == "<") {
-                    i++;
-                    let ct = "";
 
-                    while (data[i] != ">") ct += data[i++];
-                    i++;
-
-                    count = decodeJ1Num(ct) + 4;
-                }
-
-                loadCell(value, placable, count);
+                grid.description = parts[5]?.trim() || "";
+                grid.name = parts[6]?.trim() || "";
             }
-
-            grid.description = parts[5]?.trim() || "";
-            grid.name = parts[6]?.trim() || "";
             return true;
         })
         .export(grid => {
-            const cellMap: string[] = [];
-            const cellArr: string[] = [];
-
-            for (let y = 0; y < grid.size.height; y++) {
+            const cellData: number[] = [];
+            for (let y = grid.size.height - 1; y >= 0; y--) { // TODO: reverse grid coordinates
                 for (let x = 0; x < grid.size.width; x++) {
                     const pos = Pos(x, y);
                     const cell = grid.cells.get(pos);
-                    let ct = "";
 
-                    if (grid.tiles.get(pos) == Tile.Placable) ct += ":";
-
+                    // id
                     if (cell) {
-                        let cellIx = cellMap.indexOf(cell.type.id);
-                        if (cellIx == -1) { cellMap.push(cell.type.id); cellIx = cellMap.length - 1; }
-
-                        ct += encodeJ1Num((cellIx * 4 + cell.direction) + 1);
-                    }
-                    else ct += encodeJ1Num(0);
-
-                    cellArr.push(ct);
-                }
-            }
-
-            for (let i = 0; i < cellMap.length; i++) {
-                if (cellMap[i].startsWith("jm.utils")) {
-                    cellMap[i] = "." + cellMap[i].substr(8);
-                }
-                else if (cellMap[i].startsWith("jm.core")) {
-                    cellMap[i] = cellMap[i].substr(7);
-                }
-            }
-
-            let length = cellArr.length;
-            while (cellArr[length - 1] == "0" && length > 0) length--;
-            cellArr.length = length;
-
-
-            const cellsText: string[] = [];
-            let prev = "";
-            let count = 1;
-            for (let i = 0; i <= cellArr.length; i++) {
-                const ca = cellArr[i];
-
-                if (ca == prev) {
-                    count++;
-                }
-                else {
-                    if (prev !== "") {
-                        cellsText.push(prev);
-                        if (count == 2) cellsText.push(prev);
-                        else if (count == 3) cellsText.push(prev, prev);
-                        if (count > 3) {
-                            const num = encodeJ1Num(count - 4);
-                            if (num.length == 1) cellsText.push(">" + num);
-                            else cellsText.push("<" + num + ">");
+                        const id = cell.type.rawId;
+                        if (typeof id == "number") {
+                            cellData.push(0x43); // C
+                            cellData.push(id);
                         }
+                        else {
+                            cellData.push(0x63); // c
+                            for (let i = 0; i < id.length; i++) {
+                                cellData.push(id.charCodeAt(i));
+                            }
+                            cellData.push(0x01); // end of string
+                        }
+                        cellData.push(cell.direction + 0x41); // direction + A
+                    }
+                    else {
+                        cellData.push(0x45); // E
                     }
 
-                    count = 1;
-                    prev = ca;
+                    if (grid.tiles.get(pos) == Tile.Placable) {
+                        cellData.push(0x50); // P
+                    }
                 }
             }
+
+            const compressed = deflateRawSync(Buffer.from(cellData)).toString("base64");
 
             const result = [
                 "J1",
-                encodeJ1Num(grid.size.width),
-                encodeJ1Num(grid.size.height),
-                cellMap.join(","),
-                cellsText.join(""),
+                encode64Num(grid.size.width),
+                encode64Num(grid.size.height),
+                compressed,
             ];
-            const description = grid.description.trim();
-            if (description) {
-                result.push(description);
-
-                const name = grid.name.trim();
-                if (name) result.push(name);
-            }
-
             return result.join(";");
         });
 
@@ -800,4 +814,7 @@ function _canOpen(grid: CellGrid) {
 
 const codeJ1 = makeNumberEncoder("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,.-_+*#'!\"$%&/()=?[]|{}");
 const decodeJ1Num = codeJ1.decode;
-const encodeJ1Num = codeJ1.encode;
+// const encodeJ1Num = codeJ1.encode;
+const code64 = makeNumberEncoder("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
+const decode64Num = code64.decode;
+const encode64Num = code64.encode;

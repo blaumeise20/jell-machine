@@ -14,6 +14,7 @@ import { makeNumberEncoder } from "@core/numbers";
 export function load() {
     const generator = CellType.create({
         id: "jm.core.generator",
+        __rawId: 0,
         name: "Generator",
         description: "Generates the cell behind to the front.",
         behavior: class GeneratorCell extends Cell {
@@ -43,6 +44,7 @@ export function load() {
 
     const mover = CellType.create({
         id: "jm.core.mover",
+        __rawId: 1,
         name: "Mover",
         description: "Moves forward one cell and pushes all cells in the way.",
         behavior: class MoverCell extends Cell {
@@ -65,6 +67,7 @@ export function load() {
 
     const cwRotator = CellType.create({
         id: "jm.core.cw_rotator",
+        __rawId: 2,
         name: "Clockwise Rotator",
         description: "Rotates all four touching cells clockwise.",
         behavior: class RotatorCell extends Cell {
@@ -89,6 +92,7 @@ export function load() {
     });
     const ccwRotator = CellType.create({
         id: "jm.core.ccw_rotator",
+        __rawId: 3,
         name: "Counterclockwise Rotator",
         description: "Rotates all four touching cells counterclockwise.",
         behavior: cwRotator.behavior,
@@ -101,6 +105,7 @@ export function load() {
 
     const push = CellType.create({
         id: "jm.core.push",
+        __rawId: 4,
         name: "Push",
         description: "A simple cell that does nothing. Can be pushed in all directions.",
         behavior: Cell,
@@ -110,6 +115,7 @@ export function load() {
 
     const slide = CellType.create({
         id: "jm.core.slide",
+        __rawId: 5,
         name: "Slide",
         description: "A cell that can only be pushed in two directions.",
         behavior: class SlideCell extends Cell {
@@ -124,6 +130,7 @@ export function load() {
 
     const arrow = CellType.create({
         id: "jm.core.arrow",
+        __rawId: 6,
         name: "Arrow",
         description: "A cell that can only be pushed in one direction.",
         behavior: class ArrowCell extends Cell {
@@ -137,6 +144,7 @@ export function load() {
 
     const enemy = CellType.create({
         id: "jm.core.enemy",
+        __rawId: 7,
         name: "Enemy",
         description: "When pushed, destroys the pushing cell and dies itself. Used in levels and vaults.",
         behavior: class EnemyCell extends Cell {
@@ -153,6 +161,7 @@ export function load() {
 
     const trash = CellType.create({
         id: "jm.core.trash",
+        __rawId: 8,
         name: "Trash",
         description: "Deletes all incoming cells. Does not die itself.",
         behavior: class TrashCell extends Cell {
@@ -167,6 +176,7 @@ export function load() {
 
     const wall = CellType.create({
         id: "jm.core.wall",
+        __rawId: 9,
         name: "Wall",
         description: "Can't be pushed nor rotated",
         behavior: class WallCell extends Cell {
