@@ -22,10 +22,10 @@ export function renderGrid(
     const cx = gridCenter.x;
     const cy = gridCenter.y;
     const tex = currentTextures;
-    const sx = clamp(0, Math.floor(cx + (0 - hWidth) / cellSize), grid.size.width - 1);
-    const sy = clamp(0, Math.floor(cy - (hHeight) / cellSize), grid.size.height - 1);
-    const ex = clamp(0, Math.ceil(cx + (hWidth) / cellSize) + 1, grid.size.width - 1);
-    const ey = clamp(0, Math.ceil(cy - (0 - hHeight) / cellSize) + 1, grid.size.height - 1);
+    const sx = clamp(0, Math.floor(cx + (0 - hWidth) / cellSize), grid.size.width);
+    const sy = clamp(0, Math.floor(cy - (hHeight) / cellSize), grid.size.height);
+    const ex = clamp(0, Math.ceil(cx + (hWidth) / cellSize), grid.size.width);
+    const ey = clamp(0, Math.ceil(cy - (0 - hHeight) / cellSize), grid.size.height);
     const halfSize = cellSize / 2;
     const halfPi = Math.PI / 2;
 
