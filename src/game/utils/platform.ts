@@ -53,3 +53,8 @@ export function resolvePath(...paths: string[]): string {
     }
     return result;
 }
+
+export function quit() {
+    if (electronIpc)
+        electronIpc.send("QUIT");
+}

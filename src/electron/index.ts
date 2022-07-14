@@ -47,3 +47,7 @@ app.on("window-all-closed", () => {
 ipcMain.on("ERR", (_, data) => {
     console.log(data);
 });
+
+ipcMain.on("QUIT", (_, __) => {
+    app.quit();
+});
