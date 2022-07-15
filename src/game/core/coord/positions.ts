@@ -27,7 +27,7 @@ export class PosMap<T> {
         return this.store[`${x},${y}`];
     }
     has(key: Position): boolean {
-        return this.store[`${key.x},${key.y}`] !== undefined;
+        return `${key.x},${key.y}` in this.store;
     }
     set(key: Position, value: T): this {
         this.store[`${key.x},${key.y}`] = value;
