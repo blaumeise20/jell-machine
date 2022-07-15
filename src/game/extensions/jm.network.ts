@@ -2,7 +2,7 @@ import { Cell } from "@core/cells/cell";
 import { CellType } from "@core/cells/cellType";
 import { UpdateType } from "@core/cells/cellUpdates";
 import { Off } from "@core/coord/positions";
-import { Slot } from "@core/slot";
+// import { Slot } from "@core/slot";
 import arr from "create-arr";
 
 const PORT = 8080;
@@ -49,7 +49,13 @@ export function load() {
                     })),
                 };
 
-                const response = httpGet(`http://localhost:${PORT}/`, JSON.stringify(requestData))
+                let response: Actions;
+                try {
+                    response = httpGet(`http://localhost:${PORT}/`, JSON.stringify(requestData));
+                }
+                catch {
+                    return;
+                }
 
                 if (Array.isArray(response)) response.forEach(this.doAction.bind(this));
                 else this.doAction(response);
@@ -60,10 +66,11 @@ export function load() {
         updateOrder: 3.1,
     });
 
-    Slot.add(networkMover);
+    networkMover;
+    // Slot.add(networkMover); TODO: explanation
 }
 
-function httpGet(url: string, dataHeader: string): Actions {
+function httpGet(url: string, dataHeader: string): any {
     const req = new XMLHttpRequest();
     req.open("GET", url, false);
     req.setRequestHeader("Cell-Data", dataHeader);
