@@ -336,7 +336,7 @@ export function load() {
         id: "jm.utils.piston",
         __rawId: 12,
         name: "Piston",
-        description: "Pushes cells in the direction it is facing if enabled. Can be enabled/disabled by pushing from behind, which deletes the incoming cell.\nCan't be moved/rotated while extended.",
+        description: "Pushes cells in the direction it is facing if extended. Can extend/retract by a cell entering from behind, which deletes the incoming cell.\nCan't be moved nor rotated while extended.",
         // Extends and retracts if a cell comes in from behind.
         // If extended it is immovable.
 
@@ -432,7 +432,7 @@ export function load() {
         id: "jm.utils.sticky_piston",
         __rawId: 13,
         name: "Sticky Piston",
-        description: "Pushes cells in the direction it is facing if enabled. Otherwise pulls the cell one cell away. Can be enabled/disabled by pushing from behind, which deletes the incoming cell.\nCan't be moved/rotated while extended.",
+        description: "Pushes cells in the direction it is facing if extended. If retracted, it pulls the cell one cell away. Can extend/retract by a cell entering from behind, which deletes the incoming cell.\nCan't be moved nor rotated while extended.",
         // Sticky piston is like normal piston, but pulls the cell when retracting.
 
         behavior: class StickyPistonCell extends Cell {
