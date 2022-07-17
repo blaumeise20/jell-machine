@@ -635,7 +635,7 @@ export function load() {
                 function loadCell(value: number, placable: boolean, count: number) {
                     value = value - 1;
 
-                    const direction = value & 3;
+                    const direction = value % 4;
                     const cellIx = (value-direction) / 4;
 
                     let cellId = cellMap[cellIx];
