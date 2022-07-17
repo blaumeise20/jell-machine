@@ -19,7 +19,7 @@ export function load() {
                         this.push(action.dir ?? this.direction, 1);
                         break;
                     case "rotate":
-                        this.setRotation(action.dir ?? ((this.direction + (action.amount ?? 1)) % 4 + 4) % 4);
+                        this.setRotation(action.dir ?? (this.direction + (action.amount ?? 1)) & 3);
                         break;
                     case "generate":
                         break;

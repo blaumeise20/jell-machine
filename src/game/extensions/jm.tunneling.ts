@@ -11,9 +11,9 @@ export function load() {
         description: "Redirects the input from one side to the other. Cells pushed through it get rotated.",
         behavior: class RedirectorCell extends Cell {
             override getPos(dir: Direction) {
-                if (dir == (this.direction + 2) % 4) return super.getCellTo((this.direction + 1) % 4);
+                if (dir == ((this.direction + 2) & 3)) return super.getCellTo((this.direction + 1) & 3);
 
-                if (dir == (this.direction + 3) % 4) return super.getCellTo(this.direction);
+                if (dir == ((this.direction + 3) & 3)) return super.getCellTo(this.direction);
 
                 return super.getPos(dir);
             }
@@ -69,13 +69,13 @@ export function load() {
         description: "Two stacked redirectors. Rotates cells going through.",
         behavior: class CrossdirectorCell extends Cell {
             override getPos(dir: Direction) {
-                if (dir == this.direction) return super.getCellTo((this.direction + 3) % 4);
+                if (dir == this.direction) return super.getCellTo((this.direction + 3) & 3);
 
-                if (dir == (this.direction + 1) % 4) return super.getCellTo((this.direction + 2) % 4);
+                if (dir == ((this.direction + 1) & 3)) return super.getCellTo((this.direction + 2) & 3);
 
-                if (dir == (this.direction + 2) % 4) return super.getCellTo((this.direction + 1) % 4);
+                if (dir == ((this.direction + 2) & 3)) return super.getCellTo((this.direction + 1) & 3);
 
-                if (dir == (this.direction + 3) % 4) return super.getCellTo(this.direction);
+                if (dir == ((this.direction + 3) & 3)) return super.getCellTo(this.direction);
 
                 return super.getPos(dir);
             }

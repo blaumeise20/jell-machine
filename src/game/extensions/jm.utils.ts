@@ -267,7 +267,7 @@ export function load() {
         description: "Randomly rotates the cell infront of it.",
         behavior: class RandomCell extends Cell {
             override update() {
-                const pos = this.getCellTo((Direction.Right + this.direction) % 4);
+                const pos = this.getCellTo(this.direction);
                 if (!pos) return;
 
                 this.grid.cells.get(pos[0])?.rotate(Math.random() > 0.5 ? 1 : -1);
@@ -473,7 +473,7 @@ export function load() {
                         const front = cell.getCellTo(cell.direction);
                         cell.rm();
                         if (front) {
-                            this.grid.cells.get(front[0])?.push((front[1] + 2) % 4, 1);
+                            this.grid.cells.get(front[0])?.push((front[1] + 2) & 3, 1);
                         }
                     }
 
@@ -635,7 +635,7 @@ export function load() {
                 function loadCell(value: number, placable: boolean, count: number) {
                     value = value - 1;
 
-                    const direction = value % 4;
+                    const direction = value & 3;
                     const cellIx = (value-direction) / 4;
 
                     let cellId = cellMap[cellIx];
