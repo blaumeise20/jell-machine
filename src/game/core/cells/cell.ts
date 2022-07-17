@@ -114,7 +114,9 @@ export class Cell {
     }
 
     setRotation(amount: number) {
-        this.rotationOffset = (amount - this.direction) & 3;
+        const diff = (amount - this.direction) & 3;
+        this.rotationOffset = diff > 2 ? diff - 4 : diff;
+        console.log(this.rotationOffset, diff);
         this.direction = amount & 3;
     }
 
