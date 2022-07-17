@@ -724,7 +724,13 @@ export function load() {
                 }
             }
 
-            const compressed = deflateRawSync(Buffer.from(cellData)).toString("base64");
+            const compressed = deflateRawSync(
+                Buffer.from(cellData),
+                {
+                    level: 9,
+                    memLevel: 9,
+                },
+            ).toString("base64");
 
             const result = [
                 "J1",
