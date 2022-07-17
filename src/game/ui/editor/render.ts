@@ -7,6 +7,7 @@ import { currentTextures } from "@utils/texturePacks";
 
 export function renderGrid(
     ctx: CanvasRenderingContext2D,
+    bgMap: CanvasPattern,
     grid: CellGrid,
     _zoom: number,
     cellSize: number,
@@ -32,14 +33,30 @@ export function renderGrid(
     // Draw grid
     const t_bg = tex.cells["bg"].bitmap;
     const t_placable = tex.cells["placable"].bitmap;
-    for (let x = sx; x < ex; x++) {
-        for (let y = sy; y < ey; y++) {
-            if (grid.cells.getXY(x, y)?.type.id == "_") continue;
-
+    const x = Math.floor(hWidth + (sx - cx) * cellSize);
+    const y = Math.floor(hHeight - (ey - cy + 1) * cellSize);
+    bgMap.setTransform({
+        a: cellSize / t_bg.width,
+        d: cellSize / t_bg.height,
+        e: x,
+        f: y,
+    });
+    ctx.fillStyle = bgMap;
+    ctx.beginPath();
+    ctx.rect(
+        x,
+        y,
+        Math.ceil(hWidth + (ex - cx) * cellSize) - x,
+        Math.ceil(hHeight - (sy - cy) * cellSize) - y,
+    );
+    ctx.closePath();
+    ctx.fill();
+    for (const [pos, tile] of grid.tiles.entries()) {
+        if (tile == Tile.Placable) {
             ctx.drawImage(
-                grid.tiles.getXY(x, y) == Tile.Placable ? t_placable : t_bg,
-                Math.floor(hWidth + (x - cx) * cellSize),
-                Math.floor(hHeight - (y - cy + 1) * cellSize),
+                t_placable,
+                Math.floor(hWidth + (pos.x - cx) * cellSize),
+                Math.floor(hHeight - (pos.y - cy + 1) * cellSize),
                 cellSize,
                 cellSize,
             );
@@ -58,11 +75,9 @@ export function renderGrid(
                 const centerX = cellX + halfSize;
                 const centerY = cellY + halfSize;
                 ctx.save();
-                // if (cell.direction != Direction.Right) {
-                    ctx.translate(centerX, centerY);
-                    ctx.rotate(lerp(cell.direction - cell.rotationOffset, cell.direction, t) * halfPi);
-                    ctx.translate(-centerX, -centerY);
-                // }
+                ctx.translate(centerX, centerY);
+                ctx.rotate(lerp(cell.direction - cell.rotationOffset, cell.direction, t) * halfPi);
+                ctx.translate(-centerX, -centerY);
                 ctx.drawImage(
                     tex.cells[cell.type.getTex(cell)].bitmap,
                     cellX,

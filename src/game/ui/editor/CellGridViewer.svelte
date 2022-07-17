@@ -14,6 +14,7 @@
     import { clipboard } from "../uiState";
     import { CellChange } from "@core/cells/cellChange";
     import { renderGrid } from "./render";
+    import { currentTextures } from "@utils/texturePacks";
 
     export let grid: CellGrid;
     export let gridProvider: GridProvider;
@@ -76,9 +77,11 @@
     let frame: number;
     let canvas: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D;
+    let bgTextureMap: CanvasPattern;
     $: if (canvas) {
         ctx = canvas.getContext("2d")!;
         ctx.imageSmoothingQuality = "high";
+        bgTextureMap = ctx.createPattern(currentTextures.cells["bg"].bitmap, "repeat")!;
     }
     onMount(() => {
         previousTime = performance.now();
@@ -152,6 +155,7 @@
         // rendering
         renderGrid(
             ctx,
+            bgTextureMap,
             grid,
             zoom,
             CELL_SIZE * zoom * DISPLAY_RATIO,
