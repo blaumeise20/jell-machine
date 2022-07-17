@@ -8,11 +8,8 @@
     import { Off, Pos, toPos } from "@core/coord/positions";
     import { rotation, selectedCell } from "./GameControls.svelte";
     import { Size } from "@core/coord/size";
-    import { Events } from "@core/events";
     import { GridProvider } from "../gridProvider/GridProvider";
-    import { Cell } from "@core/cells/cell";
     import { clipboard } from "../uiState";
-    import { CellChange } from "@core/cells/cellChange";
     import { renderGrid } from "./render";
     import { currentTextures } from "@utils/texturePacks";
 
@@ -34,7 +31,6 @@
     const gridOffset = { left: 0, bottom: 0 };
     let zoom = 1;
     let mouseButton = -1;
-    let undoItem = new CellChange();
 
     // camera: move keys
     const moving = {
@@ -120,35 +116,12 @@
         // camera: placing
         if (placeCell) {
             if (mouseButton == 0) {
-                if (keys.shift) {
-                    grid.tiles.set(clickedCell, Tile.Placable);
-                }
-                else {
-                    // TODO
-                    const originalCell = grid.cells.get(clickedCell);
-                    if (!originalCell || originalCell.type != $selectedCell || originalCell.direction != $rotation) {
-                        if (grid.isInfinite || grid.size.contains(clickedCell)) {
-                            const cell = grid.loadCell(clickedCell, $selectedCell, $rotation)!;
-                            Events.emit("cell-placed", clickedCell, cell);
-                            gridProvider.cellPlaced(clickedCell, cell as Cell);
-                            undoItem.addCell(clickedCell, originalCell);
-                        }
-                    }
-                }
+                if (keys.shift) grid.tiles.set(clickedCell, Tile.Placable);
+                else gridProvider.placeCell(clickedCell, $selectedCell, $rotation);
             }
             else if (mouseButton == 2) {
                 if (keys.shift) grid.tiles.delete(clickedCell);
-                else {
-                    // TODO
-                    const cell = grid.cells.get(clickedCell);
-                    if (cell) {
-                        cell.rm();
-                        Events.emit("cell-deleted", clickedCell, cell);
-                        gridProvider.cellPlaced(clickedCell, null);
-                        undoItem.addCell(clickedCell, cell);
-                    }
-                }
-
+                else gridProvider.placeCell(clickedCell, null);
             }
         }
 
@@ -190,8 +163,9 @@
 
     // selection clipboard: cut/copy/paste
     on("x").and(modifiers.cmdOrCtrl).when(() => showSelectionBox).down(() => {
-        $clipboard = grid.cloneArea(selectionSize, true);
+        $clipboard = grid.cloneArea(selectionSize);
         gridProvider.clearArea(selectionSize);
+        gridProvider.undoStack.finish();
         showSelectionBox = false;
         placeCell = true;
     });
@@ -218,7 +192,8 @@
         ["arrowup", Direction.Up],
     ] as const) {
         on(key).and(modifiers.alt).when(() => showSelectionBox).down(() => {
-            gridProvider.moveArea(selectionSize, dir); // TODO: multiplayer
+            gridProvider.moveArea(selectionSize, dir);
+            gridProvider.undoStack.finish();
             const offset = Off[dir];
             mouseAnchor.x += offset.x;
             mouseAnchor.y += offset.y;
@@ -255,23 +230,8 @@
 
         if (pasteboard) {
             if (e.button != 2) {
-                // TODO
-                for (const cell of pasteboard.cells.values()) {
-                    const newPos = Pos(cell.pos.x + selectionPos.x, cell.pos.y + selectionPos.y);
-                    const cellAt = grid.cells.get(newPos);
-                    let newCell: Cell | false;
-                    if (cellAt && keys.ctrl) {
-                        const newData = cellAt.type.merge(cellAt, cell);
-                        newCell = grid.loadCell(newPos, newData[0], newData[1]);
-                    }
-                    else {
-                        newCell = grid.loadCell(cell.pos.mi(selectionPos), cell.type, cell.direction);
-                    }
-                    if (newCell) {
-                        Events.emit("cell-placed", cell.pos, newCell);
-                        gridProvider.cellPlaced(newPos, newCell);
-                    }
-                }
+                gridProvider.insertArea(selectionPos, pasteboard, keys.ctrl);
+                gridProvider.undoStack.finish();
             }
             pasteboard = null;
             placeCell = false;
@@ -286,9 +246,8 @@
     }
     function mouseupEvent(_e: MouseEvent) {
         mouseButton = -1;
+        if (placeCell) gridProvider.undoStack.finish();
         placeCell = !showSelectionBox;
-        gridProvider.addUndoItem(undoItem);
-        undoItem = new CellChange();
     }
 </script>
 

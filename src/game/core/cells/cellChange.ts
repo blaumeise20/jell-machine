@@ -27,3 +27,29 @@ export class CellChange {
         }
     }
 }
+
+export class UndoStack {
+    public stack: CellChange[];
+    public current: CellChange;
+
+    constructor() {
+        this.stack = [];
+        this.current = new CellChange();
+    }
+
+    public addCell(pos: Position, cell: Cell | null) {
+        this.current.addCell(pos, cell);
+    }
+
+    public finish() {
+        this.stack.push(this.current);
+        this.current = new CellChange();
+    }
+
+    public undoOn(grid: CellGrid, callback: (pos: Position, cell: Cell | null) => void) {
+        const item = this.stack.pop();
+        if (!item) return false;
+        item.undoOn(grid, callback);
+        return true;
+    }
+}
