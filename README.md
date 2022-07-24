@@ -27,44 +27,42 @@ It includes all features of Mystic Mod, but many other suggestions from the Myst
 The main goal is to improve user experience, so new cells might take some time to get added.
 
 ## Controls
-Left click: place cell
+* **Left click**: Place cell
 
-Right click: delete cell
+* **Right click**: Delete cell
 
-Shift+click: edit placables
+* **Shift+click**: Edit placables
 
-WASD: move camera
+* **WASD/Arrow Keys**: Move camera
 
-Arrow keys: move camera
+* **Scroll**: Zoom
 
-Scroll: zoom
+* **Q or E**: Rotate cell
 
-Q or E: rotate cell
+* **Ctrl+drag**: Select area
 
-Ctrl+drag: select area
+* **Cmd/Ctrl+C**: Copy selected area
 
-Cmd/Ctrl+C: copy selected area
+* **Cmd/Ctrl+X**: Cut selected area
 
-Cmd/Ctrl+X: cut selected area
+* **Cmd/Ctrl+V**: Paste
 
-Cmd/Ctrl+V: paste
+* **Alt+Arrow keys**: Move selected area
 
-Alt+Arrow keys: move selected area
+* **Q and E (while pasting)**: Rotate selection
 
-Q and E while pasting: rotate selection
+* **R and F (while pasting)**: Flip selection
 
-R and F while pasting: flip selection
+* **ESC**: Open menu
 
-ESC: open menu
+* **F1**: Toggle UI around cells
 
-F1: toggle UI around cells
+* **F2**: Toggle grid
 
-F2: toggle grid
+* **F3**: Toggle debug menu
 
-F3: toggle debug menu
+* **Space**: Toggle simulation
 
-Space: toggle simulation
+* **G**: Step one tick
 
-G: Step one tick
-
-T: Reset
+* **T**: Reset
