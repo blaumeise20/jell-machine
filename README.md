@@ -28,41 +28,22 @@ The main goal is to improve user experience, so new cells might take some time t
 
 ## Controls
 * **Left click**: Place cell
-
 * **Right click**: Delete cell
-
 * **Shift+click**: Edit placables
-
 * **WASD/Arrow Keys**: Move camera
-
 * **Scroll**: Zoom
-
 * **Q or E**: Rotate cell
-
 * **Ctrl+drag**: Select area
-
 * **Cmd/Ctrl+C**: Copy selected area
-
 * **Cmd/Ctrl+X**: Cut selected area
-
 * **Cmd/Ctrl+V**: Paste
-
 * **Alt+Arrow keys**: Move selected area
-
 * **Q and E (while pasting)**: Rotate selection
-
 * **R and F (while pasting)**: Flip selection
-
 * **ESC**: Open menu
-
 * **F1**: Toggle UI around cells
-
 * **F2**: Toggle grid
-
 * **F3**: Toggle debug menu
-
 * **Space**: Toggle simulation
-
 * **G**: Step one tick
-
 * **T**: Reset
