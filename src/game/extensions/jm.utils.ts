@@ -64,7 +64,8 @@ export function load() {
     const audioContext = new AudioContext();
     const gainNode = audioContext.createGain();
     gainNode.connect(audioContext.destination);
-    const oscillators: OscillatorNode[] = [];
+    const oscillators: [GainNode, OscillatorNode][] = [];
+    let playingNotes = 0;
 
     const notes = {
         // "C3":   130.81,
@@ -192,13 +193,14 @@ export function load() {
     };
     const noteNames = Object.keys(notes);
     const play = (note: keyof typeof notes) => {
+        const gain = audioContext.createGain();
         const oscillator = audioContext.createOscillator();
         oscillator.type = "sine";
         oscillator.frequency.value = notes[note];
-        oscillator.connect(gainNode);
+        oscillator.connect(gain);
+        gain.connect(gainNode);
 
-        oscillators.push(oscillator);
-        gainNode.gain.value = 1 / oscillators.length;
+        oscillators.push([gain, oscillator]);
     };
     const noteTicks = new Set<keyof typeof notes>();
 
@@ -224,8 +226,19 @@ export function load() {
         noteTicks.clear();
 
         oscillators.forEach(oscillator => {
-            oscillator.start();
-            setTimeout(() => oscillator.stop(), $config.tickSpeed);
+            playingNotes++;
+            gainNode.gain.value = 1 / playingNotes;
+            oscillator[1].start();
+            setTimeout(() => {
+                oscillator[0].gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.1);
+                setTimeout(() => {
+                    oscillator[1].stop();
+                    oscillator[1].disconnect();
+                    oscillator[0].disconnect();
+                    playingNotes--;
+                    gainNode.gain.value = 1 / playingNotes;
+                }, 100);
+            }, $config.tickSpeed * $config.troh);
         });
 
         oscillators.length = 0;
