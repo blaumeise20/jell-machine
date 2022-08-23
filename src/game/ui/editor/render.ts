@@ -34,7 +34,7 @@ export function renderGrid(
     const t_bg = tex.cells["bg"].bitmap;
     const t_placable = tex.cells["placable"].bitmap;
     const x = Math.floor(hWidth + (sx - cx) * cellSize);
-    const y = Math.floor(hHeight - (ey - cy + 1) * cellSize);
+    const y = Math.floor(hHeight - (ey - cy) * cellSize);
     bgMap.setTransform({
         a: cellSize / t_bg.width,
         d: cellSize / t_bg.height,
