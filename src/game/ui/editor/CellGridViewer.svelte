@@ -12,6 +12,7 @@
     import { clipboard } from "../uiState";
     import { renderGrid } from "./render";
     import { currentTextures } from "@utils/texturePacks";
+    import { config } from "@utils/config";
 
     export let grid: CellGrid;
     export let gridProvider: GridProvider;
@@ -92,15 +93,18 @@
         // camera: move calculations
         let x = center.x;
         let y = center.y;
-        const offset = CELLS_PER_SECOND / zoom * (delta / 1000);
+        let offset = CELLS_PER_SECOND / zoom * (delta / 1000);
+        if ($config.keyboardOnly) offset = offset / 1.5;
         if (moving.up || moving2.up) y += offset;
         if (moving.right || moving2.right) x += offset;
         if (moving.down || moving2.down) y -= offset;
         if (moving.left || moving2.left) x -= offset;
 
         // camera: placing calculations
-        const pixelDistX = mouse.x - editorSize.width / 2;
-        const pixelDistY = mouse.y - editorSize.height / 2;
+        const mouseX = $config.keyboardOnly ? editorSize.width / 2 : mouse.x;
+        const mouseY = $config.keyboardOnly ? editorSize.height / 2 : mouse.y;
+        const pixelDistX = mouseX - editorSize.width / 2;
+        const pixelDistY = mouseY - editorSize.height / 2;
         const cellDistX = pixelDistX / CELL_SIZE / zoom;
         const cellDistY = pixelDistY / CELL_SIZE / zoom;
         const cellX = center.x + cellDistX;
@@ -115,14 +119,22 @@
 
         // camera: placing
         if (placeCell) {
-            if (mouseButton == 0) {
+            if (mouseButton == 0 || placingKeys.o) {
                 if (keys.shift) grid.tiles.set(clickedCell, Tile.Placable);
                 else gridProvider.placeCell(clickedCell, $selectedCell, $rotation);
             }
-            else if (mouseButton == 2) {
+            else if (mouseButton == 2 || placingKeys.p) {
                 if (keys.shift) grid.tiles.delete(clickedCell);
                 else gridProvider.placeCell(clickedCell, null);
             }
+        }
+
+        // camera: zooming
+        if (zoomingKeys.u) {
+            zoom = zoom / (1 + (ZOOM_SPEED/delta) / ZOOM_SPEED);
+        }
+        else if (zoomingKeys.j) {
+            zoom = zoom * (1 + (ZOOM_SPEED/delta) / ZOOM_SPEED);
         }
 
         // rendering
@@ -160,6 +172,8 @@
         Math.round(mousePosition.x - pasteboard.size.width / 2),
         Math.round(mousePosition.y - pasteboard.size.height / 2)
     ) : Pos(0, 0);
+
+    const tabKey = on("tab").observe();
 
     // selection clipboard: cut/copy/paste
     on("x").and(modifiers.cmdOrCtrl).when(() => showSelectionBox).down(() => {
@@ -223,6 +237,9 @@
         }
         zoom = Math.min(zoom, MAX_ZOOM);
     }
+    const zoomingKeys = { u: false, j: false };
+    on("u").when(() => $config.keyboardOnly).observe(zoomingKeys, "u");
+    on("j").when(() => $config.keyboardOnly).observe(zoomingKeys, "j");
 
     // camera: placing/inserting
     function mousedownEvent(e: MouseEvent) {
@@ -240,7 +257,7 @@
             mouseButton = e.button;
             mouseAnchor.x = Math.floor(mousePosition.x);
             mouseAnchor.y = Math.floor(mousePosition.y);
-            showSelectionBox = keys.ctrl;
+            showSelectionBox = $tabKey;
             if (showSelectionBox) placeCell = false;
         }
     }
@@ -249,6 +266,9 @@
         if (placeCell) gridProvider.undoStack.finish();
         placeCell = !showSelectionBox;
     }
+    const placingKeys = { o: false, p: false };
+    on("o").when(() => $config.keyboardOnly).observe(placingKeys, "o");
+    on("p").when(() => $config.keyboardOnly).observe(placingKeys, "p");
 </script>
 
 <style lang="scss">
@@ -262,13 +282,44 @@
             width: 100%;
             height: 100%;
         }
+
+        .crosshair {
+            height: 0;
+            left: 50%;
+            position: absolute;
+            top: 50%;
+            width: 0;
+            transform: scale(var(--ui-scale));
+
+            &::before {
+                background: #fff;
+                content: "";
+                height: 2px;
+                left: -10px;
+                position: absolute;
+                top: -1px;
+                width: 20px;
+            }
+            &::after {
+                background: #fff;
+                content: "";
+                height: 20px;
+                left: -1px;
+                position: absolute;
+                top: -10px;
+                width: 2px;
+            }
+        }
     }
 </style>
 
-<div class="cell_editor" bind:this={editorElement} on:wheel={zoomEvent} on:mousedown={mousedownEvent} on:mouseup={mouseupEvent}>
+<div class="cell_editor" style="--ui-scale: {$config.uiScale * 100}%" bind:this={editorElement} on:wheel={zoomEvent} on:mousedown={mousedownEvent} on:mouseup={mouseupEvent}>
     <canvas
         bind:this={canvas}
         width={editorSize.width * DISPLAY_RATIO}
         height={editorSize.height * DISPLAY_RATIO}
     ></canvas>
+    {#if $config.keyboardOnly}
+        <div class="crosshair"></div>
+    {/if}
 </div>

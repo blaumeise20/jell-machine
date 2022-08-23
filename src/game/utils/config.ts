@@ -28,6 +28,7 @@ class ConfigManager {
         texturePack: false as string | false,
         tickSpeed: 200,
         uiScale: 1,
+        keyboardOnly: false,
         animation: true,
         showDebug: false,
         showBackgroundGrid: true,
