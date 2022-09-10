@@ -116,7 +116,7 @@
             <div class="space"></div>
             <button on:click={() => layers = layers.next("settings")}>Settings</button>
             <div class="space"></div>
-            <button on:click={() => quit()}>Quit</button>
+            <button on:click={quit}>Quit</button>
         </div>
         <button class="center help_button big" on:click={() => layers = layers.next("help")}>Help</button>
         <h1 class="tips">{tip}</h1>
