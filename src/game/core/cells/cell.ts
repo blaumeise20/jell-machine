@@ -91,14 +91,14 @@ export class Cell {
         const tc = this.grid.cells.get(pos);
         if (!tc) {
             this.setPosition(pos);
-            if (dir != pushDir) this.direction = (this.direction + (pushDir - dir) + 4) % 4;
+            if (dir != pushDir) this.direction = (this.direction + pushDir - dir) & 3;
             return true;
         }
 
         const res = tc.push(pushDir, bias);
         if (res) {
             this.setPosition(pos);
-            if (dir != pushDir) this.direction = (this.direction + (pushDir - dir) + 4) % 4;
+            if (dir != pushDir) this.direction = (this.direction + pushDir - dir) & 3;
             return true;
         }
         if (res === null) {
@@ -109,13 +109,15 @@ export class Cell {
     }
 
     rotate(amount: number) {
-        this.direction = ((this.direction + amount) % 4 + 4) % 4;
+        this.direction = (this.direction + amount) & 3;
         this.rotationOffset += amount;
     }
 
     setRotation(amount: number) {
-        this.rotationOffset = (amount - this.direction) % 4;
-        this.direction = amount % 4;
+        const diff = (amount - this.direction) & 3;
+        this.rotationOffset = diff > 2 ? diff - 4 : diff;
+        console.log(this.rotationOffset, diff);
+        this.direction = amount & 3;
     }
 
     disable() {

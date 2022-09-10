@@ -24,6 +24,10 @@ export class Size {
         this.left = left;
     }
 
+    get pos() {
+        return new Position(this.left, this.bottom);
+    }
+
     contains(pos: Position) {
         if (this.width == 0 || this.height == 0) {
             return true;

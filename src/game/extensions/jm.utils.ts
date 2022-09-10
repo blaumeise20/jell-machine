@@ -44,7 +44,7 @@ export function load() {
         id: "jm.utils.disabler",
         __rawId: 11,
         name: "Disabler",
-        description: "Prevents the four touching cells from executing it's action.",
+        description: "Prevents the four touching cells from executing their action.",
         behavior: class DisablerCell extends Cell {
             override update() {
                 this.grid.cells.get(this.pos.mi(Direction.Right))?.disable();
@@ -64,7 +64,8 @@ export function load() {
     const audioContext = new AudioContext();
     const gainNode = audioContext.createGain();
     gainNode.connect(audioContext.destination);
-    const oscillators: OscillatorNode[] = [];
+    const oscillators: [GainNode, OscillatorNode][] = [];
+    let playingNotes = 0;
 
     const notes = {
         // "C3":   130.81,
@@ -192,20 +193,21 @@ export function load() {
     };
     const noteNames = Object.keys(notes);
     const play = (note: keyof typeof notes) => {
+        const gain = audioContext.createGain();
         const oscillator = audioContext.createOscillator();
         oscillator.type = "sine";
         oscillator.frequency.value = notes[note];
-        oscillator.connect(gainNode);
+        oscillator.connect(gain);
+        gain.connect(gainNode);
 
-        oscillators.push(oscillator);
-        gainNode.gain.value = 1 / oscillators.length;
+        oscillators.push([gain, oscillator]);
     };
     const noteTicks = new Set<keyof typeof notes>();
 
     const note = CellType.create({
         id: "jm.utils.note",
         name: "Note Cell",
-        description: "Deletes it's inputs but plays a note when doing so.\nPitch is based on the Y-axis.",
+        description: "Deletes its inputs but plays a note when doing so.\nPitch is based on vertical position.",
         behavior: class NoteCell extends Cell {
             override debugText() {
                 return "Note: " + noteNames[this.pos.y % noteNames.length];
@@ -224,8 +226,19 @@ export function load() {
         noteTicks.clear();
 
         oscillators.forEach(oscillator => {
-            oscillator.start();
-            setTimeout(() => oscillator.stop(), $config.tickSpeed);
+            playingNotes++;
+            gainNode.gain.value = 1 / playingNotes;
+            oscillator[1].start();
+            setTimeout(() => {
+                oscillator[0].gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.1);
+                setTimeout(() => {
+                    oscillator[1].stop();
+                    oscillator[1].disconnect();
+                    oscillator[0].disconnect();
+                    playingNotes--;
+                    gainNode.gain.value = 1 / playingNotes;
+                }, 100);
+            }, $config.tickSpeed * $config.troh);
         });
 
         oscillators.length = 0;
@@ -264,10 +277,10 @@ export function load() {
     const random = CellType.create({
         id: "jm.utils.random",
         name: "Random Rotator",
-        description: "Randomly rotates the cell infront of it.",
+        description: "Rotates the cell infront of it either clockwise or counter-clockwise, chosen randomly.",
         behavior: class RandomCell extends Cell {
             override update() {
-                const pos = this.getCellTo((Direction.Right + this.direction) % 4);
+                const pos = this.getCellTo(this.direction);
                 if (!pos) return;
 
                 this.grid.cells.get(pos[0])?.rotate(Math.random() > 0.5 ? 1 : -1);
@@ -299,7 +312,7 @@ export function load() {
     const portal = CellType.create({
         id: "jm.utils.portal",
         name: "Portal",
-        description: "~bDo not use.~R\nTeleports incomming cells to the other portal linked to it. You need to place two portals for it to work.\nAny amount of portal pairs may exist on the grid. (Exporting/resetting is broken)",
+        description: "~bDo not use.~R\nTeleports incoming cells to the other portal linked to it. You need to place two portals for it to work.\nAny amount of portal pairs may exist on the grid. (Exporting/resetting is broken)",
         behavior: PortalCell,
         textureName: "portal",
         textureOverride: c => (c as any).connectedCell ? "portal" : "portalOff",
@@ -336,7 +349,7 @@ export function load() {
         id: "jm.utils.piston",
         __rawId: 12,
         name: "Piston",
-        description: "Pushes cells in the direction it is facing if enabled. Can be enabled/disabled by pushing from behind. Acts like a trash on that side.\nCan't be moved/rotated while extended.",
+        description: "Pushes cells in the direction it is facing if extended. Can extend/retract by a cell entering from behind, which deletes the incoming cell.\nCan't be moved nor rotated while extended.",
         // Extends and retracts if a cell comes in from behind.
         // If extended it is immovable.
 
@@ -432,7 +445,7 @@ export function load() {
         id: "jm.utils.sticky_piston",
         __rawId: 13,
         name: "Sticky Piston",
-        description: "Pushes cells in the direction it is facing if enabled. Otherwise pulls the cell one cell away. Can be enabled/disabled by pushing from behind. Acts like a trash on that side.\nCan't be moved/rotated while extended.",
+        description: "Pushes cells in the direction it is facing if extended. If retracted, it pulls the cell one cell away. Can extend/retract by a cell entering from behind, which deletes the incoming cell.\nCan't be moved nor rotated while extended.",
         // Sticky piston is like normal piston, but pulls the cell when retracting.
 
         behavior: class StickyPistonCell extends Cell {
@@ -473,7 +486,7 @@ export function load() {
                         const front = cell.getCellTo(cell.direction);
                         cell.rm();
                         if (front) {
-                            this.grid.cells.get(front[0])?.push((front[1] + 2) % 4, 1);
+                            this.grid.cells.get(front[0])?.push((front[1] + 2) & 3, 1);
                         }
                     }
 
@@ -724,7 +737,13 @@ export function load() {
                 }
             }
 
-            const compressed = deflateRawSync(Buffer.from(cellData)).toString("base64");
+            const compressed = deflateRawSync(
+                Buffer.from(cellData),
+                {
+                    level: 9,
+                    memLevel: 9,
+                },
+            ).toString("base64");
 
             const result = [
                 "J1",

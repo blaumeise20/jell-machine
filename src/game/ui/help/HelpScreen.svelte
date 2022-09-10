@@ -15,7 +15,7 @@
         ["Arrow keys", "move camera"],
         ["Scroll", "zoom"],
         ["Q or E", "rotate cell"],
-        ["Ctrl+drag", "select area"],
+        ["Tab+drag", "select area"],
         ["Cmd/Ctrl+C", "copy selected area"],
         ["Cmd/Ctrl+X", "cut selected area"],
         ["Cmd/Ctrl+V", "paste"],

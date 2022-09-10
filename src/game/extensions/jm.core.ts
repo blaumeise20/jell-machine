@@ -19,7 +19,7 @@ export function load() {
         description: "Generates the cell behind to the front.",
         behavior: class GeneratorCell extends Cell {
             override update() {
-                const source = this.getCellTo((this.direction + 2) % 4);
+                const source = this.getCellTo((this.direction + 2) & 3);
                 if (!source) return;
                 const [sourcePos, _] = source;
 
@@ -56,7 +56,7 @@ export function load() {
                 if (this.disabled) return super.push(dir, bias);
 
                 if (dir == this.direction) return super.push(dir, bias + 1);
-                if ((dir + 2) % 4 == this.direction) return super.push(dir, bias - 1);
+                if (((dir + 2) & 3) == this.direction) return super.push(dir, bias - 1);
                 return super.push(dir, bias);
             }
         },
