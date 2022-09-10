@@ -8,12 +8,11 @@
     import { Off, Pos, toPos } from "@core/coord/positions";
     import { rotation, selectedCell } from "./GameControls.svelte";
     import { Size } from "@core/coord/size";
-    import { Events } from "@core/events";
     import { GridProvider } from "../gridProvider/GridProvider";
-    import { Cell } from "@core/cells/cell";
     import { clipboard } from "../uiState";
-    import { CellChange } from "@core/cells/cellChange";
     import { renderGrid } from "./render";
+    import { currentTextures } from "@utils/texturePacks";
+    import { config } from "@utils/config";
 
     export let grid: CellGrid;
     export let gridProvider: GridProvider;
@@ -33,7 +32,6 @@
     const gridOffset = { left: 0, bottom: 0 };
     let zoom = 1;
     let mouseButton = -1;
-    let undoItem = new CellChange();
 
     // camera: move keys
     const moving = {
@@ -76,9 +74,11 @@
     let frame: number;
     let canvas: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D;
+    let bgTextureMap: CanvasPattern;
     $: if (canvas) {
         ctx = canvas.getContext("2d")!;
         ctx.imageSmoothingQuality = "high";
+        bgTextureMap = ctx.createPattern(currentTextures.cells["bg"].bitmap, "repeat")!;
     }
     onMount(() => {
         previousTime = performance.now();
@@ -93,15 +93,18 @@
         // camera: move calculations
         let x = center.x;
         let y = center.y;
-        const offset = CELLS_PER_SECOND / zoom * (delta / 1000);
+        let offset = CELLS_PER_SECOND / zoom * (delta / 1000);
+        if ($config.keyboardOnly) offset = offset / 1.5;
         if (moving.up || moving2.up) y += offset;
         if (moving.right || moving2.right) x += offset;
         if (moving.down || moving2.down) y -= offset;
         if (moving.left || moving2.left) x -= offset;
 
         // camera: placing calculations
-        const pixelDistX = mouse.x - editorSize.width / 2;
-        const pixelDistY = mouse.y - editorSize.height / 2;
+        const mouseX = $config.keyboardOnly ? editorSize.width / 2 : mouse.x;
+        const mouseY = $config.keyboardOnly ? editorSize.height / 2 : mouse.y;
+        const pixelDistX = mouseX - editorSize.width / 2;
+        const pixelDistY = mouseY - editorSize.height / 2;
         const cellDistX = pixelDistX / CELL_SIZE / zoom;
         const cellDistY = pixelDistY / CELL_SIZE / zoom;
         const cellX = center.x + cellDistX;
@@ -116,42 +119,28 @@
 
         // camera: placing
         if (placeCell) {
-            if (mouseButton == 0) {
-                if (keys.shift) {
-                    grid.tiles.set(clickedCell, Tile.Placable);
-                }
-                else {
-                    // TODO
-                    const originalCell = grid.cells.get(clickedCell);
-                    if (!originalCell || originalCell.type != $selectedCell || originalCell.direction != $rotation) {
-                        if (grid.isInfinite || grid.size.contains(clickedCell)) {
-                            const cell = grid.loadCell(clickedCell, $selectedCell, $rotation)!;
-                            Events.emit("cell-placed", clickedCell, cell);
-                            gridProvider.cellPlaced(clickedCell, cell as Cell);
-                            undoItem.addCell(clickedCell, originalCell);
-                        }
-                    }
-                }
+            if (mouseButton == 0 || placingKeys.o) {
+                if (keys.shift) grid.tiles.set(clickedCell, Tile.Placable);
+                else gridProvider.placeCell(clickedCell, $selectedCell, $rotation);
             }
-            else if (mouseButton == 2) {
+            else if (mouseButton == 2 || placingKeys.p) {
                 if (keys.shift) grid.tiles.delete(clickedCell);
-                else {
-                    // TODO
-                    const cell = grid.cells.get(clickedCell);
-                    if (cell) {
-                        cell.rm();
-                        Events.emit("cell-deleted", clickedCell, cell);
-                        gridProvider.cellPlaced(clickedCell, null);
-                        undoItem.addCell(clickedCell, cell);
-                    }
-                }
-
+                else gridProvider.placeCell(clickedCell, null);
             }
+        }
+
+        // camera: zooming
+        if (zoomingKeys.u) {
+            zoom = zoom / (1 + (ZOOM_SPEED/delta) / ZOOM_SPEED);
+        }
+        else if (zoomingKeys.j) {
+            zoom = zoom * (1 + (ZOOM_SPEED/delta) / ZOOM_SPEED);
         }
 
         // rendering
         renderGrid(
             ctx,
+            bgTextureMap,
             grid,
             zoom,
             CELL_SIZE * zoom * DISPLAY_RATIO,
@@ -184,10 +173,13 @@
         Math.round(mousePosition.y - pasteboard.size.height / 2)
     ) : Pos(0, 0);
 
+    const tabKey = on("tab").observe();
+
     // selection clipboard: cut/copy/paste
     on("x").and(modifiers.cmdOrCtrl).when(() => showSelectionBox).down(() => {
-        $clipboard = grid.cloneArea(selectionSize, true);
+        $clipboard = grid.cloneArea(selectionSize);
         gridProvider.clearArea(selectionSize);
+        gridProvider.undoStack.finish();
         showSelectionBox = false;
         placeCell = true;
     });
@@ -214,7 +206,8 @@
         ["arrowup", Direction.Up],
     ] as const) {
         on(key).and(modifiers.alt).when(() => showSelectionBox).down(() => {
-            gridProvider.moveArea(selectionSize, dir); // TODO: multiplayer
+            gridProvider.moveArea(selectionSize, dir);
+            gridProvider.undoStack.finish();
             const offset = Off[dir];
             mouseAnchor.x += offset.x;
             mouseAnchor.y += offset.y;
@@ -244,6 +237,9 @@
         }
         zoom = Math.min(zoom, MAX_ZOOM);
     }
+    const zoomingKeys = { u: false, j: false };
+    on("u").when(() => $config.keyboardOnly).observe(zoomingKeys, "u");
+    on("j").when(() => $config.keyboardOnly).observe(zoomingKeys, "j");
 
     // camera: placing/inserting
     function mousedownEvent(e: MouseEvent) {
@@ -251,23 +247,8 @@
 
         if (pasteboard) {
             if (e.button != 2) {
-                // TODO
-                for (const cell of pasteboard.cells.values()) {
-                    const newPos = Pos(cell.pos.x + selectionPos.x, cell.pos.y + selectionPos.y);
-                    const cellAt = grid.cells.get(newPos);
-                    let newCell: Cell | false;
-                    if (cellAt && keys.ctrl) {
-                        const newData = cellAt.type.merge(cellAt, cell);
-                        newCell = grid.loadCell(newPos, newData[0], newData[1]);
-                    }
-                    else {
-                        newCell = grid.loadCell(cell.pos.mi(selectionPos), cell.type, cell.direction);
-                    }
-                    if (newCell) {
-                        Events.emit("cell-placed", cell.pos, newCell);
-                        gridProvider.cellPlaced(newPos, newCell);
-                    }
-                }
+                gridProvider.insertArea(selectionPos, pasteboard, keys.ctrl);
+                gridProvider.undoStack.finish();
             }
             pasteboard = null;
             placeCell = false;
@@ -276,16 +257,18 @@
             mouseButton = e.button;
             mouseAnchor.x = Math.floor(mousePosition.x);
             mouseAnchor.y = Math.floor(mousePosition.y);
-            showSelectionBox = keys.ctrl;
+            showSelectionBox = $tabKey;
             if (showSelectionBox) placeCell = false;
         }
     }
     function mouseupEvent(_e: MouseEvent) {
         mouseButton = -1;
+        if (placeCell) gridProvider.undoStack.finish();
         placeCell = !showSelectionBox;
-        gridProvider.addUndoItem(undoItem);
-        undoItem = new CellChange();
     }
+    const placingKeys = { o: false, p: false };
+    on("o").when(() => $config.keyboardOnly).observe(placingKeys, "o");
+    on("p").when(() => $config.keyboardOnly).observe(placingKeys, "p");
 </script>
 
 <style lang="scss">
@@ -299,13 +282,44 @@
             width: 100%;
             height: 100%;
         }
+
+        .crosshair {
+            height: 0;
+            left: 50%;
+            position: absolute;
+            top: 50%;
+            width: 0;
+            transform: scale(var(--ui-scale));
+
+            &::before {
+                background: #fff;
+                content: "";
+                height: 2px;
+                left: -10px;
+                position: absolute;
+                top: -1px;
+                width: 20px;
+            }
+            &::after {
+                background: #fff;
+                content: "";
+                height: 20px;
+                left: -1px;
+                position: absolute;
+                top: -10px;
+                width: 2px;
+            }
+        }
     }
 </style>
 
-<div class="cell_editor" bind:this={editorElement} on:wheel={zoomEvent} on:mousedown={mousedownEvent} on:mouseup={mouseupEvent}>
+<div class="cell_editor" style="--ui-scale: {$config.uiScale * 100}%" bind:this={editorElement} on:wheel={zoomEvent} on:mousedown={mousedownEvent} on:mouseup={mouseupEvent}>
     <canvas
         bind:this={canvas}
         width={editorSize.width * DISPLAY_RATIO}
         height={editorSize.height * DISPLAY_RATIO}
     ></canvas>
+    {#if $config.keyboardOnly}
+        <div class="crosshair"></div>
+    {/if}
 </div>

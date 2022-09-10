@@ -44,7 +44,7 @@ export class CellGrid {
     loadCell(pos: Position, type: CellType, direction: Direction) {
         if (this.isInfinite || this.size.contains(pos)) {
             this.cells.get(pos)?.rm();
-            const cell = type._newCell(this, pos, direction % 4)
+            const cell = type._newCell(this, pos, direction & 3)
             this.cells.set(pos, cell);
             cell.init();
             return cell;
@@ -77,16 +77,13 @@ export class CellGrid {
     }
 
     //#region grid actions
-    cloneArea(area: Size, del = false) {
+    cloneArea(area: Size) {
         const grid = new CellGrid();
         grid.size = new Size(area.width, area.height);
         for (let x = 0; x < area.width; x++) {
             for (let y = 0; y < area.height; y++) {
                 const cell = this.cells.get(Pos(x + area.left, y + area.bottom));
-                if (cell) {
-                    grid.loadCell(Pos(x, y), cell.type, cell.direction);
-                    if (del) cell.rm();
-                }
+                if (cell) grid.loadCell(Pos(x, y), cell.type, cell.direction);
             }
         }
         return grid;
@@ -154,7 +151,7 @@ export class CellGrid {
                 const cell = this.cells.get(Pos(x, y));
                 if (cell) {
                     const newPos = Pos(y, this.size.width - x - 1);
-                    grid.loadCell(newPos, cell.type, (cell.direction + 1) % 4);
+                    grid.loadCell(newPos, cell.type, (cell.direction + 1) & 3);
                 }
             }
         }
@@ -170,7 +167,7 @@ export class CellGrid {
                 const cell = this.cells.get(Pos(x, y));
                 if (cell) {
                     const newPos = Pos(this.size.height - y - 1, x);
-                    grid.loadCell(newPos, cell.type, (cell.direction + 3) % 4);
+                    grid.loadCell(newPos, cell.type, (cell.direction + 3) & 3);
                 }
             }
         }
