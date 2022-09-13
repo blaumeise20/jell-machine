@@ -6,6 +6,7 @@
     import Overlay from "./Overlay.svelte";
     import { LevelGridProvider } from "./gridProvider/LevelGridProvider";
     import { gridProvider } from "./uiState";
+    import { quit } from "@utils/platform";
 
     export let visible: boolean;
     export let layers: Stack<string>;
@@ -114,6 +115,8 @@
             <button class="big" on:click={() => layers = layers.next("connect")}>Connect to server</button>
             <div class="space"></div>
             <button on:click={() => layers = layers.next("settings")}>Settings</button>
+            <div class="space"></div>
+            <button on:click={quit}>Quit</button>
         </div>
         <button class="center help_button big" on:click={() => layers = layers.next("help")}>Help</button>
         <h1 class="tips">{tip}</h1>
