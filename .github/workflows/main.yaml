@@ -1,5 +1,8 @@
 name: Build
 
+## WARNING ##
+# Currently not really working.
+
 on:
   push:
     branches: [ master ]
@@ -8,44 +11,72 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install packages
-        run: npm install
-      - name: Build project for Windows
-        run: npm run build:electron:windows
-      - name: Upload Windows build
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: Windows
-          path: dist/Jell Machine-win32-x64
-          if-no-files-found: error
-      - name: Build project for Linux
-        run: npm run build:electron:linux
-      - name: Upload Linux build
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: Linux
-          path: dist/Jell Machine-linux-x64
-          if-no-files-found: error
-  build-mac:
+  build-linux:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install packages
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: install dependencies
         run: npm install
-      - name: Build project for Mac
+      - name: build
         run: |
-          npm run build:electron:mac
-          chmod a+x "dist/Jell Machine-darwin-x64/Jell Machine.app/Contents/MacOS/Jell Machine"
-          cd dist/Jell\ Machine-darwin-x64
-          tar -cvf ../MacOS.tar Jell\ Machine.app
-          cd ../..
-      - name: Upload Mac build
-        uses: actions/upload-artifact@v2.2.4
+          npm run tauri build
+          cd src-tauri/target/release/bundle/macos
+          chmod a+x "src-tauri/target/release/bundle/macos/Jell Machine.app/Contents/MacOS/Jell Machine"
+          tar -cvf ../../MacOS.tar Jell\ Machine.app
+          cd ../../../../..
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
         with:
           name: MacOS
-          path: dist/MacOS.tar
+          path: src-tauri/target/release/MacOS.tar
           if-no-files-found: error
+  # build:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Install packages
+  #       run: npm install
+  #     - name: Build project for Windows
+  #       run: npm run build:electron:windows
+  #     - name: Upload Windows build
+  #       uses: actions/upload-artifact@v2.2.4
+  #       with:
+  #         name: Windows
+  #         path: dist/Jell Machine-win32-x64
+  #         if-no-files-found: error
+  #     - name: Build project for Linux
+  #       run: npm run build:electron:linux
+  #     - name: Upload Linux build
+  #       uses: actions/upload-artifact@v2.2.4
+  #       with:
+  #         name: Linux
+  #         path: dist/Jell Machine-linux-x64
+  #         if-no-files-found: error
+  # build-mac:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Install packages
+  #       run: npm install
+  #     - name: Build project for Mac
+  #       run: |
+  #         npm run build:electron:mac
+  #         chmod a+x "dist/Jell Machine-darwin-x64/Jell Machine.app/Contents/MacOS/Jell Machine"
+  #         cd dist/Jell\ Machine-darwin-x64
+  #         tar -cvf ../MacOS.tar Jell\ Machine.app
+  #         cd ../..
+  #     - name: Upload Mac build
+  #       uses: actions/upload-artifact@v2.2.4
+  #       with:
+  #         name: MacOS
+  #         path: dist/MacOS.tar
+  #         if-no-files-found: error

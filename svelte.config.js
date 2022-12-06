@@ -1,15 +1,5 @@
-const { sveltePreprocess } = require("svelte-preprocess/dist/autoProcess");
+import sveltePreprocess from "svelte-preprocess";
 
-module.exports = {
-    preprocess: sveltePreprocess({
-        typescript: {
-            tsconfigFile: "./tsconfig.json"
-        },
-        scss: {
-            sourceMap: true,
-            includePaths: ["src/style"],
-            indentWidth: 4
-        },
-        sourceMap: true
-    }),
+export default {
+    preprocess: sveltePreprocess(),
 };

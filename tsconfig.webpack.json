@@ -1,4 +1,0 @@
-{
-    "extends": "./tsconfig.json",
-    "include": ["src/game", "node_modules/svelte/types/runtime"]
-}

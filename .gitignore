@@ -1,16 +1,27 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
 node_modules
-node_modules.nosync
-dist/
-src/dist/
-src/build/
-
-.vscode
-.DS_STORE
-
-.env
-.env.local
-.env.development
+dist
+dist-ssr
+*.local
 
 src/game/extensions/jm.testing.ts
 test.ts
 src/game/core/console/
+
+# Editor directories and files
+.vscode/*
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

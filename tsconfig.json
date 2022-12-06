@@ -1,9 +1,9 @@
 {
+    "extends": "@tsconfig/svelte/tsconfig.json",
     "compilerOptions": {
         "module": "esnext",
         "target": "esnext",
         "lib": ["esnext", "DOM"],
-        "types": ["svelte", "@types/node"],
 
         "strict": true,
         "noImplicitAny": true,
@@ -17,14 +17,30 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noImplicitReturns": true,
+        "useDefineForClassFields": true,
+        "resolveJsonModule": true,
+        "baseUrl": ".",
+        "allowJs": true,
+        "checkJs": true,
+        "isolatedModules": true,
 
         "sourceMap": true,
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "paths": {
-            "@core/*": ["./src/game/core/*"],
-            "@utils/*": ["./src/game/utils/*"]
+            "@core/*": ["./src/core/*"],
+            "@utils/*": ["./src/utils/*"]
         }
     },
-    "exclude": ["node_modules/", "node_modules.nosync/"]
+    "include": [
+        "src/**/*.d.ts",
+        "src/**/*.ts",
+        "src/**/*.js",
+        "src/**/*.svelte"
+    ],
+    "references": [
+        {
+            "path": "./tsconfig.node.json"
+        }
+    ]
 }
