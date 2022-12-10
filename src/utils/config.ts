@@ -8,8 +8,8 @@ async function write(config: Config) {
 
     for (const key in config) {
         if (config.hasOwnProperty(key)) {
-            // @ts-ignore
-            const val = config[key], def = ConfigManager.default[key];
+            // @ts-expect-error
+            const val = config[key], def = defaultConfig[key];
             if (val !== def) {
                 newConfig[key] = val;
             }
@@ -17,7 +17,7 @@ async function write(config: Config) {
     }
 
     if (isWeb) localStorage.setItem("config", JSON.stringify(newConfig));
-    else await writeTextFile("config.json", JSON.stringify(newConfig), { dir: BaseDirectory.AppData });
+    else await writeTextFile("config.json", JSON.stringify(newConfig), { dir: BaseDirectory.AppConfig });
 }
 
 const defaultConfig = {
@@ -43,7 +43,7 @@ loadingPromises.push((async () => {
     }
     else {
         try {
-            file = JSON.parse(await readTextFile("config.json", { dir: BaseDirectory.AppData }));
+            file = JSON.parse(await readTextFile("config.json", { dir: BaseDirectory.AppConfig }));
         }
         catch {
             file = defaultConfig;
@@ -56,12 +56,11 @@ loadingPromises.push((async () => {
         try {
             await write(c);
         }
-        catch {
+        catch (e) {
             // ignore
         }
     });
 })());
-
 
 export let $config = defaultConfig;
 config.subscribe(v => $config = v);

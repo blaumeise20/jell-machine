@@ -27,9 +27,7 @@
                 "removeFile": false,
                 "renameFile": false,
                 "exists": false,
-                "scope": {
-                    "$APP_DATA": true
-                }
+                "scope": ["$APPCONFIG/*", "$APPDATA/*"]
             },
             "clipboard": {
                 "all": true,

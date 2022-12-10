@@ -19,8 +19,10 @@
 </script>
 
 <style lang="scss">
+    @use "../defs.scss" as *;
+
     .overlay_container {
-        background-color: #363636;
+        background-color: $bg-base;
         left: 0;
         position: fixed;
         top: 0;

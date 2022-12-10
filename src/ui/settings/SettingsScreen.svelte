@@ -10,8 +10,10 @@
 </script>
 
 <style lang="scss">
+    @use "../../defs.scss" as *;
+
     .overlay_container {
-        background-color: #363636;
+        background-color: $bg-base;
         left: 0;
         position: fixed;
         top: 0;
@@ -23,13 +25,13 @@
     .overlay {
         color: #fff;
         font: 400 17px/20px "Roboto", sans-serif;
-        left: 35%;
+        left: 50%;
         height: auto;
         padding: 20px;
         position: fixed;
         top: 50%;
-        transform: translateY(-50%);
-        width: 30%;
+        transform: translate(-50%, -50%);
+        width: 500px;
     }
 </style>
 

@@ -1,3 +1,5 @@
+@use "defs.scss" as *;
+
 /* roboto-regular - latin */
 @font-face {
   font-family: 'Roboto';
@@ -50,7 +52,7 @@ body, html {
     position: fixed;
 }
 #loader {
-    background-color: #363636;
+    background-color: $bg-base;
     height: 100vh;
     left: 0;
     position: fixed;
@@ -151,8 +153,8 @@ body, html {
 
 button {
     appearance: none;
-    background-color: #303030;
-    border: 2px solid #303030;
+    background-color: $bg-foreground;
+    border: 2px solid $bg-foreground;
     color: #fff;
     cursor: pointer;
     display: block;
@@ -184,7 +186,7 @@ button.center {
 
 input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="url"] {
     appearance: none;
-    background-color: #303030;
+    background-color: $bg-foreground;
     border: none;
     color: #fff;
     display: inline-block;
@@ -207,7 +209,7 @@ input::-webkit-inner-spin-button {
 
 input[type="checkbox"] {
     appearance: none;
-    background-color: #303030;
+    background-color: $bg-foreground;
     border: none;
     color: #fff;
     display: inline-block;
@@ -234,6 +236,48 @@ input[type="checkbox"]:checked::after {
     -moz-transform: rotate(-45deg);
     -ms-transform: rotate(-45deg);
     -o-transform: rotate(-45deg);
+}
+
+input[type="range"] {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: $bg-foreground;
+    border: none;
+    color: #fff;
+    display: inline-block;
+    height: 10px;
+    outline: none;
+    position: relative;
+    margin: 0;
+    width: 200px;
+    vertical-align: middle;
+}
+input[type="range"]:focus {
+    outline: none;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: $bg-foreground;
+    border: none;
+    color: #fff;
+    display: inline-block;
+    height: 10px;
+    outline: none;
+    position: relative;
+    margin: 0;
+    width: 200px;
+    vertical-align: middle;
+}
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    background-color: #fff;
+    border-radius: 50%;
+    height: 20px;
+    margin-top: -5px;
+    width: 20px;
 }
 
 @import "./style_ui.scss";
