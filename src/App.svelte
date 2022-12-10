@@ -8,7 +8,6 @@
     import HelpScreen from "./ui/help/HelpScreen.svelte";
     import SettingsScreen from "./ui/settings/SettingsScreen.svelte";
     import { Stack } from "@utils/stack";
-    import { modifiers } from "./ui/keys";
 
     const layerList = [
         [EditorScreen, "editor"],
@@ -24,7 +23,7 @@
 <svelte:body
     on:contextmenu|preventDefault
     on:keydown={e => {
-        if (!modifiers.cmdOrCtrl()) {
+        if (e.key === "Escape") {
             e.preventDefault();
         }
     }}
