@@ -128,5 +128,5 @@ function changeProtocol(url: string): string {
         else if (protocol === "http" || protocol === "https")
             return url.replace(protocol, "ws");
     }
-    return "ws://" + url.slice(match?.[0].length ?? 0);
+    return "wss://" + url.slice(match?.[0].length ?? 0);
 }

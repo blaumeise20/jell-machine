@@ -1,6 +1,8 @@
 import { isWeb } from "./platform";
 import { readText, writeText } from "@tauri-apps/api/clipboard";
 
+export const loadingPromises: Promise<any>[] = [];
+
 export function safe<T>(fn: () => T): [T, true] | [null, false];
 export function safe<T>(fn: () => T, fallback: T): [T, true] | [T, false];
 export function safe(fn: () => any, fallback = null): [any, boolean] {

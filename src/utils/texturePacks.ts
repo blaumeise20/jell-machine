@@ -1,6 +1,7 @@
 import { writable, type Writable } from "svelte/store";
 import { config } from "./config";
 import { BaseDirectory, createDir, readBinaryFile, readDir } from "@tauri-apps/api/fs";
+import { loadingPromises } from "./misc";
 
 const textureMapping = {
     generator: ["generator.png"],
@@ -56,7 +57,7 @@ class Textures {
     static instance: Textures;
 
     constructor() {
-        this.init();
+        loadingPromises.push(this.init());
     }
 
     async init() {

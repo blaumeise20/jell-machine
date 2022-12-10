@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { safe } from "./misc";
+import { loadingPromises, safe } from "./misc";
 import { isWeb } from "./platform";
 import { BaseDirectory, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 
@@ -34,30 +34,34 @@ const defaultConfig = {
 export type Config = typeof defaultConfig;
 
 export const config = writable<Config>({} as Config);
-let file: Partial<Config>;
-if (isWeb) {
-    const data = localStorage.getItem("config");
-    if (data) file = safe(() => JSON.parse(data), defaultConfig)[0];
-    else file = defaultConfig;
-}
-else {
-    try {
-        file = JSON.parse(await readTextFile("config.json", { dir: BaseDirectory.AppData }));
+loadingPromises.push((async () => {
+    let file: Partial<Config>;
+    if (isWeb) {
+        const data = localStorage.getItem("config");
+        if (data) file = safe(() => JSON.parse(data), defaultConfig)[0];
+        else file = defaultConfig;
     }
-    catch {
-        file = defaultConfig;
+    else {
+        try {
+            file = JSON.parse(await readTextFile("config.json", { dir: BaseDirectory.AppData }));
+        }
+        catch {
+            file = defaultConfig;
+        }
     }
-}
 
-config.subscribe(async c => {
-    try {
-        await write(c);
-    } catch {
-        // ignore
-    }
-});
+    config.set({ ...defaultConfig, ...file });
 
-config.set({ ...defaultConfig, ...file });
+    config.subscribe(async c => {
+        try {
+            await write(c);
+        }
+        catch {
+            // ignore
+        }
+    });
+})());
+
 
 export let $config = defaultConfig;
 config.subscribe(v => $config = v);
