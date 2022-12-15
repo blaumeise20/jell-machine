@@ -42,23 +42,23 @@
     @use "../defs.scss" as *;
 
     .overlay_container {
-        background-color: $bg-base;
+        background-color: rgba($bg-base, 0.9);
+        height: 100%;
         left: 0;
         position: fixed;
         top: 0;
         z-index: 100;
         width: 100%;
-        height: 100%;
     }
 
     .overlay {
-        left: 35%;
+        left: 50%;
         position: fixed;
         top: 50%;
-        padding: 20px;
         height: auto;
-        transform: translateY(-50%);
-        width: 30%;
+        transform: translate(-50%, -50%);
+        width: 500px;
+        z-index: 102;
     }
 
     img {
@@ -66,17 +66,11 @@
         width: 100%;
     }
 
-    /* .import_warning {
-        color: #fff;
-        font: 400 20px/25px "Roboto", sans-serif;
-        margin: 20px 0;
-        text-align: center;
-    } */
-
     .help_button {
         bottom: 20px;
         left: 20px;
         position: absolute;
+        z-index: 102;
     }
     .tips {
         right: 5%;

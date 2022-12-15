@@ -28,6 +28,7 @@ const defaultConfig = {
     animation: true,
     showDebug: false,
     showBackgroundGrid: true,
+    mainScreenBackground: true,
     troh: 1,
 };
 

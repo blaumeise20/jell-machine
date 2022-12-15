@@ -22,11 +22,11 @@
     @use "../defs.scss" as *;
 
     .overlay_container {
-        background-color: $bg-base;
+        background-color: rgba($bg-base, 0.9);
         left: 0;
         position: fixed;
         top: 0;
-        z-index: 101;
+        z-index: 100;
         width: 100%;
         height: 100%;
     }
@@ -35,10 +35,10 @@
         left: 50%;
         position: fixed;
         top: 50%;
-        padding: 20px;
         height: auto;
         transform: translate(-50%, -50%);
         width: auto;
+        z-index: 102;
     }
 
     h2 {

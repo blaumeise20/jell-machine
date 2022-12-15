@@ -13,11 +13,11 @@
     @use "../../defs.scss" as *;
 
     .overlay_container {
-        background-color: $bg-base;
+        background-color: rgba($bg-base, 0.9);
         left: 0;
         position: fixed;
         top: 0;
-        z-index: 103;
+        z-index: 100;
         width: 100%;
         height: 100%;
     }
@@ -27,11 +27,11 @@
         font: 400 17px/20px "Roboto", sans-serif;
         left: 50%;
         height: auto;
-        padding: 20px;
         position: fixed;
         top: 50%;
         transform: translate(-50%, -50%);
         width: 500px;
+        z-index: 102;
     }
 </style>
 
