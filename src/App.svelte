@@ -67,7 +67,7 @@
     return;
 }} />
 
-{#if $config.mainScreenBackground}
+{#if $config.mainScreenBackground && layers.peek() !== "editor"}
     <div class="bg-image"></div>
 {/if}
 
