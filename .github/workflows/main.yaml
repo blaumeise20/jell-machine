@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-linux:
+  build-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
         run: |
           npm run tauri build
           cd src-tauri/target/release/bundle/macos
-          chmod a+x "src-tauri/target/release/bundle/macos/Jell Machine.app/Contents/MacOS/Jell Machine"
+          chmod a+x "Jell Machine.app/Contents/MacOS/Jell Machine"
           tar -cvf ../../MacOS.tar Jell\ Machine.app
           cd ../../../../..
       - name: upload artifact
@@ -38,6 +38,52 @@ jobs:
         with:
           name: MacOS
           path: src-tauri/target/release/MacOS.tar
+          if-no-files-found: error
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: install dependencies
+        run: npm install
+      - name: build
+        run: npm run tauri build
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Windows
+          path: src-tauri/target/release/bundle/windows/Jell\ Machine.msi
+          if-no-files-found: error
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: install dependencies
+        run: npm install
+      - name: build
+        run: npm run tauri build
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Linux
+          path: src-tauri/target/release/bundle/linux/Jell\ Machine.AppImage
           if-no-files-found: error
   # build:
   #   runs-on: windows-latest
