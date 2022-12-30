@@ -60,7 +60,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Windows
-          path: src-tauri/target/release/bundle/msi
+          path: src-tauri/target/release/bundle
           if-no-files-found: error
   build-linux:
     runs-on: ubuntu-latest
