@@ -156,6 +156,7 @@ button {
     appearance: none;
     background-color: $bg-foreground;
     border: 2px solid $bg-foreground;
+    border-radius: 5px;
     color: #fff;
     cursor: pointer;
     display: block;
@@ -189,6 +190,7 @@ input[type="text"], input[type="password"], input[type="email"], input[type="num
     appearance: none;
     background-color: $bg-foreground;
     border: none;
+    border-radius: 5px;
     color: #fff;
     display: inline-block;
     font: 400 17px/20px "Roboto", sans-serif;
@@ -212,13 +214,14 @@ input[type="checkbox"] {
     appearance: none;
     background-color: $bg-foreground;
     border: none;
+    border-radius: 5px;
     color: #fff;
     display: inline-block;
-    height: 20px;
+    height: 25px;
     outline: none;
     position: relative;
     margin: 0;
-    width: 20px;
+    width: 25px;
     vertical-align: middle;
 }
 input[type="checkbox"]:checked::after {
@@ -228,9 +231,9 @@ input[type="checkbox"]:checked::after {
     content: "";
     display: block;
     height: 6px;
-    left: 2px;
+    left: 4px;
     position: absolute;
-    top: 3px;
+    top: 6px;
     width: 15px;
     transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
@@ -244,6 +247,7 @@ input[type="range"] {
     -webkit-appearance: none;
     background-color: $bg-foreground;
     border: none;
+    border-radius: 5px;
     color: #fff;
     display: inline-block;
     height: 10px;
@@ -261,6 +265,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     -webkit-appearance: none;
     background-color: $bg-foreground;
     border: none;
+    border-radius: 5px;
     color: #fff;
     display: inline-block;
     height: 10px;
@@ -286,10 +291,11 @@ input[type="range"]::-webkit-slider-thumb {
 
 // boxes (blurry background)
 .box {
-    backdrop-filter: saturate(180%) blur(10px);
-    -webkit-backdrop-filter: saturate(180%) blur(10px);
+    backdrop-filter: saturate(200%) blur(10px);
+    -webkit-backdrop-filter: saturate(200%) blur(10px);
     background-color: rgba(54, 54, 54, 0.95);
     border: 2px solid #404040;
+    border-radius: 5px;
 
     &.box-medium {
         background-color: rgba(54, 54, 54, 0.925);
@@ -298,8 +304,8 @@ input[type="range"]::-webkit-slider-thumb {
         background-color: rgba(54, 54, 54, 0.8);
     }
 
-    &.box-top { border-width: 2px 0 0 0; }
-    &.box-bottom { border-width: 0 0 2px 0; }
-    &.box-left { border-width: 0 0 0 2px; }
-    &.box-right { border-width: 0 2px 0 0; }
+    &.box-top { border-radius: 0; border-width: 2px 0 0 0; }
+    &.box-bottom { border-radius: 0; border-width: 0 0 2px 0; }
+    &.box-left { border-radius: 0; border-width: 0 0 0 2px; }
+    &.box-right { border-radius: 0; border-width: 0 2px 0 0; }
 }
