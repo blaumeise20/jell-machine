@@ -43,7 +43,7 @@
 }
 
 
-body, html {
+html, body {
     color: #fff;
     background-color: $bg-base;
     font: 400 17px/20px "Roboto", sans-serif;
@@ -61,7 +61,10 @@ body, html {
     width: 100vw;
     z-index: 100;
 }
-#loader > div {
+#loader i {
+    display: block;
+}
+#loader > i {
     height: 256px;
     left: 50%;
     margin: -128px 0 0 -128px;
@@ -69,87 +72,73 @@ body, html {
     top: 50%;
     width: 256px;
 }
-#loader > div::before {
+#loader > i::before, #loader > i::after {
     background-color: #fff;
     border-radius: 2px;
     content: "";
+    position: absolute;
+    z-index: 42;
+}
+#loader > i::before {
     height: 68px;
     left: -2px;
-    position: absolute;
     top: -2px;
     width: 4px;
-    z-index: 42;
 }
-#loader > div::after {
-    background-color: #fff;
-    border-radius: 2px;
-    content: "";
+#loader > i::after {
     height: 4px;
     left: 190px;
-    position: absolute;
     top: 254px;
     width: 68px;
-    z-index: 42;
 }
-#loader > div > div {
+#loader > i > i {
     height: 100%;
     overflow: hidden;
     position: relative;
     width: 100%;
 }
-#loader > div > div > div:nth-child(1) {
-    animation: loader1 0.3s infinite linear;
-    -webkit-animation: loader1 0.3s infinite linear;
+#loader > i > i > i {
     background: url(../assets/defaultPack/mover.png) repeat-x 0 0;
     background-size: 64px 64px;
+    position: absolute;
+    transform-origin: top left;
+}
+#loader > i > i > i:nth-child(1) {
+    animation: loader1 0.3s infinite linear;
+    -webkit-animation: loader1 0.3s infinite linear;
     height: 64px;
     left: 0;
-    position: absolute;
     top: 0;
     transform: translateX(-64px);
     width: 256px;
     z-index: 40;
 }
 @keyframes loader1 {
-    0% {
-        transform: translateX(-64px);
-    }
-    100% {
-        transform: translateX(0);
-    }
+    0% { transform: translateX(-64px); }
+    100% { transform: translateX(0); }
 }
-#loader > div > div > div:nth-child(2) {
-    background: url(../assets/defaultPack/redirector.png) repeat-x 0 0;
-    background-size: 64px 64px;
+#loader > i > i > i:nth-child(2) {
+    background-image: url(../assets/defaultPack/redirector.png);
     height: 64px;
-    position: absolute;
     top: 0;
-    right: 0;
+    right: -64px;
     transform: rotate(90deg);
     width: 64px;
     z-index: 41;
 }
-#loader > div > div > div:nth-child(3) {
+#loader > i > i > i:nth-child(3) {
     animation: loader2 0.3s infinite linear;
     -webkit-animation: loader2 0.3s infinite linear;
-    background: url(../assets/defaultPack/mover.png) repeat-x 0 0;
-    background-size: 64px 64px;
     height: 64px;
     left: 256px;
-    position: absolute;
     top: 64px;
     transform: rotate(90deg) translateX(-64px);
-    transform-origin: top left;
     width: 256px;
     z-index: 40;
 }
 @keyframes loader2 {
-    0% {
-        transform: rotate(90deg) translateX(-64px);
-    }
-    100% {
-        transform: rotate(90deg) translateX(0);
-    }
+    0% { transform: rotate(90deg) translateX(-64px); }
+    100% { transform: rotate(90deg) translateX(0); }
 }
 
 button {
