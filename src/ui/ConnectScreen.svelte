@@ -40,14 +40,6 @@
         z-index: 102;
     }
 
-    h2 {
-        color: #fff;
-        font: 400 35px/40px "Roboto", sans-serif;
-        margin: 0;
-        padding: 0;
-        text-align: center;
-    }
-
     input {
         text-align: center;
         width: 100%;

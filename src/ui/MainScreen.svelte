@@ -19,7 +19,6 @@
 
         if (res[0]) {
             layers = layers.next("editor");
-
             $gridProvider = new LevelGridProvider(res[1]);
         }
         else {
@@ -87,15 +86,15 @@
         <div class="overlay">
             <img src={logo} alt="Logo" />
             <button class="big" on:click={importClipboard}>Import from clipboard</button>
-            <!-- {#if showSpoiler}
-                <div class="import_warning">SPOILER: be careful with the thing you have in your clipboard</div>
-            {/if} -->
             <div class="space"></div>
             <button class="big" on:click={() => layers = layers.next("create")}>Create new level</button>
             <div class="space"></div>
             <button class="big" on:click={() => layers = layers.next("connect")}>Connect to server</button>
             <div class="space"></div>
-            <button on:click={() => layers = layers.next("settings")}>Settings</button>
+            <div class="cols">
+                <button on:click={() => layers = layers.next("settings")}>Settings</button>
+                <button on:click={() => layers = layers.next("mods")}>Mods</button>
+            </div>
             {#if !isWeb}
                 <div class="space"></div>
                 <button on:click={quit}>Quit</button>

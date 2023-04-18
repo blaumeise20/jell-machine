@@ -309,3 +309,21 @@ input[type="range"]::-webkit-slider-thumb {
     &.box-left { border-radius: 0; border-width: 0 0 0 2px; }
     &.box-right { border-radius: 0; border-width: 0 2px 0 0; }
 }
+
+
+h2 {
+    color: #fff;
+    font: 400 35px/40px "Roboto", sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+
+.cols {
+    column-gap: 20px;
+    display: flex;
+}
+.cols > * {
+    flex: 1;
+}

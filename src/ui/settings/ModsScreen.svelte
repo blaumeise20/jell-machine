@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { Stack } from "@utils/stack";
     import { on } from "../keys";
-    import Settings from "./Settings.svelte";
 
     export let visible: boolean;
     export let layers: Stack<string>;
@@ -38,9 +37,10 @@
 {#if visible}
     <div class="overlay_container">
         <div class="overlay">
-            <h2>Settings</h2>
+            <h2>Mods</h2>
             <div class="space"></div>
-            <Settings />
+            <p>Soon ™</p>
+            <p>Might be renamed to either "Extensions" or "Plugins"</p>
             <div class="space"></div>
             <button class="center" on:click={() => layers = layers.back()}>Back</button>
         </div>

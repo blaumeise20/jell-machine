@@ -7,6 +7,7 @@
     import ConnectScreen from "./ui/ConnectScreen.svelte";
     import HelpScreen from "./ui/help/HelpScreen.svelte";
     import SettingsScreen from "./ui/settings/SettingsScreen.svelte";
+    import ModsScreen from "./ui/settings/ModsScreen.svelte";
     import { Stack } from "@utils/stack";
     import { config } from "@utils/config";
 
@@ -17,6 +18,7 @@
         [ConnectScreen, "connect"],
         [HelpScreen, "help"],
         [SettingsScreen, "settings"],
+        [ModsScreen, "mods"],
     ] as const;
     let layers = new Stack<string>().next("main");
 </script>
