@@ -1,12 +1,14 @@
 <script lang="ts">
     import { CellGrid } from "@core/cells/grid";
     import { clip } from "@utils/misc";
-    import logo from "../logo.png";
+    import logo from "./logo.png?blob";
     import type { Stack } from "@utils/stack";
     import Overlay from "./Overlay.svelte";
     import { LevelGridProvider } from "./gridProvider/LevelGridProvider";
     import { gridProvider } from "./uiState";
     import { isWeb, quit } from "@utils/platform";
+
+    const logoURL = URL.createObjectURL(logo);
 
     export let visible: boolean;
     export let layers: Stack<string>;
@@ -84,7 +86,7 @@
 {#if visible}
     <div class="overlay_container">
         <div class="overlay">
-            <img src={logo} alt="Logo" />
+            <img src={logoURL} alt="Logo" />
             <button class="big" on:click={importClipboard}>Import from clipboard</button>
             <div class="space"></div>
             <button class="big" on:click={() => layers = layers.next("create")}>Create new level</button>
