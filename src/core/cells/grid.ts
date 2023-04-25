@@ -41,10 +41,48 @@ export class CellGrid {
             const cell = type._newCell(this, pos, direction & 3)
             this.cells.set(pos, cell);
             this.updateTree.insert(cell);
-            cell.init();
             return cell;
         }
         return false;
+    }
+
+    /**
+     * Rotates the cell at the specified position.
+     * @param pos Cell position.
+     * @param offset Rotation offset.
+     */
+    rotate(pos: Position, offset: number) {
+        const cell = this.cells.get(pos);
+        const newDirection = (cell?.direction + offset) & 3;
+        if (cell && (!cell.type.options.onRotate || cell.type.options.onRotate(cell, newDirection))) {
+            cell.direction = newDirection;
+            cell.rotationOffset += offset;
+        }
+    }
+
+    /**
+     * Sets the rotation for the cell at the specified position.
+     * @param pos Cell position.
+     * @param direction New rotation.
+     */
+    setRotation(pos: Position, direction: Direction) {
+        const cell = this.cells.get(pos);
+        if (cell && (!cell.type.options.onRotate || cell.type.options.onRotate(cell, direction))) {
+            const diff = (direction - cell.direction) & 3;
+            cell.rotationOffset = diff > 2 ? diff - 4 : diff;
+            cell.direction = direction & 3;
+        }
+    }
+
+    /**
+     * Disables the cell at the specified position.
+     * @param pos Cell position.
+     */
+    disable(pos: Position) {
+        const cell = this.cells.get(pos);
+        if (cell && (!cell.type.options.onDisable || cell.type.options.onDisable(cell))) {
+            cell.disabledIn = this.tickCount;
+        }
     }
 
     /**

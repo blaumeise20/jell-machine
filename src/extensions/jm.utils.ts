@@ -27,18 +27,17 @@ export function load() {
         description: "Rotates all four touching cells in the direction it is looking.",
         behavior: class OrientatorCell extends Cell {
             override update() {
-                this.grid.cells.get(this.pos.mi(Direction.Right))?.setRotation(this.direction);
-                this.grid.cells.get(this.pos.mi(Direction.Down))?.setRotation(this.direction);
-                this.grid.cells.get(this.pos.mi(Direction.Left))?.setRotation(this.direction);
-                this.grid.cells.get(this.pos.mi(Direction.Up))?.setRotation(this.direction);
+                this.grid.setRotation(this.pos.mi(Direction.Right), this.direction);
+                this.grid.setRotation(this.pos.mi(Direction.Down), this.direction);
+                this.grid.setRotation(this.pos.mi(Direction.Left), this.direction);
+                this.grid.setRotation(this.pos.mi(Direction.Up), this.direction);
             }
-
-            override rotate() {}
-            override setRotation() {}
         },
         textureName: "orientator",
+
         updateType: UpdateType.Directional,
         updateOrder: 2.5,
+        onRotate: () => false,
     });
 
     const disabler = CellType.create({
@@ -48,17 +47,17 @@ export function load() {
         description: "Prevents the four touching cells from executing their action.",
         behavior: class DisablerCell extends Cell {
             override update() {
-                this.grid.cells.get(this.pos.mi(Direction.Right))?.disable();
-                this.grid.cells.get(this.pos.mi(Direction.Down))?.disable();
-                this.grid.cells.get(this.pos.mi(Direction.Left))?.disable();
-                this.grid.cells.get(this.pos.mi(Direction.Up))?.disable();
+                this.grid.disable(this.pos.mi(Direction.Right));
+                this.grid.disable(this.pos.mi(Direction.Down));
+                this.grid.disable(this.pos.mi(Direction.Left));
+                this.grid.disable(this.pos.mi(Direction.Up));
             }
-
-            override disable() {}
         },
         textureName: "disabler",
+
         updateType: UpdateType.Random,
         updateOrder: 0,
+        onDisable: () => false,
     });
 
     //#region note cell
@@ -210,16 +209,15 @@ export function load() {
         name: "Note Cell",
         description: "Deletes its inputs but plays a note when doing so.\nPitch is based on vertical position.",
         behavior: class NoteCell extends Cell {
-            override debugText() {
-                return "Note: " + noteNames[this.pos.y % noteNames.length];
-            }
             override push() {
                 if (!this.disabled) noteTicks.add(noteNames[this.pos.y % noteNames.length] as keyof typeof notes);
                 return null;
             }
         },
         textureName: "note",
-        flip: d => d
+        flip: d => d,
+
+        debugText: cell => "Note: " + noteNames[cell.pos.y % noteNames.length],
     });
 
     Events.on("tickend", () => {
@@ -271,6 +269,7 @@ export function load() {
             }
         },
         textureName: "jell",
+
         updateType: UpdateType.Random,
         updateOrder: -127,
     });
@@ -284,10 +283,11 @@ export function load() {
                 const pos = this.getCellTo(this.direction);
                 if (!pos) return;
 
-                this.grid.cells.get(pos[0])?.rotate(Math.random() > 0.5 ? 1 : -1);
+                this.grid.rotate(pos[0], Math.random() > 0.5 ? 1 : -1);
             }
         },
         textureName: "random",
+
         updateType: UpdateType.Directional,
         updateOrder: 2.1,
     });
@@ -296,13 +296,6 @@ export function load() {
     let sourcePortal: PortalCell | null = null;
     class PortalCell extends Cell {
         connectedCell!: PortalCell;
-
-        override debugText() {
-            if (this.connectedCell)
-                return "Connected to: " + this.connectedCell.pos.format(0);
-
-            return "Not connected";
-        }
 
         override getPos(dir: Direction) {
             if (!this.connectedCell) return super.getPos(dir); // annoying ts
@@ -316,8 +309,10 @@ export function load() {
         description: "~bDo not use.~R\nTeleports incoming cells to the other portal linked to it. You need to place two portals for it to work.\nAny amount of portal pairs may exist on the grid. (Exporting/resetting is broken)",
         behavior: PortalCell,
         textureName: "portal",
-        textureOverride: c => (c as any).connectedCell ? "portal" : "portalOff",
+        textureOverride: cell => cell.connectedCell ? "portal" : "portalOff",
         flip: d => d,
+
+        debugText: cell => cell.connectedCell ? "Connected to: " + cell.connectedCell.pos.format(0) : "Not connected",
     });
 
     Events.on("cell-placed", (_, cell) => {
@@ -357,10 +352,6 @@ export function load() {
         behavior: class PistonCell extends Cell {
             extended = false;
             actuallyExtended = false;
-
-            override debugText() {
-                return "Extended: " + this.extended;
-            }
 
             override update() {
                 // Get head position
@@ -409,19 +400,14 @@ export function load() {
                 // otherwise push.
                 return super.push(dir, bias);
             }
-            override rotate(dir: number) {
-                if (this.extended) return;
-                super.rotate(dir);
-            }
-            override setRotation(dir: number) {
-                if (this.extended) return;
-                super.setRotation(dir);
-            }
         },
         textureName: "pistonOff",
         textureOverride: c => (c as any).actuallyExtended ? "pistonOn" : "pistonOff",
+
         updateType: UpdateType.Directional,
         updateOrder: 5,
+        debugText: cell => "Extended: " + cell.extended,
+        onRotate: cell => !cell.extended,
     });
 
     const pistonHead = CellType.create({
@@ -429,17 +415,16 @@ export function load() {
         name: "Piston Head",
         description: "Placeholder cell for where the piston extends.\nCan't be moved/rotated.",
         // Used for sticky pistons,
-        // not placable.
+        // not placeable.
 
         behavior: class PistonHeadCell extends Cell {
             override push() {
                 return false;
             }
-
-            override rotate() {}
-            override setRotation() {}
         },
         textureName: "pistonHead",
+
+        onRotate: () => false,
     });
 
     const stickyPiston = CellType.create({
@@ -452,10 +437,6 @@ export function load() {
         behavior: class StickyPistonCell extends Cell {
             extended = false;
             actuallyExtended = false;
-
-            override debugText() {
-                return "Extended: " + this.extended;
-            }
 
             override update() {
                 // Get head position
@@ -508,19 +489,14 @@ export function load() {
                 // otherwise push.
                 return super.push(dir, bias);
             }
-            override rotate(dir: number) {
-                if (this.extended) return;
-                super.rotate(dir);
-            }
-            override setRotation(dir: number) {
-                if (this.extended) return;
-                super.setRotation(dir);
-            }
         },
         textureName: "pistonSticky",
         textureOverride: c => (c as any).actuallyExtended ? "pistonOn" : "pistonSticky",
+
         updateType: UpdateType.Directional,
         updateOrder: 5,
+        debugText: cell => "Extended: " + cell.extended,
+        onRotate: cell => !cell.extended,
     });
 
     const stickyPistonHead = CellType.create({
@@ -528,17 +504,16 @@ export function load() {
         name: "Sticky Piston Head",
         description: "Placeholder cell for where the sticky piston extends.\nCan't be moved/rotated.",
         // Used for sticky pistons,
-        // not placable.
+        // not placeable.
 
         behavior: class StickyPistonHeadCell extends Cell {
             override push() {
                 return false;
             }
-
-            override rotate() {}
-            override setRotation() {}
         },
         textureName: "pistonStickyHead",
+
+        onRotate: () => false,
     });
 
     const nuke = CellType.create({
@@ -582,6 +557,7 @@ export function load() {
         },
         textureName: "nuke",
         flip: d => d,
+
         updateType: UpdateType.Directional,
         updateOrder: 4,
     });

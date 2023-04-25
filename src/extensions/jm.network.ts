@@ -19,7 +19,7 @@ export function load() {
                         this.push(action.dir ?? this.direction, 1);
                         break;
                     case "rotate":
-                        this.setRotation(action.dir ?? (this.direction + (action.amount ?? 1)) & 3);
+                        this.grid.setRotation(this.pos, action.dir ?? (this.direction + (action.amount ?? 1)) & 3);
                         break;
                     case "generate":
                         break;
@@ -62,6 +62,7 @@ export function load() {
             }
         },
         textureName: "network",
+
         updateType: UpdateType.Directional,
         updateOrder: 3.1,
     });

@@ -62,7 +62,7 @@
                 Position: {targetedCell.pos.x} {targetedCell.pos.y}<br />
                 Type: {targetedCell.type.id}<br />
                 Direction: {Direction[targetedCell.direction]}<br />
-                {targetedCell.debugText()}
+                {targetedCell.type.options.debugText?.(targetedCell) ?? ""}
             </div>
         {/if}
     </div>

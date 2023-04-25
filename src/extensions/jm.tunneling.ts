@@ -17,12 +17,11 @@ export function load() {
 
                 return super.getPos(dir);
             }
-
-            override rotate() {}
-            override setRotation() {}
         },
         textureName: "redirector",
         flip: CellType.flipTwoWay,
+
+        onRotate: () => false,
     });
 
     const tunnel = CellType.create({
@@ -36,9 +35,6 @@ export function load() {
 
                 return super.getPos(dir);
             }
-
-            override rotate() {}
-            override setRotation() {}
         },
         textureName: "tunnel",
         flip: d => d,
@@ -46,6 +42,8 @@ export function load() {
             if (b[0] == tunnel && a[1] % 2 != b[1] % 2) return [crossway, Direction.Right];
             return b;
         },
+
+        onRotate: () => false,
     });
 
     const crossway = CellType.create({
@@ -79,12 +77,11 @@ export function load() {
 
                 return super.getPos(dir);
             }
-
-            override rotate() {}
-            override setRotation() {}
         },
         textureName: "crossdirector",
         flip: CellType.flipTwoWay,
+
+        onRotate: () => false,
     });
 
     Slot.add(redirector, tunnel, crossway, crossdirector);

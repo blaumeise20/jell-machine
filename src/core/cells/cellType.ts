@@ -61,8 +61,8 @@ export class CellType {
         return new this.behavior(pos, this, dir, grid);
     }
 
-    static create(options: CellTypeOptions) {
-        const t = new CellType(options);
+    static create<B extends typeof Cell>(options: CellTypeOptions<B>) {
+        const t = new CellType(options as any);
         Registry.registerCell(t);
         return t;
     }
@@ -94,17 +94,21 @@ export class CellType {
     };
 }
 
-export interface CellTypeOptions {
+export interface CellTypeOptions<B extends typeof Cell = typeof Cell, I = InstanceType<B>> {
     id: string;
     __rawId?: number;
     name: string;
     description?: string;
-    behavior: typeof Cell;
+    behavior: B;
     textureName: string;
-    textureOverride?(cell: Cell): string;
+    textureOverride?(cell: I): string;
     flip?(cell: CellData, horizontal: boolean): CellData;
     merge?(self: CellData, other: CellData): CellData;
     data?: any;
+
     updateType?: UpdateType;
     updateOrder?: number;
+    debugText?: (cell: I) => string;
+    onRotate?: (cell: I, direction: Direction) => boolean;
+    onDisable?: (cell: I) => boolean;
 }

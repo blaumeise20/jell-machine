@@ -4,19 +4,12 @@ import { Direction } from "../coord/direction";
 import type { CellType } from "./cellType";
 import { BorderMode } from "./border";
 
-let cellid = 0;
-
 export class Cell {
     public deleted = false;
     public disabledIn = -1;
-    public get disabled(): boolean {
-        return this.disabledIn == this.grid.tickCount;
-    }
+    public get disabled(): boolean { return this.disabledIn == this.grid.tickCount; }
     public updatedIn = -1;
-    public get updated(): boolean {
-        return this.updatedIn == this.grid.tickCount;
-    }
-    id = cellid++;
+    public get updated(): boolean { return this.updatedIn == this.grid.tickCount; }
 
     public oldPosition: Position;
     public rotationOffset: Direction;
@@ -30,16 +23,12 @@ export class Cell {
         return [this.type, this.direction];
     }
 
-    init() {}
     update() {}
-    delete() {}
-    debugText() { return ""; }
 
     rm() {
         if (this.deleted) return;
         this.grid.cells.delete(this.pos);
         this.grid.updateTree.delete(this);
-        this.delete();
         this.deleted = true;
     }
 
@@ -107,21 +96,6 @@ export class Cell {
             return true;
         }
         return false;
-    }
-
-    rotate(amount: number) {
-        this.direction = (this.direction + amount) & 3;
-        this.rotationOffset += amount;
-    }
-
-    setRotation(amount: number) {
-        const diff = (amount - this.direction) & 3;
-        this.rotationOffset = diff > 2 ? diff - 4 : diff;
-        this.direction = amount & 3;
-    }
-
-    disable() {
-        this.disabledIn = this.grid.tickCount;
     }
 }
 

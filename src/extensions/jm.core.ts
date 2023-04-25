@@ -38,6 +38,7 @@ export function load() {
             }
         },
         textureName: "generator",
+
         updateOrder: 1,
         updateType: UpdateType.Directional,
     });
@@ -61,44 +62,49 @@ export function load() {
             }
         },
         textureName: "mover",
+
         updateOrder: 3,
         updateType: UpdateType.Directional,
     });
 
-    const cwRotator = CellType.create({
+    class RotatorCell extends Cell {
+        override update() {
+            const rotation = this.type.data.rotation;
+
+            const valRight = this.getCellTo(Direction.Right);
+            if (valRight) this.grid.rotate(valRight[0], rotation);
+            const valDown = this.getCellTo(Direction.Down);
+            if (valDown) this.grid.rotate(valDown[0], rotation);
+            const valLeft = this.getCellTo(Direction.Left);
+            if (valLeft) this.grid.rotate(valLeft[0], rotation);
+            const valUp = this.getCellTo(Direction.Up);
+            if (valUp) this.grid.rotate(valUp[0], rotation);
+        }
+    }
+    // stupid typescript
+    const cwRotator: CellType = CellType.create({
         id: "jm.core.cw_rotator",
         __rawId: 2,
         name: "Clockwise Rotator",
         description: "Rotates all four touching cells clockwise.",
-        behavior: class RotatorCell extends Cell {
-            override update() {
-                const rotation = this.type.data.rotation;
-
-                const valRight = this.getCellTo(Direction.Right);
-                if (valRight) this.grid.cells.get(valRight[0])?.rotate(rotation);
-                const valDown = this.getCellTo(Direction.Down);
-                if (valDown) this.grid.cells.get(valDown[0])?.rotate(rotation);
-                const valLeft = this.getCellTo(Direction.Left);
-                if (valLeft) this.grid.cells.get(valLeft[0])?.rotate(rotation);
-                const valUp = this.getCellTo(Direction.Up);
-                if (valUp) this.grid.cells.get(valUp[0])?.rotate(rotation);
-            }
-        },
+        behavior: RotatorCell,
         textureName: "cwRotator",
         data: { rotation: 1 },
         flip: (options) => [ccwRotator, options[1]],
+
         updateOrder: 2,
         updateType: UpdateType.Random,
     });
-    const ccwRotator = CellType.create({
+    const ccwRotator: CellType = CellType.create({
         id: "jm.core.ccw_rotator",
         __rawId: 3,
         name: "Counterclockwise Rotator",
         description: "Rotates all four touching cells counterclockwise.",
-        behavior: cwRotator.behavior,
+        behavior: RotatorCell,
         textureName: "ccwRotator",
         data: { rotation: -1 },
         flip: (options) => [cwRotator, options[1]],
+
         updateOrder: 2,
         updateType: UpdateType.Random,
     });
@@ -183,13 +189,12 @@ export function load() {
             override push() {
                 return false;
             }
-
-            override rotate() {}
-            override setRotation() {}
-            override disable() {}
         },
         textureName: "wall",
         flip: d => d,
+
+        onRotate: () => false,
+        onDisable: () => false,
     });
 
     const border = CellType.create({
@@ -204,14 +209,13 @@ export function load() {
             override push() {
                 return false;
             }
-
-            override rotate() {}
-            override setRotation() {}
-            override disable() {}
         },
         textureName: "border",
         flip: d => d,
         merge: d => d,
+
+        onRotate: () => false,
+        onDisable: () => false,
     });
     CellType.create({
         id: "?",
