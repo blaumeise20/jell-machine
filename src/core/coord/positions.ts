@@ -4,51 +4,47 @@ import { Direction } from "./direction";
  * A `Map` for indexing with `Position`s.
  */
 export class PosMap<T> {
-    private store: Record<string, T> = Object.create(null);
+    private store: Map<string, T> = new Map();
     __object = this.store;
 
     constructor() {}
 
     clear(): void {
-        this.store = {};
+        this.store.clear();
     }
     delete(key: Position): boolean {
-        return delete this.store[`${key.x},${key.y}`];
+        return this.store.delete(`${key.x},${key.y}`);
     }
     forEach(callbackfn: (value: T, key: Position, map: PosMap<T>) => void, thisArg?: any): void {
-        for (const [key, value] of Object.entries(this.store)) {
+        for (const [key, value] of this.store) {
             callbackfn.call(thisArg, value, Pos(...(JSON.parse(`[${key}]`) as [number, number])), this);
         }
     }
     get(key: Position): T {
-        return this.store[`${key.x},${key.y}`];
+        return this.store.get(`${key.x},${key.y}`)!;
     }
     getXY(x: number, y: number) {
-        return this.store[`${x},${y}`];
+        return this.store.get(`${x},${y}`);
     }
     has(key: Position): boolean {
-        return `${key.x},${key.y}` in this.store;
+        return this.store.has(`${key.x},${key.y}`);
     }
     set(key: Position, value: T): this {
-        this.store[`${key.x},${key.y}`] = value;
+        this.store.set(`${key.x},${key.y}`, value);
         return this;
     }
 
-    values(): T[] {
-        const result = [];
-        for (const key in this.store) {
-            result.push(this.store[key]);
-        }
-        return result;
+    values(): IterableIterator<T> {
+        return this.store.values();
     }
 
     *entries(): IterableIterator<[Position, T]> {
-        for (const [key, value] of Object.entries(this.store))
+        for (const [key, value] of this.store)
             yield [Pos(...(JSON.parse(`[${key}]`) as [number, number])), value];
     }
 
     get size() {
-        return Object.values(this.store).length;
+        return this.store.size;
     }
 }
 

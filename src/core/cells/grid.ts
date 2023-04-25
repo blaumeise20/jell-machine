@@ -4,7 +4,7 @@ import type { Tile } from "../tiles";
 import type { Cell } from "./cell";
 import type { CellType } from "./cellType";
 import { Direction } from "../coord/direction";
-import { doStep } from "./cellUpdates";
+import { doStep, UpdateTree } from "./cellUpdates";
 import { Registry } from "../registry";
 import { BorderMode } from "./border";
 import { Events } from "@core/events";
@@ -25,6 +25,7 @@ export class CellGrid {
     currentSubtick = 0;
     selectedArea: Size | null = null;
     borderMode = BorderMode.Default;
+    readonly updateTree = new UpdateTree();
 
     private constructor() {}
 
@@ -39,6 +40,7 @@ export class CellGrid {
             this.cells.get(pos)?.rm();
             const cell = type._newCell(this, pos, direction & 3)
             this.cells.set(pos, cell);
+            this.updateTree.insert(cell);
             cell.init();
             return cell;
         }
