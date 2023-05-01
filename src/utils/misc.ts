@@ -43,3 +43,15 @@ export function clip(text?: string) {
         return readText();
     }
 }
+
+export function lazy<T>(fn: () => T) {
+    let value: T;
+    let init = false;
+    return () => {
+        if (!init) {
+            value = fn();
+            init = true;
+        }
+        return value;
+    }
+}

@@ -3,66 +3,55 @@ import type { CellType } from "./cellType";
 import { Extension } from "../extensions";
 import type { CellGrid } from "./grid";
 import { Direction } from "../coord/direction";
+import { lazy } from "@utils/misc";
 
 const avgTime: number[] = [];
 
-export function doStep(grid: CellGrid, _subtick: boolean) {
-    if ((updateOrder as any).eee) {
-        (updateOrder as any).eee = false;
-        updateOrder.push(...Extension.getUpdateOrder());
-    }
+const directionalUpdateOrder: [Direction, (a: Cell, b: Cell) => number][] = [
+    [Direction.Right, (a, b) => b.pos.x - a.pos.x],
+    [Direction.Left, (a, b) => a.pos.x - b.pos.x],
+    [Direction.Up, (a, b) => b.pos.y - a.pos.y],
+    [Direction.Down, (a, b) => a.pos.y - b.pos.y],
+];
 
+const updateOrder = lazy(() => Extension.getUpdateOrder());
+
+export function doStep(grid: CellGrid, _subtick: boolean) {
     for (const cell of grid.cells.__object.values()) {
         cell.oldPosition = cell.pos;
         cell.rotationOffset = 0;
     }
 
     const start = performance.now();
-    for (const updateType of updateOrder) {
-        switch (updateType[1]) {
-            case UpdateType.Directional:
-                for (const dir of directionalUpdateOrder) {
-                    const cells: Cell[] = [];
-                    let i = 0;
-                    for (const cell of grid.updateTree.get(updateType[0])) {
-                        if (cell.direction == dir) {
-                            cells[i++] = cell;
-                        }
-                    }
-                    cells.length = i;
-
-                    switch (dir) {
-                        case Direction.Right:
-                            cells.sort((a, b) => b.pos.x - a.pos.x);
-                            break;
-                        case Direction.Down:
-                            cells.sort((a, b) => a.pos.y - b.pos.y);
-                            break;
-                        case Direction.Left:
-                            cells.sort((a, b) => a.pos.x - b.pos.x);
-                            break;
-                        case Direction.Up:
-                            cells.sort((a, b) => b.pos.y - a.pos.y);
-                            break;
-                    }
-
-                    for (let i = 0; i < cells.length; i++) {
-                        const cell = cells[i];
-                        if (!cell.deleted && !cell.disabled && !cell.updated) {
-                            cell.update();
-                            cell.updatedIn = grid.tickCount;
-                        }
+    for (const updateType of updateOrder()) {
+        if (updateType[1] == UpdateType.Directional) {
+            for (const [dir, sorting] of directionalUpdateOrder) {
+                const cells: Cell[] = [];
+                let i = 0;
+                for (const cell of grid.updateTree.get(updateType[0])) {
+                    if (cell.direction == dir) {
+                        cells[i++] = cell;
                     }
                 }
+                cells.length = i;
+                cells.sort(sorting);
 
-                break;
-            case UpdateType.Random:
-                for (const cell of grid.cells.__object.values())
-                    if (cell.type == updateType[0] && !cell.deleted && !cell.disabled && !cell.updated) {
+                for (let i = 0; i < cells.length; i++) {
+                    const cell = cells[i];
+                    if (!cell.deleted && !cell.disabled && !cell.updated) {
                         cell.update();
                         cell.updatedIn = grid.tickCount;
                     }
-                break;
+                }
+            }
+        }
+        else {
+            for (const cell of grid.updateTree.get(updateType[0])) {
+                if (cell.type == updateType[0] && !cell.deleted && !cell.disabled && !cell.updated) {
+                    cell.update();
+                    cell.updatedIn = grid.tickCount;
+                }
+            }
         }
     }
 
@@ -76,22 +65,6 @@ export enum UpdateType {
     Directional,
     Random,
 }
-
-export const directionalUpdateOrder = [
-    Direction.Right,
-    Direction.Left,
-    Direction.Up,
-    Direction.Down,
-];
-
-export const order = {
-    [Direction.Right]: (cell: Cell) => -cell.pos.x,
-    [Direction.Down]: (cell: Cell) => cell.pos.y,
-    [Direction.Left]: (cell: Cell) => cell.pos.x,
-    [Direction.Up]: (cell: Cell) => -cell.pos.y,
-};
-
-export const updateOrder: [CellType, UpdateType][] = Object.assign([], { eee: true });
 
 export class UpdateTree {
     private cells: Map<CellType, Set<Cell>> = new Map();
