@@ -25,10 +25,6 @@ export class CellType {
         return this.options.behavior;
     }
 
-    // onFlip(fn: (cell: CellData, horizontal: boolean) => CellData) {
-    //     this.options.flip = fn;
-    //     return this;
-    // }
     flip(cell: Cell, horizontal: boolean): CellData {
         if (this.options.flip)
             return this.options.flip([cell.type, cell.direction], horizontal);

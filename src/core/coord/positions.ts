@@ -4,47 +4,46 @@ import { Direction } from "./direction";
  * A `Map` for indexing with `Position`s.
  */
 export class PosMap<T> {
-    private store: Map<string, T> = new Map();
-    __object = this.store;
+    __object: Map<string, T> = new Map();
 
     constructor() {}
 
     clear(): void {
-        this.store.clear();
+        this.__object.clear();
     }
     delete(key: Position): boolean {
-        return this.store.delete(`${key.x},${key.y}`);
+        return this.__object.delete(`${key.x},${key.y}`);
     }
     forEach(callbackfn: (value: T, key: Position, map: PosMap<T>) => void, thisArg?: any): void {
-        for (const [key, value] of this.store) {
+        for (const [key, value] of this.__object) {
             callbackfn.call(thisArg, value, Pos(...(JSON.parse(`[${key}]`) as [number, number])), this);
         }
     }
     get(key: Position): T {
-        return this.store.get(`${key.x},${key.y}`)!;
+        return this.__object.get(`${key.x},${key.y}`)!;
     }
     getXY(x: number, y: number) {
-        return this.store.get(`${x},${y}`);
+        return this.__object.get(`${x},${y}`);
     }
     has(key: Position): boolean {
-        return this.store.has(`${key.x},${key.y}`);
+        return this.__object.has(`${key.x},${key.y}`);
     }
     set(key: Position, value: T): this {
-        this.store.set(`${key.x},${key.y}`, value);
+        this.__object.set(`${key.x},${key.y}`, value);
         return this;
     }
 
     values(): IterableIterator<T> {
-        return this.store.values();
+        return this.__object.values();
     }
 
     *entries(): IterableIterator<[Position, T]> {
-        for (const [key, value] of this.store)
+        for (const [key, value] of this.__object)
             yield [Pos(...(JSON.parse(`[${key}]`) as [number, number])), value];
     }
 
     get size() {
-        return this.store.size;
+        return this.__object.size;
     }
 }
 

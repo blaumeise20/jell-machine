@@ -17,7 +17,9 @@
 
     async function importClipboard() {
         const clipboardContent = await clip();
+        console.time("import level code");
         const res = CellGrid.loadFromString(clipboardContent);
+        console.timeEnd("import level code");
 
         if (res[0]) {
             layers = layers.next("editor");
