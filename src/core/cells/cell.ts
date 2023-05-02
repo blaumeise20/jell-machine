@@ -28,7 +28,7 @@ export class Cell {
     rm() {
         if (this.deleted) return;
         this.grid.cells.delete(this.pos);
-        this.grid.updateTree.delete(this);
+        this.grid.cellCollection.group_delete(this);
         this.deleted = true;
     }
 

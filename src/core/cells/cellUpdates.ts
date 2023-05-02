@@ -1,5 +1,4 @@
 import type { Cell } from "./cell";
-import type { CellType } from "./cellType";
 import { Extension } from "../extensions";
 import type { CellGrid } from "./grid";
 import { Direction } from "../coord/direction";
@@ -28,7 +27,7 @@ export function doStep(grid: CellGrid, _subtick: boolean) {
             for (const [dir, sorting] of directionalUpdateOrder) {
                 const cells: Cell[] = [];
                 let i = 0;
-                for (const cell of grid.updateTree.get(updateType[0])) {
+                for (const cell of grid.cellCollection.group_get(updateType[0])) {
                     if (cell.direction == dir) {
                         cells[i++] = cell;
                     }
@@ -46,7 +45,7 @@ export function doStep(grid: CellGrid, _subtick: boolean) {
             }
         }
         else {
-            for (const cell of grid.updateTree.get(updateType[0])) {
+            for (const cell of grid.cellCollection.group_get(updateType[0])) {
                 if (cell.type == updateType[0] && !cell.deleted && !cell.disabled && !cell.updated) {
                     cell.update();
                     cell.updatedIn = grid.tickCount;
@@ -64,24 +63,4 @@ export function doStep(grid: CellGrid, _subtick: boolean) {
 export enum UpdateType {
     Directional,
     Random,
-}
-
-export class UpdateTree {
-    private cells: Map<CellType, Set<Cell>> = new Map();
-
-    insert(cell: Cell) {
-        if (!this.cells.has(cell.type)) {
-            this.cells.set(cell.type, new Set());
-        }
-
-        this.cells.get(cell.type)!.add(cell);
-    }
-
-    delete(cell: Cell) {
-        this.cells.get(cell.type)!.delete(cell);
-    }
-
-    get(type: CellType) {
-        return this.cells.get(type)?.values() ?? [];
-    }
 }

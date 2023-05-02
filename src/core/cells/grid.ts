@@ -4,10 +4,11 @@ import type { Tile } from "../tiles";
 import type { Cell } from "./cell";
 import type { CellType } from "./cellType";
 import { Direction } from "../coord/direction";
-import { doStep, UpdateTree } from "./cellUpdates";
+import { doStep } from "./cellUpdates";
 import { Registry } from "../registry";
 import { BorderMode } from "./border";
 import { Events } from "@core/events";
+import { CellCollection } from "./cellCollection";
 
 export enum LevelError {
     Unknown,
@@ -25,7 +26,7 @@ export class CellGrid {
     currentSubtick = 0;
     selectedArea: Size | null = null;
     borderMode = BorderMode.Default;
-    readonly updateTree = new UpdateTree();
+    readonly cellCollection = new CellCollection();
 
     private constructor() {}
 
@@ -38,9 +39,9 @@ export class CellGrid {
     loadCell(pos: Position, type: CellType, direction: Direction) {
         if (this.isInfinite || this.size.contains(pos)) {
             this.cells.get(pos)?.rm();
-            const cell = type._newCell(this, pos, direction & 3)
+            const cell = new type.behavior(pos, type, direction & 3, this);
             this.cells.set(pos, cell);
-            this.updateTree.insert(cell);
+            this.cellCollection.group_insert(cell);
             return cell;
         }
         return false;
