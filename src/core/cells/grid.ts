@@ -14,6 +14,7 @@ export enum LevelError {
     Unknown,
     UnknownFormat,
 }
+
 export class CellGrid {
     isInfinite: boolean = false;
     size!: Size;

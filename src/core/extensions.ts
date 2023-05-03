@@ -7,14 +7,12 @@ import { Registry } from "./registry";
  */
 export type ItemIdentifier = string;
 
-export type ExtensionLoader = () => void;
-
 export class Extension {
     id!: string;
 
     static extensions: Extension[] = [];
 
-    static load(id: string, extensionLoader: ExtensionLoader) {
+    static load(id: string, extensionLoader: () => void) {
         const extension = new Extension();
         extension.id = id;
 

@@ -101,5 +101,4 @@ export class Cell {
 
 export type PushResult = boolean | null;
 export type Movement = [Position, Direction];
-
 export type CellData = [CellType, Direction];

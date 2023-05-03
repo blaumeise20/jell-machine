@@ -8,7 +8,6 @@ export namespace Registry {
     const slots: Slot[] = [];
     const levelCodes: Record<string, LevelCode> = {};
 
-
     // cell types
     export function getCell(id: ItemIdentifier): CellType | undefined {
         return cells[id];
