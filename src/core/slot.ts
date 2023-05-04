@@ -1,5 +1,5 @@
 import { writable, type Writable } from "svelte/store";
-import type { CellType } from "./cells/cellType";
+import type { CellType } from "@core/grid/cellType";
 import { Registry } from "./registry";
 
 export class Slot {

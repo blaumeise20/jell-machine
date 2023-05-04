@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Cell } from "@core/cells/cell";
+    import type { Cell } from "@core/grid/cell";
     import { Direction } from "@core/coord/direction";
     import { Pos } from "@core/coord/positions";
     import { config } from "@utils/config";

@@ -1,7 +1,7 @@
-import type { Cell } from "@core/cells/cell";
-import { UndoStack } from "@core/cells/cellChange";
-import type { CellType } from "@core/cells/cellType";
-import type { CellGrid } from "@core/cells/grid";
+import type { Cell } from "@core/grid/cell";
+import { UndoStack } from "@core/grid/cellChange";
+import type { CellType } from "@core/grid/cellType";
+import type { CellGrid } from "@core/grid/grid";
 import { Direction } from "@core/coord/direction";
 import { Off, Pos, Position } from "@core/coord/positions";
 import type { Size } from "@core/coord/size";

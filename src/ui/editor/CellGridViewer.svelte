@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Direction } from "@core/coord/direction";
-    import type { CellGrid } from "@core/cells/grid";
+    import type { CellGrid } from "@core/grid/grid";
     import { onMount } from "svelte";
     import { Tile } from "@core/tiles";
     import { keys, modifiers, on } from "../keys";
@@ -12,7 +12,7 @@
     import { renderGrid } from "./render";
     import { currentTextures } from "@utils/texturePacks";
     import { config } from "@utils/config";
-    import type { CellType } from "@core/cells/cellType";
+    import type { CellType } from "@core/grid/cellType";
 
     export let grid: CellGrid;
     export let gridProvider: GridProvider;

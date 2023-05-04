@@ -1,5 +1,5 @@
-import type { Cell } from "@core/cells/cell";
-import { CellGrid } from "@core/cells/grid";
+import type { Cell } from "@core/grid/cell";
+import { CellGrid } from "@core/grid/grid";
 import type { Position } from "@core/coord/positions";
 import { MultiplayerConnection } from "@core/multiplayer/connection";
 import type { Stack } from "@utils/stack";

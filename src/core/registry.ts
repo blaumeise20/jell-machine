@@ -1,4 +1,4 @@
-import type { CellType } from "./cells/cellType";
+import type { CellType } from "@core/grid/cellType";
 import type { ItemIdentifier } from "./extensions";
 import type { LevelCode } from "./levelCode";
 import type { Slot } from "./slot";

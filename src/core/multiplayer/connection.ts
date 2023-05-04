@@ -1,5 +1,5 @@
-import type { Cell } from "@core/cells/cell";
-import type { CellGrid } from "@core/cells/grid";
+import type { Cell } from "@core/grid/cell";
+import type { CellGrid } from "@core/grid/grid";
 import { Pos, Position } from "@core/coord/positions";
 import { Registry } from "@core/registry";
 import { InputStream, OutputStream } from "./binaryIO";

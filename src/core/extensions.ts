@@ -1,5 +1,5 @@
-import type { CellType } from "./cells/cellType";
-import type { UpdateType } from "./cells/cellUpdates";
+import type { CellType } from "@core/grid/cellType";
+import type { UpdateType } from "@core/grid/cellUpdates";
 import { Registry } from "./registry";
 
 /**

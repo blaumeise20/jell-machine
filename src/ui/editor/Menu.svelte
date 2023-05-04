@@ -3,7 +3,7 @@
     import { selection } from "../uiState";
     import { Menu } from "@core/ui/menu";
     import UiElementViewer from "../UIElementViewer.svelte";
-    import { BorderMode } from "@core/cells/border";
+    import { BorderMode } from "@core/grid/border";
     import type { Stack } from "@utils/stack";
     import type { GridProvider } from "../gridProvider/GridProvider";
 

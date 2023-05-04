@@ -1,4 +1,4 @@
-import type { CellGrid } from "./cells/grid";
+import type { CellGrid } from "@core/grid/grid";
 import { Registry } from "./registry";
 
 export class LevelCode {

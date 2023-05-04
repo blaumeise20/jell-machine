@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { CellGrid } from "@core/cells/grid";
+    import { CellGrid } from "@core/grid/grid";
     import type { Stack } from "@utils/stack";
     import { LevelGridProvider } from "./gridProvider/LevelGridProvider";
     import { on } from "./keys";

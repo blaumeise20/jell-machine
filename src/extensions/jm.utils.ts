@@ -1,6 +1,6 @@
-import { Cell } from "@core/cells/cell";
-import { UpdateType } from "@core/cells/cellUpdates";
-import type { CellGrid } from "@core/cells/grid";
+import { Cell } from "@core/grid/cell";
+import { UpdateType } from "@core/grid/cellUpdates";
+import type { CellGrid } from "@core/grid/grid";
 import { LevelCode } from "@core/levelCode";
 import { Tile } from "@core/tiles";
 import { $config } from "@utils/config";
@@ -11,7 +11,7 @@ import { Direction } from "@core/coord/direction";
 import { Menu } from "@core/ui/menu";
 import { block, text, UIText } from "@core/ui/build";
 import { get } from "svelte/store";
-import { CellType } from "@core/cells/cellType";
+import { CellType } from "@core/grid/cellType";
 import { Events } from "@core/events";
 import { Slot } from "@core/slot";
 import { makeNumberEncoder } from "@core/numbers";
