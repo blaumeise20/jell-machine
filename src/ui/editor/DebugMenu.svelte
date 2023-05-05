@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Cell } from "@core/grid/cell";
-    import { Direction } from "@core/coord/direction";
+    import { Direction } from "@core/direction";
     import { Pos } from "@core/coord/positions";
     import { config } from "@utils/config";
     import type { GridProvider } from "../gridProvider/GridProvider";

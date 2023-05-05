@@ -1,5 +1,5 @@
 import { resolvePath } from "@utils/platform";
-import { CellGrid } from "@core/grid/grid";
+import { CellGrid } from "@core/grid/cellGrid";
 
 export class Structure {
     constructor(public name: string, public path: string) {}

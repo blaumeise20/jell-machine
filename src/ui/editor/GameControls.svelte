@@ -4,7 +4,7 @@
     import { config } from "@utils/config";
     import { Animator } from "@utils/animator";
     import { SlotHandler } from "@core/slot";
-    import type { Direction } from "@core/coord/direction";
+    import type { Direction } from "@core/direction";
     import { Registry } from "@core/registry";
     import Hotbar from "./Hotbar.svelte";
     import type { GridProvider } from "../gridProvider/GridProvider";

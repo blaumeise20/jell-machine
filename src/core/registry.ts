@@ -1,6 +1,6 @@
 import type { CellType } from "@core/grid/cellType";
 import type { ItemIdentifier } from "./extensions";
-import type { LevelCode } from "./levelCode";
+import type { LevelCode } from "./saving/levelCode";
 import type { Slot } from "./slot";
 
 export namespace Registry {

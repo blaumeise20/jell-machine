@@ -1,6 +1,6 @@
 import { Cell } from "@core/grid/cell";
 import { CellType } from "@core/grid/cellType";
-import { Direction } from "@core/coord/direction";
+import { Direction } from "@core/direction";
 import { Slot } from "@core/slot";
 
 export function load() {

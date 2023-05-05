@@ -3,17 +3,13 @@ import { Off, Pos, Position, PosMap } from "../coord/positions";
 import type { Tile } from "../tiles";
 import type { Cell } from "./cell";
 import type { CellType } from "./cellType";
-import { Direction } from "../coord/direction";
+import { Direction } from "../direction";
 import { doStep } from "./cellUpdates";
 import { Registry } from "../registry";
 import { BorderMode } from "./border";
 import { Events } from "@core/events";
 import { CellCollection } from "./cellCollection";
-
-export enum LevelError {
-    Unknown,
-    UnknownFormat,
-}
+import { LevelError } from "@core/saving/levelError";
 
 export class CellGrid {
     isInfinite: boolean = false;

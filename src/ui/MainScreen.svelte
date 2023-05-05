@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { CellGrid } from "@core/grid/grid";
+    import { CellGrid } from "@core/grid/cellGrid";
     import { clip } from "@utils/misc";
     import logo from "./logo.png?blob";
     import type { Stack } from "@utils/stack";

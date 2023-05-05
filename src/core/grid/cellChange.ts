@@ -1,6 +1,6 @@
 import { Position, PosMap } from "@core/coord/positions";
 import type { Cell } from "./cell";
-import type { CellGrid } from "./grid";
+import type { CellGrid } from "./cellGrid";
 
 export class CellChange {
     public cells: PosMap<Cell | null>;

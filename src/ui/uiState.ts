@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import type { Size } from "@core/coord/size";
-import type { CellGrid } from "@core/grid/grid";
+import type { CellGrid } from "@core/grid/cellGrid";
 import type { GridProvider } from "./gridProvider/GridProvider";
 
 export const showControls = writable(true);

@@ -1,4 +1,4 @@
-import type { CellGrid } from "@core/grid/grid";
+import type { CellGrid } from "@core/grid/cellGrid";
 import { GridProvider } from "./GridProvider";
 
 export class LevelGridProvider extends GridProvider {

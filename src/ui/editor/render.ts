@@ -1,5 +1,5 @@
-import type { CellGrid } from "@core/grid/grid";
-import { Direction } from "@core/coord/direction";
+import type { CellGrid } from "@core/grid/cellGrid";
+import { Direction } from "@core/direction";
 import type { Position } from "@core/coord/positions";
 import type { Size } from "@core/coord/size";
 import { Tile } from "@core/tiles";

@@ -1,5 +1,5 @@
-import type { CellGrid } from "@core/grid/grid";
-import { Registry } from "./registry";
+import type { CellGrid } from "@core/grid/cellGrid";
+import { Registry } from "../registry";
 
 export class LevelCode {
     public importFn: (parts: string[], grid: CellGrid) => boolean = () => false;
