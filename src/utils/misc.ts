@@ -14,23 +14,6 @@ export function safe(fn: () => any, fallback = null): [any, boolean] {
 	}
 }
 
-export function tryAll<T>(arr: T[], fn: (t: T) => boolean) {
-    for (const t of arr) {
-        const result = safe(() => fn(t));
-        if (!result[0] || !result[1]) return false;
-    }
-    return true;
-}
-
-export function tryAllContinue<T>(arr: T[], fn: (t: T) => boolean) {
-    const errors = [];
-    for (const t of arr) {
-        const result = safe(() => fn(t));
-        if (!result[0] || !result[1]) errors.push({ result, t });
-    }
-    return errors;
-}
-
 export function clip(): Promise<string>;
 export function clip(text: string): Promise<void>;
 export function clip(text?: string) {

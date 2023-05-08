@@ -37,8 +37,8 @@ const textureMapping = {
 
     network: ["network.png"],
 
-    placeable: ["BGPlaceable.png", "0.png"],
-    bg: ["BG.png", "BGDefault.png"],
+    placeable: ["BGPlaceable.png"],
+    bg: ["BG.png"],
     border: ["_.png"],
     unknown: ["unknown.png"],
 };
@@ -100,15 +100,12 @@ class Textures {
         });
 
         for (const k of Object.keys(textureMapping) as (keyof typeof textureMapping)[]) {
-            for (const filename of textureMapping[k]) {
-                const blob = files[`/assets/defaultPack/${filename}`] as Blob;
-                const url = URL.createObjectURL(blob);
-                createImageBitmap(blob).then(bitmap => {
-                    cells[k] = { blob, url, bitmap };
-                });
-
-                break;
-            }
+            const filename = textureMapping[k][0];
+            const blob = files[`/assets/defaultPack/${filename}`] as Blob;
+            const url = URL.createObjectURL(blob);
+            createImageBitmap(blob).then(bitmap => {
+                cells[k] = { blob, url, bitmap };
+            });
         }
 
         this.defaultPack = {

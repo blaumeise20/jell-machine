@@ -4,9 +4,7 @@ export class Animator {
     private frame = -1;
     private interval = 0;
 
-    constructor(private fn: () => any) {
-
-    }
+    constructor(private fn: () => any) {}
 
     setInterval(delay: number) {
         this.interval = delay;
