@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CellType } from "@core/grid/cellType";
+    import type { CellType } from "@core/cells/cellType";
     import type { SlotHandler } from "@core/slot";
     // import { block, button, text, UITextSize } from "@core/ui/build";
     import { config } from "@utils/config";

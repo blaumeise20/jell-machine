@@ -1,5 +1,5 @@
-import { Cell } from "@core/grid/cell";
-import { CellType } from "@core/grid/cellType";
+import { Cell } from "@core/cells/cell";
+import { CellType } from "@core/cells/cellType";
 import { UpdateType } from "@core/grid/cellUpdates";
 import { Off } from "@core/coord/positions";
 // import { Slot } from "@core/slot";

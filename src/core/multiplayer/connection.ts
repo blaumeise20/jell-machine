@@ -1,4 +1,4 @@
-import type { Cell } from "@core/grid/cell";
+import type { Cell } from "@core/cells/cell";
 import type { CellGrid } from "@core/grid/cellGrid";
 import { Pos, Position } from "@core/coord/positions";
 import { Registry } from "@core/registry";

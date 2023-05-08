@@ -1,7 +1,7 @@
 import { Pos, Position, PosMap } from "@core/coord/positions";
 import { Registry } from "@core/registry";
-import type { Cell } from "./cell";
-import type { CellType } from "./cellType";
+import type { Cell } from "../cells/cell";
+import type { CellType } from "../cells/cellType";
 
 export const CHUNK_HEIGHT = 16;
 export const CHUNK_WIDTH = 16;

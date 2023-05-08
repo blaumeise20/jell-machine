@@ -1,8 +1,8 @@
 import { Pos, Position } from "../coord/positions";
-import type { CellGrid } from "./cellGrid";
+import type { CellGrid } from "../grid/cellGrid";
 import { Direction } from "../direction";
 import type { CellType } from "./cellType";
-import { BorderMode } from "./border";
+import { BorderMode } from "../grid/border";
 
 export class Cell {
     public deleted = false;

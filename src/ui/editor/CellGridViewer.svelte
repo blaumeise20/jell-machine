@@ -12,7 +12,7 @@
     import { renderGrid } from "./render";
     import { currentTextures } from "@utils/texturePacks";
     import { config } from "@utils/config";
-    import type { CellType } from "@core/grid/cellType";
+    import type { CellType } from "@core/cells/cellType";
 
     export let grid: CellGrid;
     export let gridProvider: GridProvider;

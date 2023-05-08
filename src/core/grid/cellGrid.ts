@@ -1,8 +1,8 @@
 import { Size } from "../coord/size";
 import { Off, Pos, Position, PosMap } from "../coord/positions";
 import type { Tile } from "../tiles";
-import type { Cell } from "./cell";
-import type { CellType } from "./cellType";
+import type { Cell } from "../cells/cell";
+import type { CellType } from "../cells/cellType";
 import { Direction } from "../direction";
 import { doStep } from "./cellUpdates";
 import { Registry } from "../registry";

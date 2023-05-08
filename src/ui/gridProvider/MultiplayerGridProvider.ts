@@ -1,4 +1,4 @@
-import type { Cell } from "@core/grid/cell";
+import type { Cell } from "@core/cells/cell";
 import { CellGrid } from "@core/grid/cellGrid";
 import type { Position } from "@core/coord/positions";
 import { MultiplayerConnection } from "@core/multiplayer/connection";

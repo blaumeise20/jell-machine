@@ -1,4 +1,4 @@
-import type { CellType } from "@core/grid/cellType";
+import type { CellType } from "@core/cells/cellType";
 import type { UpdateType } from "@core/grid/cellUpdates";
 import { Registry } from "./registry";
 

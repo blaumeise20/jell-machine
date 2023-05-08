@@ -9,7 +9,7 @@
     import Overlay from "../Overlay.svelte";
     import Settings from "../settings/Settings.svelte";
     import type { GridProvider } from "../gridProvider/GridProvider";
-    import type { CellType } from "@core/grid/cellType";
+    import type { CellType } from "@core/cells/cellType";
     import type { Direction } from "@core/direction";
     import type { Readable, Writable } from "svelte/store";
 

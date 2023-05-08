@@ -1,4 +1,4 @@
-import type { Cell } from "./cell";
+import type { Cell } from "../cells/cell";
 import { Extension } from "../extensions";
 import type { CellGrid } from "./cellGrid";
 import { Direction } from "../direction";

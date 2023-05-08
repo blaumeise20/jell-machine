@@ -1,5 +1,5 @@
 import { Pos } from "@core/coord/positions";
-import { Cell } from "@core/grid/cell";
+import { Cell } from "@core/cells/cell";
 import { UpdateType } from "@core/grid/cellUpdates";
 import { Size } from "@core/coord/size";
 import { Tile } from "@core/tiles";
@@ -7,7 +7,7 @@ import arr from "create-arr";
 import { LevelCode } from "@core/saving/levelCode";
 import { Direction } from "@core/direction";
 import { BorderMode } from "@core/grid/border";
-import { CellType } from "@core/grid/cellType";
+import { CellType } from "@core/cells/cellType";
 import { Slot } from "@core/slot";
 import { makeNumberEncoder } from "@core/numbers";
 
