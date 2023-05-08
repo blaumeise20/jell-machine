@@ -10,7 +10,7 @@
     const actions = [
         ["Left click", "place cell"],
         ["Right click", "delete cell"],
-        ["Shift+click", "edit placables"],
+        ["Shift+click", "edit placeables"],
         ["WASD", "move camera"],
         ["Arrow keys", "move camera"],
         ["Scroll", "zoom"],

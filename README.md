@@ -29,7 +29,7 @@ The main goal is to improve user experience, so new cells might take some time t
 ## Controls
 * **Left click**: Place cell
 * **Right click**: Delete cell
-* **Shift+click**: Edit placables
+* **Shift+click**: Edit placeables
 * **WASD/Arrow Keys**: Move camera
 * **Scroll**: Zoom
 * **Q or E**: Rotate cell

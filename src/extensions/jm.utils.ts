@@ -604,7 +604,7 @@ export function load() {
                     }
 
                     if (cellData[i] == 0x50) { // P
-                        grid.tiles.set(Pos(x, y), Tile.Placable);
+                        grid.tiles.set(Pos(x, y), Tile.Placeable);
                     }
 
                     x++;
@@ -622,7 +622,7 @@ export function load() {
                 const data = parts[4];
                 let ix = 0;
 
-                function loadCell(value: number, placable: boolean, count: number) {
+                function loadCell(value: number, placeable: boolean, count: number) {
                     value = value - 1;
 
                     const direction = value % 4;
@@ -642,7 +642,7 @@ export function load() {
                     while (count--) {
                         const pos = Pos(ix % grid.size.width, Math.floor(ix / grid.size.width));
 
-                        if (placable) grid.tiles.set(pos, Tile.Placable);
+                        if (placeable) grid.tiles.set(pos, Tile.Placeable);
                         if (value >= 0) grid.loadCell(pos, cell, direction);
 
                         ix++;
@@ -650,11 +650,11 @@ export function load() {
                 }
 
                 for (let i = 0; i < data.length;) {
-                    let placable = false;
+                    let placeable = false;
                     let count = 1;
 
                     if (data[i] == ":") {
-                        i++; placable = true;
+                        i++; placeable = true;
                     }
 
                     const value = decodeJ1Num(data[i++]);
@@ -673,7 +673,7 @@ export function load() {
                         count = decodeJ1Num(ct) + 4;
                     }
 
-                    loadCell(value, placable, count);
+                    loadCell(value, placeable, count);
                 }
 
                 grid.description = parts[5]?.trim() || "";
@@ -708,7 +708,7 @@ export function load() {
                         cellData.push(0x45); // E
                     }
 
-                    if (grid.tiles.get(pos) == Tile.Placable) {
+                    if (grid.tiles.get(pos) == Tile.Placeable) {
                         cellData.push(0x50); // P
                     }
                 }

@@ -15,7 +15,7 @@ const textureMapping = {
     trash: ["trash.png"],
 
     wall: ["wall.png", "immobile.png"],
-    note: ["note.png", "music.png"],
+    note: ["note.png"],
     orientator: ["orientator.png"],
     disabler: ["disabler.png"],
     jell: ["jell.png"],
@@ -37,7 +37,7 @@ const textureMapping = {
 
     network: ["network.png"],
 
-    placable: ["BGPlacable.png", "0.png"],
+    placeable: ["BGPlaceable.png", "0.png"],
     bg: ["BG.png", "BGDefault.png"],
     border: ["_.png"],
     unknown: ["unknown.png"],

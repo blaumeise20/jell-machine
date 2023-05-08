@@ -248,14 +248,14 @@ export function load() {
     LevelCode.create("V1").import((parts, grid) => {
         grid.size = new Size(int(parts[1]), int(parts[2]));
 
-        // placable stuff
-        const placables = parts[3].split(",");
-        if (placables[0]) {
-            for (const position of placables) {
+        // placeable stuff
+        const placeables = parts[3].split(",");
+        if (placeables[0]) {
+            for (const position of placeables) {
                 const posArr = position.split(".");
                 const pos = Pos(int(posArr[0]), int(posArr[1]));
                 if (!grid.size.contains(pos)) return false;
-                grid.tiles.set(pos, Tile.Placable);
+                grid.tiles.set(pos, Tile.Placeable);
             }
         }
 
@@ -288,7 +288,7 @@ export function load() {
                 const pos = Pos(index % grid.size!.width, Math.floor(index / grid.size!.width));
                 if (cellContent % 2) {
                     if (!grid.size.contains(pos)) return 0;
-                    grid.tiles.set(pos, Tile.Placable);
+                    grid.tiles.set(pos, Tile.Placeable);
                 }
                 if (cellContent < 72) {
                     const cellId = Math.floor(cellContent / 2) % 9;

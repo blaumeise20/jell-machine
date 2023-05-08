@@ -32,7 +32,7 @@ export function renderGrid(
 
     // Draw grid
     const t_bg = tex.cells["bg"].bitmap;
-    const t_placable = tex.cells["placable"].bitmap;
+    const t_placeable = tex.cells["placeable"].bitmap;
     const x = Math.floor(hWidth + (sx - cx) * cellSize);
     const y = Math.floor(hHeight - (ey - cy) * cellSize);
     bgMap.setTransform({
@@ -50,9 +50,9 @@ export function renderGrid(
     );
     ctx.restore();
     for (const [pos, tile] of grid.tiles.entries()) {
-        if (tile == Tile.Placable) {
+        if (tile == Tile.Placeable) {
             ctx.drawImage(
-                t_placable,
+                t_placeable,
                 Math.floor(hWidth + (pos.x - cx) * cellSize),
                 Math.floor(hHeight - (pos.y - cy + 1) * cellSize),
                 cellSize,

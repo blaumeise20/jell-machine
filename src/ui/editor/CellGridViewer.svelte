@@ -130,7 +130,7 @@
         // camera: placing
         if (placeCell) {
             if (mouseButton == 0 || placingKeys.o) {
-                if (keys.shift) grid.tiles.set(clickedCell, Tile.Placable);
+                if (keys.shift) grid.tiles.set(clickedCell, Tile.Placeable);
                 else gridProvider.placeCell(clickedCell, selectedCell, rotation);
             }
             else if (mouseButton == 2 || placingKeys.p) {
@@ -228,7 +228,7 @@
 
     // selection: fill
     // on("g").down(() => {
-    //     if (keys.shift) grid.fillTile(selectionSize, Tile.Placable);
+    //     if (keys.shift) grid.fillTile(selectionSize, Tile.Placeable);
     //     else grid.fillCell(selectionSize, $selectedCell, $rotation);
     // });
 
