@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Direction } from "@core/direction";
+    import { Direction } from "@core/cells/direction";
     import type { CellGrid } from "@core/grid/cellGrid";
     import { onMount } from "svelte";
     import { Tile } from "@core/tiles";

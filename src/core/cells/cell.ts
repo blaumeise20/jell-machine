@@ -1,6 +1,6 @@
 import { Pos, Position } from "../coord/positions";
 import type { CellGrid } from "../grid/cellGrid";
-import { Direction } from "../direction";
+import { Direction } from "./direction";
 import type { CellType } from "./cellType";
 import { BorderMode } from "../grid/border";
 

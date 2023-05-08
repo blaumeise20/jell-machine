@@ -5,7 +5,7 @@ import { Size } from "@core/coord/size";
 import { Tile } from "@core/tiles";
 import arr from "create-arr";
 import { LevelCode } from "@core/saving/levelCode";
-import { Direction } from "@core/direction";
+import { Direction } from "@core/cells/direction";
 import { BorderMode } from "@core/grid/border";
 import { CellType } from "@core/cells/cellType";
 import { Slot } from "@core/slot";

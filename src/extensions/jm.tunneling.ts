@@ -1,6 +1,6 @@
 import { Cell } from "@core/cells/cell";
 import { CellType } from "@core/cells/cellType";
-import { Direction } from "@core/direction";
+import { Direction } from "@core/cells/direction";
 import { Slot } from "@core/slot";
 
 export function load() {

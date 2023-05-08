@@ -7,7 +7,7 @@ import { $config } from "@utils/config";
 import { Pos } from "@core/coord/positions";
 import { Size } from "@core/coord/size";
 import { Registry } from "@core/registry";
-import { Direction } from "@core/direction";
+import { Direction } from "@core/cells/direction";
 import { Menu } from "@core/ui/menu";
 import { block, text, UIText } from "@core/ui/build";
 import { get } from "svelte/store";

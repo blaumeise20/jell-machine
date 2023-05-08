@@ -3,7 +3,7 @@ import { Off, Pos, Position, PosMap } from "../coord/positions";
 import type { Tile } from "../tiles";
 import type { Cell } from "../cells/cell";
 import type { CellType } from "../cells/cellType";
-import { Direction } from "../direction";
+import { Direction } from "../cells/direction";
 import { doStep } from "./cellUpdates";
 import { Registry } from "../registry";
 import { BorderMode } from "./border";

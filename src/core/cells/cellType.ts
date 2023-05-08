@@ -1,7 +1,7 @@
 import type { Position } from "../coord/positions";
 import type { ItemIdentifier } from "../extensions";
 import type { CellGrid } from "../grid/cellGrid";
-import { Direction } from "../direction";
+import { Direction } from "./direction";
 import type { Cell, CellData } from "./cell";
 import type { UpdateType } from "../grid/cellUpdates";
 import { Registry } from "@core/registry";

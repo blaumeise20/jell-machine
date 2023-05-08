@@ -1,7 +1,7 @@
 import type { Cell } from "../cells/cell";
 import { Extension } from "../extensions";
 import type { CellGrid } from "./cellGrid";
-import { Direction } from "../direction";
+import { Direction } from "../cells/direction";
 import { lazy } from "@utils/misc";
 
 const avgTime: number[] = [];

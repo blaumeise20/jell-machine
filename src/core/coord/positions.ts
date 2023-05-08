@@ -1,4 +1,4 @@
-import { Direction } from "../direction";
+import { Direction } from "../cells/direction";
 
 /**
  * A `Map` for indexing with `Position`s.
