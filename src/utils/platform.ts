@@ -10,12 +10,12 @@ export function resolvePath(...paths: string[]): string {
         }
         else {
             if (result.endsWith("/")) {
-                result = result.substr(0, result.length - 1);
+                result = result.slice(0, result.length - 1);
             }
             const parts = path.split("/");
             for (const part of parts) {
                 if (part === "..") {
-                    result = result.substr(0, result.lastIndexOf("/"));
+                    result = result.slice(0, result.lastIndexOf("/"));
                 }
                 else {
                     result += "/" + part;

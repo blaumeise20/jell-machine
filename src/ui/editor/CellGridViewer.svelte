@@ -101,7 +101,7 @@
         previousTime = time;
         if (living) frame = requestAnimationFrame(updateFrame);
 
-        $fps = Math.round(1000 / delta);
+        $fps = 1000 / delta;
 
         // camera: move calculations
         let x = center.x;

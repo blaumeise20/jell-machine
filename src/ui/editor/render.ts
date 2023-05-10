@@ -29,6 +29,7 @@ export function renderGrid(
     const ey = clamp(0, Math.ceil(cy - (0 - hHeight) / cellSize), grid.size.height);
     const halfSize = cellSize / 2;
     const halfPi = Math.PI / 2;
+    const R = Math.PI * 2;
 
     // Draw grid
     const t_bg = tex.cells["bg"].getBitmap(0); // TODO
@@ -62,30 +63,29 @@ export function renderGrid(
     }
 
     // Draw cells
+    let prevAngle = 0;
+    ctx.save();
     for (let x = sx; x < ex; x++) {
         for (let y = sy; y < ey; y++) {
             const cell = grid.cells.getXY(x, y);
             if (cell) {
                 const lx = lerp(cell.oldPosition.x, x, t);
                 const ly = lerp(cell.oldPosition.y, y, t);
-                const cellX = hWidth + (lx - cx) * cellSize;
-                const cellY = hHeight - (ly - cy + 1) * cellSize;
-                const centerX = cellX + halfSize;
-                const centerY = cellY + halfSize;
-                ctx.save();
-                ctx.translate(centerX, centerY);
-                ctx.rotate(lerp(cell.direction - cell.rotationOffset, cell.direction, t) * halfPi);
-                ctx.translate(-centerX, -centerY);
+                const cellX = hWidth + (lx - cx) * cellSize + halfSize;
+                const cellY = hHeight - (ly - cy + 1) * cellSize + halfSize;
+                const angle = lerp(cell.direction - cell.rotationOffset, cell.direction, t) * halfPi % R;
+                ctx.rotate((angle - prevAngle + R) % R);
+                prevAngle = angle;
+                const newX = cellX * Math.cos(R - angle) - cellY * Math.sin(R - angle) - halfSize;
+                const newY = cellX * Math.sin(R - angle) + cellY * Math.cos(R - angle) - halfSize;
                 ctx.drawImage(
                     tex.cells[cell.type.getTex(cell)].bitmap(cellSize),
-                    cellX,
-                    cellY,
+                    newX,
+                    newY,
                     cellSize,
                     cellSize,
                 );
-                ctx.restore();
             }
-
 
             // check if there is a cell on the pasteboard
             if (pasteboard && pasteboardPos) {
@@ -95,6 +95,7 @@ export function renderGrid(
                     const cellY = hHeight - (y - cy + 1) * cellSize;
                     const centerX = cellX + halfSize;
                     const centerY = cellY + halfSize;
+                    ctx.restore();
                     ctx.save();
                     if (pasteboardCell.direction != Direction.Right) {
                         ctx.translate(centerX, centerY);
@@ -110,10 +111,13 @@ export function renderGrid(
                         cellSize,
                     );
                     ctx.restore();
+                    ctx.save();
+                    prevAngle = 0;
                 }
             }
         }
     }
+    ctx.restore();
 
     // Optionally draw selection
     if (selection) {
