@@ -12,3 +12,5 @@ export const cursorPosition = writable<{ x: number, y: number }>({ x: 0, y: 0 })
 export const screenPosition = writable<{ x: number, y: number }>({ x: 0, y: 0 });
 
 export const clipboard = writable<CellGrid | null>(null);
+
+export const fps = writable(0);

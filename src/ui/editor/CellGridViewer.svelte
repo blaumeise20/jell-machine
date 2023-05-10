@@ -8,7 +8,7 @@
     import { Off, Pos, toPos } from "@core/coord/positions";
     import { Size } from "@core/coord/size";
     import type { GridProvider } from "../gridProvider/GridProvider";
-    import { clipboard } from "../uiState";
+    import { clipboard, fps } from "../uiState";
     import { renderGrid } from "./render";
     import { currentTextures } from "@utils/texturePacks";
     import { config } from "@utils/config";
@@ -100,6 +100,8 @@
         const delta = time - previousTime;
         previousTime = time;
         if (living) frame = requestAnimationFrame(updateFrame);
+
+        $fps = Math.round(1000 / delta);
 
         // camera: move calculations
         let x = center.x;

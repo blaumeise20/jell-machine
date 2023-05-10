@@ -5,7 +5,7 @@
     import { config } from "@utils/config";
     import type { GridProvider } from "../gridProvider/GridProvider";
     import { on } from "../keys";
-    import { cursorPosition, screenPosition, selection } from "../uiState";
+    import { cursorPosition, fps, screenPosition, selection } from "../uiState";
 
     export let gridProvider: GridProvider;
     export let visible: boolean;
@@ -43,6 +43,7 @@
 
 {#if $config.showDebug && visible}
     <div class="debug">
+        FPS: {$fps}<br />
         <div data-label="General">
             Level size: {gridProvider.grid.size.width}&times;{gridProvider.grid.size.height}<br />
             Initial: <span style:color={$initial ? null : "#f44"}>{$initial}</span>
