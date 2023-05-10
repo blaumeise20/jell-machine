@@ -80,9 +80,10 @@
     let bgTextureMap: CanvasPattern;
     $: if (canvas) {
         ctx = canvas.getContext("2d")!;
+        ctx.imageSmoothingEnabled = false;
         ctx.imageSmoothingQuality = "high";
 
-        const bg = currentTextures.cells["bg"].bitmap;
+        const bg = currentTextures.cells["bg"].getBitmap(0);
         const temp = document.createElement("canvas");
         temp.width = bg.width;
         temp.height = bg.height;

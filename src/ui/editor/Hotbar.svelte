@@ -190,7 +190,7 @@
                     class="item"
                     class:selected={slot.isActive}
                     style="
-                        background-image: url({$textures.cells[slot.currentItem.options.textureName].url});
+                        background-image: url({$textures.cells[slot.currentItem.options.textureName]});
                         transform: rotate({rotation * 90}deg);
                     "
                     on:click={() => {
@@ -211,7 +211,7 @@
                             class="subitem"
                             class:selected={slot.slot.currentItem == cell}
                             style="
-                                background-image: url({$textures.cells[cell.options.textureName].url});
+                                background-image: url({$textures.cells[cell.options.textureName]});
                                 transform: rotate({rotation * 90}deg);
                             "
                             on:click={() => slotHandler.toCell(index)}

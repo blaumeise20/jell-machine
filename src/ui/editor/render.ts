@@ -31,8 +31,8 @@ export function renderGrid(
     const halfPi = Math.PI / 2;
 
     // Draw grid
-    const t_bg = tex.cells["bg"].bitmap;
-    const t_placeable = tex.cells["placeable"].bitmap;
+    const t_bg = tex.cells["bg"].getBitmap(0); // TODO
+    const t_placeable = tex.cells["placeable"].getBitmap(0);
     const x = Math.floor(hWidth + (sx - cx) * cellSize);
     const y = Math.floor(hHeight - (ey - cy) * cellSize);
     bgMap.setTransform({
@@ -77,7 +77,7 @@ export function renderGrid(
                 ctx.rotate(lerp(cell.direction - cell.rotationOffset, cell.direction, t) * halfPi);
                 ctx.translate(-centerX, -centerY);
                 ctx.drawImage(
-                    tex.cells[cell.type.getTex(cell)].bitmap,
+                    tex.cells[cell.type.getTex(cell)].bitmap(cellSize),
                     cellX,
                     cellY,
                     cellSize,
@@ -103,7 +103,7 @@ export function renderGrid(
                     }
                     ctx.globalAlpha = 0.5;
                     ctx.drawImage(
-                        tex.cells[pasteboardCell.type.getTex(pasteboardCell)].bitmap,
+                        tex.cells[pasteboardCell.type.getTex(pasteboardCell)].bitmap(cellSize),
                         cellX,
                         cellY,
                         cellSize,

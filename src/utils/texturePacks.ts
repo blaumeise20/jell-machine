@@ -2,45 +2,46 @@ import { writable, type Writable } from "svelte/store";
 import { config } from "./config";
 import { BaseDirectory, createDir, readBinaryFile, readDir } from "@tauri-apps/api/fs";
 import { loadingPromises } from "./misc";
+import { Texture } from "@core/textures/texture";
 
 const textureMapping = {
-    generator: ["generator.png"],
-    mover: ["mover.png"],
-    cwRotator: ["rotatorCW.png", "CWrotator_alt.png"],
-    ccwRotator: ["rotatorCCW.png", "CCWrotator_alt.png"],
-    push: ["push.png"],
-    slide: ["slide.png"],
-    arrow: ["arrow.png"],
-    enemy: ["enemy.png"],
-    trash: ["trash.png"],
+    generator: "generator.png",
+    mover: "mover.png",
+    cwRotator: "rotatorCW.png",
+    ccwRotator: "rotatorCCW.png",
+    push: "push.png",
+    slide: "slide.png",
+    arrow: "arrow.png",
+    enemy: "enemy.png",
+    trash: "trash.png",
 
-    wall: ["wall.png", "immobile.png"],
-    note: ["note.png"],
-    orientator: ["orientator.png"],
-    disabler: ["disabler.png"],
-    jell: ["jell.png"],
-    random: ["random.png"],
-    portal: ["portal.png"],
-    portalOff: ["portalOff.png"],
-    nuke: ["nuke.png"],
+    wall: "wall.png",
+    note: "note.png",
+    orientator: "orientator.png",
+    disabler: "disabler.png",
+    jell: "jell.png",
+    random: "random.png",
+    portal: "portal.png",
+    portalOff: "portalOff.png",
+    nuke: "nuke.png",
 
-    pistonOn: ["pistonOn.png"],
-    pistonOff: ["pistonOff.png"],
-    pistonHead: ["pistonHead.png"],
-    pistonSticky: ["pistonSticky.png"],
-    pistonStickyHead: ["pistonStickyHead.png"],
+    pistonOn: "pistonOn.png",
+    pistonOff: "pistonOff.png",
+    pistonHead: "pistonHead.png",
+    pistonSticky: "pistonSticky.png",
+    pistonStickyHead: "pistonStickyHead.png",
 
-    redirector: ["redirector.png"],
-    tunnel: ["tunnel.png"],
-    crossway: ["crossway.png"],
-    crossdirector: ["crossdirector.png"],
+    redirector: "redirector.png",
+    tunnel: "tunnel.png",
+    crossway: "crossway.png",
+    crossdirector: "crossdirector.png",
 
-    network: ["network.png"],
+    network: "network.png",
 
-    placeable: ["BGPlaceable.png"],
-    bg: ["BG.png"],
-    border: ["_.png"],
-    unknown: ["unknown.png"],
+    placeable: "BGPlaceable.png",
+    bg: "BG.png",
+    border: "_.png",
+    unknown: "unknown.png",
 };
 const uiTextures = {
     play: "buttonPlay.png",
@@ -100,11 +101,10 @@ class Textures {
         });
 
         for (const k of Object.keys(textureMapping) as (keyof typeof textureMapping)[]) {
-            const filename = textureMapping[k][0];
+            const filename = textureMapping[k];
             const blob = files[`/assets/defaultPack/${filename}`] as Blob;
-            const url = URL.createObjectURL(blob);
-            createImageBitmap(blob).then(bitmap => {
-                cells[k] = { blob, url, bitmap };
+            Texture.fromBlob(blob).then(texture => {
+                cells[k] = texture;
             });
         }
 
@@ -119,27 +119,22 @@ class Textures {
         const cells = {} as any;
 
         t: for (const k of Object.keys(textureMapping) as (keyof typeof textureMapping)[]) {
-            for (const filename of textureMapping[k]) {
-                let imageContent: Uint8Array;
-                try {
-                    imageContent = await readBinaryFile(`textures/${name}/${filename}`, { dir: BaseDirectory.AppData });
-                }
-                catch {
-                    continue;
-                }
-
-                const blob = new Blob(
-                    [imageContent.buffer],
-                    { type: "image/png" }
-                );
-                const url = URL.createObjectURL(blob);
-                createImageBitmap(blob).then(bitmap => {
-                    cells[k] = { blob, url, bitmap };
-                });
-
-                continue t;
+            const filename = textureMapping[k];
+            let imageContent: Uint8Array;
+            try {
+                imageContent = await readBinaryFile(`textures/${name}/${filename}`, { dir: BaseDirectory.AppData });
             }
-            return false;
+            catch {
+                return false;
+            }
+
+            const blob = new Blob(
+                [imageContent.buffer],
+                { type: "image/png" }
+            );
+            Texture.fromBlob(blob).then(texture => {
+                cells[k] = texture;
+            });
         }
 
         return {
@@ -166,8 +161,7 @@ class Textures {
                     [new Uint8Array(imageContent[0]).buffer],
                     { type: "image/png" }
                 );
-                const url = URL.createObjectURL(blob);
-                ui[k] = { blob, url };
+                ui[k] = await Texture.fromBlob(blob);
             } catch {}
         }
 
@@ -195,11 +189,6 @@ export interface TexturePack {
         pause: Texture;
         structures: Texture;
     };
-}
-export interface Texture {
-    blob: Blob;
-    url: string;
-    bitmap: ImageBitmap;
 }
 
 Textures.instance = new Textures();
