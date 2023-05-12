@@ -161,7 +161,7 @@ class Textures {
                     [new Uint8Array(imageContent[0]).buffer],
                     { type: "image/png" }
                 );
-                ui[k] = await Texture.fromBlob(blob);
+                ui[k] = await Texture.fromBlob(blob, false);
             } catch {}
         }
 

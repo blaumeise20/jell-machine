@@ -1,5 +1,4 @@
 import type { CellGrid } from "@core/grid/cellGrid";
-import { Direction } from "@core/cells/direction";
 import type { Position } from "@core/coord/positions";
 import type { Size } from "@core/coord/size";
 import { Tile } from "@core/tiles";
@@ -91,28 +90,22 @@ export function renderGrid(
             if (pasteboard && pasteboardPos) {
                 const pasteboardCell = pasteboard.cells.getXY(x - pasteboardPos.x, y - pasteboardPos.y);
                 if (pasteboardCell) {
-                    const cellX = hWidth + (x - cx) * cellSize;
-                    const cellY = hHeight - (y - cy + 1) * cellSize;
-                    const centerX = cellX + halfSize;
-                    const centerY = cellY + halfSize;
-                    ctx.restore();
-                    ctx.save();
-                    if (pasteboardCell.direction != Direction.Right) {
-                        ctx.translate(centerX, centerY);
-                        ctx.rotate(pasteboardCell.direction * halfPi);
-                        ctx.translate(-centerX, -centerY);
-                    }
+                    const cellX = hWidth + (x - cx) * cellSize + halfSize;
+                    const cellY = hHeight - (y - cy + 1) * cellSize + halfSize;
+                    const angle = pasteboardCell.direction * halfPi % R;
+                    ctx.rotate((angle - prevAngle + R) % R);
+                    prevAngle = angle;
+                    const newX = cellX * Math.cos(R - angle) - cellY * Math.sin(R - angle) - halfSize;
+                    const newY = cellX * Math.sin(R - angle) + cellY * Math.cos(R - angle) - halfSize;
                     ctx.globalAlpha = 0.5;
                     ctx.drawImage(
                         tex.cells[pasteboardCell.type.getTex(pasteboardCell)].bitmap(cellSize),
-                        cellX,
-                        cellY,
+                        newX,
+                        newY,
                         cellSize,
                         cellSize,
                     );
-                    ctx.restore();
-                    ctx.save();
-                    prevAngle = 0;
+                    ctx.globalAlpha = 1;
                 }
             }
         }

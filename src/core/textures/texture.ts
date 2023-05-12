@@ -28,22 +28,25 @@ export class Texture {
         return this.url;
     }
 
-    static async fromBlob(blob: Blob, mipmapLevels = 3) {
+    static async fromBlob(blob: Blob, doMipmap = true) {
         const url = URL.createObjectURL(blob);
 
         const original = await createImageBitmap(blob);
-        const mipmaps = [original];
+        const bitmaps = [original];
         let width = original.width;
         let height = original.height;
-        for (let i = 0; i < mipmapLevels; i++) {
-            width = Math.max(1, width >> 1);
-            height = Math.max(1, height >> 1);
-            resizeCanvas.width = width;
-            resizeCanvas.height = height;
-            resizeContext.drawImage(original, 0, 0, width, height);
-            mipmaps.push(await createImageBitmap(resizeCanvas));
+        if (doMipmap) {
+            // max 8 textures (1 original + 7 downscaled)
+            for (let i = 0; i < 7 && width > 1 && height > 1; i++) {
+                width = Math.max(1, width >> 1);
+                height = Math.max(1, height >> 1);
+                resizeCanvas.width = width;
+                resizeCanvas.height = height;
+                resizeContext.drawImage(original, 0, 0, width, height);
+                bitmaps.push(await createImageBitmap(resizeCanvas));
+            }
         }
 
-        return new Texture(url, mipmaps);
+        return new Texture(url, bitmaps);
     }
 }
