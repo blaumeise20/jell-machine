@@ -104,6 +104,9 @@ export class CellGrid {
                 if (cell) grid.loadCell(Pos(x, y), cell.type, cell.direction);
             }
         }
+        for (const [pos, tile] of this.tiles.entries()) {
+            grid.tiles.set(pos, tile);
+        }
         return grid;
     }
 
