@@ -3,7 +3,7 @@
     import type { CellGrid } from "@core/grid/cellGrid";
     import { onMount } from "svelte";
     import { Tile } from "@core/tiles";
-    import { keys, modifiers, on } from "../keys";
+    import { keys, keys$, modifiers, on } from "../keys";
     import { mouse } from "@utils/mouse";
     import { Off, Pos, toPos } from "@core/coord/positions";
     import { Size } from "@core/coord/size";
@@ -186,8 +186,6 @@
         Math.round(mousePosition.y - pasteboard.size.height / 2)
     ) : Pos(0, 0);
 
-    const tabKey = on("tab").observe();
-
     // selection clipboard: cut/copy/paste
     on("x").and(modifiers.cmdOrCtrl).when(() => showSelectionBox).down(() => {
         $clipboard = grid.cloneArea(selectionSize);
@@ -270,7 +268,7 @@
             mouseButton = e.button;
             mouseAnchor.x = Math.floor(mousePosition.x);
             mouseAnchor.y = Math.floor(mousePosition.y);
-            showSelectionBox = $tabKey;
+            showSelectionBox = $keys$.alt;
             if (showSelectionBox) placeCell = false;
         }
     }
